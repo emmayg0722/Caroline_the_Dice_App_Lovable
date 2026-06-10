@@ -2,6 +2,21 @@ import { useState, type ReactNode } from "react";
 import { X } from "lucide-react";
 import { type DiceSide, pickCardSurface as surfaceFor } from "@/lib/caroline-store";
 
+/** Unified rim + highlight + drop shadow, scaled to the die size so small dice
+ *  keep a crisp edge on any surface (light or dark) and large dice still feel soft. */
+function dieShadow(size: number): string {
+  const ringW = Math.max(1, Math.round(size * 0.012));
+  const drop = Math.max(6, Math.round(size * 0.14));
+  const dropY = Math.max(3, Math.round(size * 0.06));
+  return [
+    `0 0 0 ${ringW}px var(--die-stroke)`,
+    `inset 0 1px 0 var(--die-highlight)`,
+    `inset 0 -2px 0 var(--die-inner-shade)`,
+    `0 1px 0 var(--die-shadow-soft)`,
+    `0 ${dropY}px ${drop}px -${Math.round(drop * 0.6)}px var(--die-shadow-drop)`,
+  ].join(", ");
+}
+
 export function PhoneShell({ children }: { children: ReactNode }) {
   return (
     <div className="phone-shell min-h-screen">
