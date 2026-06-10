@@ -80,6 +80,12 @@
   --snow: oklch(0.985 0 0);              /* clean white */
   --clay: oklch(0.78 0.07 55);           /* warm clay beige */
 
+  /* Card surfaces — softer than dice fills so dice always pop */
+  --paper: oklch(1 0 0);                 /* clean paper */
+  --sand: oklch(0.96 0.022 80);          /* warm sand */
+  --mist: oklch(0.965 0.012 230);        /* cool mist */
+  --dusk: oklch(0.94 0.02 330);          /* soft dusk */
+
   --background: var(--cream);
   --foreground: var(--ink);
   --card: oklch(1 0 0);
