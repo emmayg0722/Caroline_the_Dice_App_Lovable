@@ -2,6 +2,21 @@ import { useState, type ReactNode } from "react";
 import { X } from "lucide-react";
 import { type DiceSide, pickCardSurface as surfaceFor } from "@/lib/caroline-store";
 
+/** Unified rim + highlight + drop shadow, scaled to the die size so small dice
+ *  keep a crisp edge on any surface (light or dark) and large dice still feel soft. */
+function dieShadow(size: number): string {
+  const ringW = Math.max(1, Math.round(size * 0.012));
+  const drop = Math.max(6, Math.round(size * 0.14));
+  const dropY = Math.max(3, Math.round(size * 0.06));
+  return [
+    `0 0 0 ${ringW}px var(--die-stroke)`,
+    `inset 0 1px 0 var(--die-highlight)`,
+    `inset 0 -2px 0 var(--die-inner-shade)`,
+    `0 1px 0 var(--die-shadow-soft)`,
+    `0 ${dropY}px ${drop}px -${Math.round(drop * 0.6)}px var(--die-shadow-drop)`,
+  ].join(", ");
+}
+
 export function PhoneShell({ children }: { children: ReactNode }) {
   return (
     <div className="phone-shell min-h-screen">
@@ -40,8 +55,14 @@ export function Pip({ value, size = 144 }: { value: number; size?: number }) {
           <div key={i} className="flex items-center justify-center">
             {on && (
               <div
-                className="rounded-full bg-ink"
-                style={{ width: dot, height: dot }}
+                className="rounded-full"
+                style={{
+                  width: dot,
+                  height: dot,
+                  background: "var(--die-pip)",
+                  boxShadow:
+                    "inset 0 1px 0 var(--die-pip-highlight), 0 1px 0 rgba(0,0,0,0.08)",
+                }}
               />
             )}
           </div>
@@ -64,14 +85,13 @@ export function DieFace({
 }) {
   return (
     <div
-      className={`shrink-0 border border-ink/15 shadow-pop ${tumbling ? "animate-tumble" : ""}`}
+      className={`shrink-0 ${tumbling ? "animate-tumble" : ""}`}
       style={{
         width: size,
         height: size,
         background: bg,
         borderRadius: Math.round(size * 0.18),
-        boxShadow:
-          "inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -2px 0 rgba(0,0,0,0.06), 0 1px 0 rgba(17,17,17,0.06), 0 10px 24px -14px rgba(17,17,17,0.25)",
+        boxShadow: dieShadow(size),
       }}
     >
       <Pip value={value} size={size} />
@@ -110,14 +130,13 @@ export function CustomDieFace({
     const pad = Math.round(size * 0.16);
     return (
       <div
-        className={`relative shrink-0 overflow-hidden border border-ink/15 shadow-pop ${tumbling ? "animate-tumble" : ""}`}
+        className={`relative shrink-0 overflow-hidden ${tumbling ? "animate-tumble" : ""}`}
         style={{
           width: size,
           height: size,
           background: bg,
           borderRadius: Math.round(size * 0.18),
-          boxShadow:
-            "inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -2px 0 rgba(0,0,0,0.06), 0 1px 0 rgba(17,17,17,0.06), 0 10px 24px -14px rgba(17,17,17,0.25)",
+          boxShadow: dieShadow(size),
         }}
       >
         <div
@@ -159,14 +178,13 @@ export function CustomDieFace({
 
   return (
     <div
-      className={`relative flex shrink-0 flex-col items-center justify-center overflow-hidden border border-ink/15 px-2 text-center shadow-pop ${tumbling ? "animate-tumble" : ""}`}
+      className={`relative flex shrink-0 flex-col items-center justify-center overflow-hidden px-2 text-center ${tumbling ? "animate-tumble" : ""}`}
       style={{
         width: size,
         height: size,
         background: bg,
         borderRadius: Math.round(size * 0.18),
-        boxShadow:
-          "inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -2px 0 rgba(0,0,0,0.06), 0 1px 0 rgba(17,17,17,0.06), 0 10px 24px -14px rgba(17,17,17,0.25)",
+        boxShadow: dieShadow(size),
       }}
     >
       {photo && (

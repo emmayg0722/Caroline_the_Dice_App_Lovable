@@ -84,8 +84,12 @@ if (typeof window !== "undefined") {
   }
 }
 
-// Naive "background removal": clears near-white pixels and softens edges.
-export function cutoutWhiteBackground(file: File, max = 320): Promise<string> {
+// Edge-flood background removal:
+//  1. Sample the four borders to learn the dominant background color(s).
+//  2. BFS from every edge pixel, knocking out alpha for pixels within tolerance.
+//  3. Feather the cutout edge so silhouettes don't look jagged.
+// Works for white, near-white, and uniform colored backgrounds.
+export function cutoutWhiteBackground(file: File, max = 384): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onerror = () => reject(new Error("read"));
@@ -104,18 +108,63 @@ export function cutoutWhiteBackground(file: File, max = 320): Promise<string> {
         ctx.drawImage(img, 0, 0, w, h);
         const id = ctx.getImageData(0, 0, w, h);
         const d = id.data;
-        for (let i = 0; i < d.length; i += 4) {
-          const r = d[i], g = d[i + 1], b = d[i + 2];
-          const max3 = Math.max(r, g, b);
-          const min3 = Math.min(r, g, b);
-          const sat = max3 - min3;
-          if (r > 230 && g > 230 && b > 230 && sat < 25) {
-            d[i + 3] = 0;
-          } else if (r > 210 && g > 210 && b > 210 && sat < 35) {
-            d[i + 3] = Math.round(((255 - r) / 45) * 255);
+
+        // 1) Sample border pixels for the background reference color.
+        let br = 0, bg = 0, bb = 0, bn = 0;
+        const sample = (x: number, y: number) => {
+          const i = (y * w + x) * 4;
+          br += d[i]; bg += d[i + 1]; bb += d[i + 2]; bn++;
+        };
+        for (let x = 0; x < w; x++) { sample(x, 0); sample(x, h - 1); }
+        for (let y = 0; y < h; y++) { sample(0, y); sample(w - 1, y); }
+        const bgR = br / bn, bgG = bg / bn, bgB = bb / bn;
+        const bgLum = (bgR + bgG + bgB) / 3;
+        // Tolerance loosens for light backgrounds (paper photos), tightens for colored.
+        const tol = bgLum > 220 ? 48 : 36;
+        const tol2 = tol * tol;
+
+        // 2) BFS flood-fill from edges in background-similar pixels.
+        const visited = new Uint8Array(w * h);
+        const queue: number[] = [];
+        const enqueue = (x: number, y: number) => {
+          const p = y * w + x;
+          if (visited[p]) return;
+          const i = p * 4;
+          const dr = d[i] - bgR, dg = d[i + 1] - bgG, db = d[i + 2] - bgB;
+          if (dr * dr + dg * dg + db * db > tol2) return;
+          visited[p] = 1;
+          d[i + 3] = 0;
+          queue.push(p);
+        };
+        for (let x = 0; x < w; x++) { enqueue(x, 0); enqueue(x, h - 1); }
+        for (let y = 0; y < h; y++) { enqueue(0, y); enqueue(w - 1, y); }
+        while (queue.length) {
+          const p = queue.pop()!;
+          const x = p % w, y = (p / w) | 0;
+          if (x > 0)     enqueue(x - 1, y);
+          if (x < w - 1) enqueue(x + 1, y);
+          if (y > 0)     enqueue(x, y - 1);
+          if (y < h - 1) enqueue(x, y + 1);
+        }
+
+        // 3) Feather edge: any opaque pixel touching a transparent neighbour
+        //    gets its alpha softened by how close its color is to the bg.
+        const out = new Uint8ClampedArray(d);
+        for (let y = 1; y < h - 1; y++) {
+          for (let x = 1; x < w - 1; x++) {
+            const p = y * w + x;
+            if (visited[p]) continue;
+            const i = p * 4;
+            const tNeighbour =
+              visited[p - 1] || visited[p + 1] || visited[p - w] || visited[p + w];
+            if (!tNeighbour) continue;
+            const dr = d[i] - bgR, dg = d[i + 1] - bgG, db = d[i + 2] - bgB;
+            const dist = Math.sqrt(dr * dr + dg * dg + db * db);
+            const t = Math.min(1, Math.max(0, (dist - tol * 0.6) / (tol * 0.8)));
+            out[i + 3] = Math.round(255 * t);
           }
         }
-        ctx.putImageData(id, 0, 0);
+        ctx.putImageData(new ImageData(out, w, h), 0, 0);
         resolve(canvas.toDataURL("image/png"));
       };
       img.src = reader.result as string;
