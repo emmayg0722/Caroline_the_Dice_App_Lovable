@@ -124,31 +124,33 @@
   --foreground: var(--ink);
   --card-foreground: var(--ink);
   --border: oklch(1 0 0 / 0.12);
-  --butter: oklch(0.35 0.05 90);
-  --pink: oklch(0.32 0.04 350);
-  --powder: oklch(0.32 0.03 255);
-  --sage: oklch(0.32 0.03 130);
-  --lavender: oklch(0.32 0.04 310);
-  --peach: oklch(0.34 0.05 45);
-  --mint: oklch(0.32 0.04 165);
-  --sky: oklch(0.32 0.04 220);
-  --lemon: oklch(0.36 0.06 105);
-  --plum: oklch(0.32 0.04 335);
-  --snow: oklch(0.85 0.005 90);
-  --clay: oklch(0.34 0.03 55);
+  /* Dice faces stay vivid in dark mode so pips + edges read clearly
+     against the dark card surface. */
+  --butter: oklch(0.84 0.14 92);
+  --pink: oklch(0.78 0.12 350);
+  --powder: oklch(0.78 0.1 240);
+  --sage: oklch(0.79 0.11 145);
+  --lavender: oklch(0.77 0.11 305);
+  --peach: oklch(0.8 0.13 45);
+  --mint: oklch(0.79 0.11 165);
+  --sky: oklch(0.78 0.11 220);
+  --lemon: oklch(0.88 0.14 105);
+  --plum: oklch(0.74 0.11 335);
+  --snow: oklch(0.93 0.005 90);
+  --clay: oklch(0.78 0.08 55);
   --paper: oklch(0.28 0.012 280);
   --sand: oklch(0.27 0.014 80);
   --mist: oklch(0.27 0.012 230);
   --dusk: oklch(0.27 0.014 330);
 
   /* Dice rendering — brighter rim + stronger drop on dark surfaces */
-  --die-stroke: rgba(255, 255, 255, 0.22);
-  --die-highlight: rgba(255, 255, 255, 0.18);
-  --die-inner-shade: rgba(0, 0, 0, 0.35);
-  --die-shadow-soft: rgba(0, 0, 0, 0.45);
-  --die-shadow-drop: rgba(0, 0, 0, 0.55);
-  --die-pip: oklch(0.16 0.008 280);
-  --die-pip-highlight: rgba(255, 255, 255, 0.45);
+  --die-stroke: rgba(0, 0, 0, 0.28);
+  --die-highlight: rgba(255, 255, 255, 0.55);
+  --die-inner-shade: rgba(0, 0, 0, 0.18);
+  --die-shadow-soft: rgba(0, 0, 0, 0.5);
+  --die-shadow-drop: rgba(0, 0, 0, 0.7);
+  --die-pip: oklch(0.18 0.008 280);
+  --die-pip-highlight: rgba(255, 255, 255, 0.5);
 }
 
 .phone-shell {
