@@ -34,6 +34,8 @@ function ClassicPage() {
   function roll() {
     setTumbling(true);
     playRollSound();
+    const ms = getRollDurationMs();
+    document.documentElement.style.setProperty("--tumble-ms", `${ms}ms`);
 
     setTimeout(() => {
       const next = Array.from({ length: count }, () => 1 + Math.floor(Math.random() * 6));
@@ -48,7 +50,7 @@ function ClassicPage() {
       setTimeout(() => {
         if (showBeer) setBeer(true);
       }, 600);
-    }, 675);
+    }, ms);
   }
 
   useEffect(() => {
