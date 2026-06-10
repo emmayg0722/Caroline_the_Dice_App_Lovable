@@ -105,6 +105,15 @@
   --border: oklch(0.18 0.005 280 / 0.12);
   --input: oklch(0.18 0.005 280 / 0.15);
   --ring: var(--coral);
+
+  /* Dice rendering — rim + highlight + drop shadow tuned for light surfaces */
+  --die-stroke: rgba(17, 17, 22, 0.18);
+  --die-highlight: rgba(255, 255, 255, 0.6);
+  --die-inner-shade: rgba(17, 17, 22, 0.08);
+  --die-shadow-soft: rgba(17, 17, 22, 0.08);
+  --die-shadow-drop: rgba(17, 17, 22, 0.22);
+  --die-pip: oklch(0.18 0.008 280);
+  --die-pip-highlight: rgba(255, 255, 255, 0.35);
 }
 
 .theme-dark {
