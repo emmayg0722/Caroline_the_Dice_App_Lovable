@@ -85,14 +85,13 @@ export function DieFace({
 }) {
   return (
     <div
-      className={`shrink-0 border border-ink/15 shadow-pop ${tumbling ? "animate-tumble" : ""}`}
+      className={`shrink-0 ${tumbling ? "animate-tumble" : ""}`}
       style={{
         width: size,
         height: size,
         background: bg,
         borderRadius: Math.round(size * 0.18),
-        boxShadow:
-          "inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -2px 0 rgba(0,0,0,0.06), 0 1px 0 rgba(17,17,17,0.06), 0 10px 24px -14px rgba(17,17,17,0.25)",
+        boxShadow: dieShadow(size),
       }}
     >
       <Pip value={value} size={size} />
