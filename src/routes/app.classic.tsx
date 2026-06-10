@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { DieFace, Confetti } from "@/components/caroline/Dice";
 import { useCarolineStore } from "@/lib/caroline-store";
 import { BeerPopup, useBeerTrigger } from "@/components/caroline/BeerPopup";
-import { playRollSound } from "@/lib/dice-sound";
+import { playRollSound, getRollDurationMs } from "@/lib/dice-sound";
 
 export const Route = createFileRoute("/app/classic")({
   head: () => ({ meta: [{ title: "Classic Dice — Caroline" }] }),
