@@ -74,7 +74,7 @@ export function DieFace({
           "inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -2px 0 rgba(0,0,0,0.06), 0 1px 0 rgba(17,17,17,0.06), 0 10px 24px -14px rgba(17,17,17,0.25)",
       }}
     >
-      <Pip value={value} />
+      <Pip value={value} size={size} />
     </div>
   );
 }
