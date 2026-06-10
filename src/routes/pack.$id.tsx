@@ -44,6 +44,8 @@ function RollPack() {
   function roll() {
     setTumbling(true);
     playRollSound();
+    const ms = getRollDurationMs();
+    document.documentElement.style.setProperty("--tumble-ms", `${ms}ms`);
     setTimeout(() => {
       const next = Array.from({ length: count }, () => Math.floor(Math.random() * pack!.sides.length));
       setRolled(next);
@@ -52,7 +54,7 @@ function RollPack() {
         setConfetti(true);
         setTimeout(() => setConfetti(false), 2200);
       }
-    }, 675);
+    }, ms);
   }
 
   function shareParty() {
