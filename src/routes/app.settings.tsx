@@ -143,15 +143,26 @@ function SoundSection() {
                     {opt.description}
                   </div>
                 </button>
-                <button
-                  onClick={() => playSoundById(opt.id)}
-                  className={`grid h-10 w-10 place-items-center rounded-full ${
-                    active ? "bg-coral text-white" : "bg-ink text-cream"
-                  }`}
-                  aria-label="Preview"
-                >
-                  <Play className="h-4 w-4" />
-                </button>
+                {opt.id === "off" ? (
+                  <div
+                    className={`grid h-10 w-10 place-items-center rounded-full ${
+                      active ? "bg-coral text-white" : "bg-ink/10 text-ink/60"
+                    }`}
+                    aria-hidden
+                  >
+                    <VolumeX className="h-4 w-4" />
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => playSoundById(opt.id)}
+                    className={`grid h-10 w-10 place-items-center rounded-full ${
+                      active ? "bg-coral text-white" : "bg-ink text-cream"
+                    }`}
+                    aria-label="Preview"
+                  >
+                    <Play className="h-4 w-4" />
+                  </button>
+                )}
               </div>
             </div>
           );
