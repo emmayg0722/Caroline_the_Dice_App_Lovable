@@ -169,8 +169,10 @@ function CustomTab() {
                     key={j}
                     text={s.text}
                     emoji={s.emoji}
+                    mode={s.mode}
+                    pipCount={s.mode === "pip" ? j + 1 : undefined}
                     size={64}
-                    bg="var(--cream)"
+                    bg={p.color}
                   />
                 ))}
               </div>
@@ -178,6 +180,40 @@ function CustomTab() {
           ))}
         </div>
       </section>
+
+      {confirmDelete && pendingPack && (
+        <div
+          className="fixed inset-0 z-50 grid place-items-center bg-ink/40 backdrop-blur-sm px-6"
+          onClick={() => setConfirmDelete(null)}
+        >
+          <div
+            className="w-full max-w-sm rounded-3xl bg-card p-5 shadow-pop"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="font-display text-xl font-black">Delete pack?</div>
+            <p className="mt-2 text-sm text-ink/70">
+              “{pendingPack.name}” will be removed from your packs. This can't be undone.
+            </p>
+            <div className="mt-4 flex gap-2">
+              <button
+                onClick={() => setConfirmDelete(null)}
+                className="flex-1 rounded-full border border-ink/15 bg-cream py-3 text-sm font-semibold"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  deletePack(confirmDelete);
+                  setConfirmDelete(null);
+                }}
+                className="flex-1 rounded-full bg-coral py-3 text-sm font-semibold text-white"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
