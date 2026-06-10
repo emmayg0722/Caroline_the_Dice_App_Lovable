@@ -17,6 +17,7 @@ import { Route as PartyCodeRouteImport } from './routes/party.$code'
 import { Route as PackIdRouteImport } from './routes/pack.$id'
 import { Route as CustomNewRouteImport } from './routes/custom.new'
 import { Route as CustomIdRouteImport } from './routes/custom.$id'
+import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppProRouteImport } from './routes/app.pro'
 import { Route as AppPartyRouteImport } from './routes/app.party'
 import { Route as AppCustomRouteImport } from './routes/app.custom'
@@ -62,6 +63,11 @@ const CustomIdRoute = CustomIdRouteImport.update({
   path: '/custom/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProRoute = AppProRouteImport.update({
   id: '/pro',
   path: '/pro',
@@ -90,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/app/custom': typeof AppCustomRoute
   '/app/party': typeof AppPartyRoute
   '/app/pro': typeof AppProRoute
+  '/app/settings': typeof AppSettingsRoute
   '/custom/$id': typeof CustomIdRoute
   '/custom/new': typeof CustomNewRoute
   '/pack/$id': typeof PackIdRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/app/custom': typeof AppCustomRoute
   '/app/party': typeof AppPartyRoute
   '/app/pro': typeof AppProRoute
+  '/app/settings': typeof AppSettingsRoute
   '/custom/$id': typeof CustomIdRoute
   '/custom/new': typeof CustomNewRoute
   '/pack/$id': typeof PackIdRoute
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   '/app/custom': typeof AppCustomRoute
   '/app/party': typeof AppPartyRoute
   '/app/pro': typeof AppProRoute
+  '/app/settings': typeof AppSettingsRoute
   '/custom/$id': typeof CustomIdRoute
   '/custom/new': typeof CustomNewRoute
   '/pack/$id': typeof PackIdRoute
@@ -134,6 +143,7 @@ export interface FileRouteTypes {
     | '/app/custom'
     | '/app/party'
     | '/app/pro'
+    | '/app/settings'
     | '/custom/$id'
     | '/custom/new'
     | '/pack/$id'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/app/custom'
     | '/app/party'
     | '/app/pro'
+    | '/app/settings'
     | '/custom/$id'
     | '/custom/new'
     | '/pack/$id'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/app/custom'
     | '/app/party'
     | '/app/pro'
+    | '/app/settings'
     | '/custom/$id'
     | '/custom/new'
     | '/pack/$id'
@@ -237,6 +249,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/settings': {
+      id: '/app/settings'
+      path: '/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/pro': {
       id: '/app/pro'
       path: '/pro'
@@ -273,6 +292,7 @@ interface AppRouteChildren {
   AppCustomRoute: typeof AppCustomRoute
   AppPartyRoute: typeof AppPartyRoute
   AppProRoute: typeof AppProRoute
+  AppSettingsRoute: typeof AppSettingsRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
@@ -281,6 +301,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppCustomRoute: AppCustomRoute,
   AppPartyRoute: AppPartyRoute,
   AppProRoute: AppProRoute,
+  AppSettingsRoute: AppSettingsRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
@@ -298,3 +319,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
