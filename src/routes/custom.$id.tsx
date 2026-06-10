@@ -49,6 +49,12 @@ export function Editor({ id }: { id: string }) {
   const [error, setError] = useState<string | null>(null);
   const [busyIdx, setBusyIdx] = useState<number | null>(null);
   const fileInputs = useRef<(HTMLInputElement | null)[]>([]);
+  // Staged cutout shown in a preview modal so the user can confirm before it
+  // commits to the side.
+  const [preview, setPreview] = useState<
+    | { idx: number; mode: "side" | "pip"; data: string; originalUrl: string; originalFile: File }
+    | null
+  >(null);
 
   function update(i: number, patch: Partial<Omit<DiceSide, "photo">> & { photo?: string | null }) {
     setPack((p) => {
@@ -73,12 +79,34 @@ export function Editor({ id }: { id: string }) {
         mode === "pip"
           ? await cutoutWhiteBackground(file, 320)
           : await compressPhoto(file, 320);
-      update(i, { photo: data });
+      const originalUrl = URL.createObjectURL(file);
+      setPreview({ idx: i, mode, data, originalUrl, originalFile: file });
     } catch {
       setError("Couldn't process that photo.");
     } finally {
       setBusyIdx(null);
     }
+  }
+
+  function confirmPreview() {
+    if (!preview) return;
+    update(preview.idx, { photo: preview.data });
+    URL.revokeObjectURL(preview.originalUrl);
+    setPreview(null);
+  }
+
+  function cancelPreview() {
+    if (!preview) return;
+    URL.revokeObjectURL(preview.originalUrl);
+    setPreview(null);
+  }
+
+  async function retryPreview() {
+    if (!preview) return;
+    const { idx, mode, originalFile, originalUrl } = preview;
+    URL.revokeObjectURL(originalUrl);
+    setPreview(null);
+    await onPickPhoto(idx, originalFile, mode);
   }
 
   function onSave() {
