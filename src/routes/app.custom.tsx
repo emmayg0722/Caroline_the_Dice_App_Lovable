@@ -52,7 +52,7 @@ function CustomTab() {
               and share Party Links.
             </p>
             <Link
-              to="/app/pro"
+              to="/app/settings"
               className="mt-4 inline-flex rounded-full bg-coral px-5 py-3 text-sm font-semibold text-white"
             >
               Unlock Pro · $4.99

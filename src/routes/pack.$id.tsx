@@ -15,7 +15,7 @@ function RollPack() {
   const { id } = useParams({ from: "/pack/$id" });
   const navigate = useNavigate();
   const router = useRouter();
-  const { packs, pro, createParty } = useCarolineStore();
+  const { packs, pro, createParty, dieScale } = useCarolineStore();
   const pack = findPack(id, packs);
   const isPreset = PRESET_PACKS.some((p) => p.id === id);
 
@@ -56,8 +56,8 @@ function RollPack() {
   }
 
   function shareParty() {
-    if (!pro || isPreset) {
-      navigate({ to: "/app/pro" });
+    if (!pro) {
+      navigate({ to: "/app/settings" });
       return;
     }
     const party = createParty(pack!.id);
@@ -69,10 +69,13 @@ function RollPack() {
     else navigate({ to: "/app/custom" });
   }
 
+  const baseSize = count <= 2 ? 140 : count <= 4 ? 108 : 86;
+  const dieSize = Math.round(baseSize * (dieScale || 1));
+
   return (
     <PhoneShell>
       <Confetti show={confetti} />
-      <div className="px-5 pb-16 pt-12">
+      <div className="px-5 pb-16 pt-5">
         <div className="flex items-center justify-between">
           <button
             onClick={back}
@@ -84,18 +87,22 @@ function RollPack() {
           <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">
             {isPreset ? "Preset Pack" : "My Pack"}
           </span>
-          <button
-            onClick={shareParty}
-            className="grid h-10 w-10 place-items-center rounded-full bg-ink text-cream"
-            aria-label="Share"
-          >
-            <Share2 className="h-4 w-4" />
-          </button>
+          {!isPreset ? (
+            <button
+              onClick={shareParty}
+              className="grid h-10 w-10 place-items-center rounded-full bg-ink text-cream"
+              aria-label="Share"
+            >
+              <Share2 className="h-4 w-4" />
+            </button>
+          ) : (
+            <span className="h-10 w-10" />
+          )}
         </div>
 
-        <h1 className="mt-5 font-display text-4xl font-black leading-[0.95]">{pack.name}</h1>
+        <h1 className="mt-4 font-display text-3xl font-black leading-[0.95]">{pack.name}</h1>
 
-        <div className="mt-5">
+        <div className="mt-4">
           <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-ink/55">
             Dice count
           </div>
@@ -107,7 +114,7 @@ function RollPack() {
                   setCount(n);
                   setRolled(Array.from({ length: n }, () => 0));
                 }}
-                className={`flex-1 rounded-xl border py-2.5 font-display text-base font-bold ${
+                className={`flex-1 rounded-xl border py-2 font-display text-base font-bold ${
                   count === n ? "border-ink bg-ink text-cream" : "border-ink/15 bg-card text-ink/70"
                 }`}
               >
@@ -118,13 +125,13 @@ function RollPack() {
         </div>
 
         <div
-          className="relative mt-6 rounded-3xl border border-ink/15 p-5 shadow-pop"
+          className="relative mt-4 rounded-3xl border border-ink/15 p-4 shadow-pop"
           style={{ background: pack.color }}
         >
           <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/65">
             Rolled
           </div>
-          <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
             {rolled.map((idx, i) => {
               const s = pack.sides[idx];
               return (
@@ -134,7 +141,8 @@ function RollPack() {
                   emoji={s.emoji}
                   photo={s.photo}
                   mode={s.mode}
-                  size={count <= 2 ? 165 : count <= 4 ? 128 : 100}
+                  pipCount={s.mode === "pip" ? idx + 1 : undefined}
+                  size={dieSize}
                   bg="var(--cream)"
                   tumbling={tumbling}
                 />
@@ -145,7 +153,7 @@ function RollPack() {
 
         <button
           onClick={roll}
-          className="mt-5 w-full rounded-full bg-coral py-4 font-display text-xl font-black text-white shadow-pop active:scale-[0.99]"
+          className="mt-4 w-full rounded-full bg-coral py-4 font-display text-xl font-black text-white shadow-pop active:scale-[0.99]"
         >
           Roll
         </button>
