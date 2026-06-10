@@ -149,7 +149,7 @@ export function Editor({ id }: { id: string }) {
           </div>
         </div>
 
-        <div className="mt-5 rounded-3xl border border-ink/12 p-4" style={{ background: pack.color }}>
+        <div className="mt-5 rounded-3xl border border-ink/12 bg-card p-4">
           <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/65">
             Preview
           </div>
@@ -163,7 +163,7 @@ export function Editor({ id }: { id: string }) {
                 mode={s.mode}
                 pipCount={s.mode === "pip" ? i + 1 : undefined}
                 size={92}
-                bg="var(--cream)"
+                bg={pack.color}
               />
             ))}
           </div>
