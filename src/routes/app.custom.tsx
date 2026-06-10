@@ -147,8 +147,8 @@ function CustomTab() {
               key={p.id}
               to="/pack/$id"
               params={{ id: p.id }}
-              className="block rounded-3xl border border-ink/12 p-4 shadow-pop"
-              style={{ background: p.color, transform: `rotate(${i % 2 === 0 ? -0.4 : 0.4}deg)` }}
+              className="block rounded-3xl border border-ink/12 bg-card p-4 shadow-pop"
+              style={{ transform: `rotate(${i % 2 === 0 ? -0.4 : 0.4}deg)` }}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
