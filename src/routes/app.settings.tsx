@@ -1,22 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import {
-  ArrowLeft, ChevronRight, Play, Check, Sliders, Volume2,
+  ArrowLeft, ChevronRight, Play, Check, Sliders, Volume2, VolumeX,
   Palette, Crown, Info, Gift, RefreshCw,
 } from "lucide-react";
 import { useCarolineStore } from "@/lib/caroline-store";
 import { SOUND_OPTIONS, playSoundById } from "@/lib/dice-sound";
 import { DieFace } from "@/components/caroline/Dice";
 
+type Section = "menu" | "size" | "sound" | "theme" | "premium" | "about";
+
 export const Route = createFileRoute("/app/settings")({
   head: () => ({ meta: [{ title: "Settings — Caroline" }] }),
+  validateSearch: (s: Record<string, unknown>): { section?: Section } => {
+    const v = s.section;
+    if (v === "size" || v === "sound" || v === "theme" || v === "premium" || v === "about") {
+      return { section: v };
+    }
+    return {};
+  },
   component: SettingsPage,
 });
 
-type Section = "menu" | "size" | "sound" | "theme" | "premium" | "about";
-
 function SettingsPage() {
-  const [section, setSection] = useState<Section>("menu");
+  const search = Route.useSearch();
+  const [section, setSection] = useState<Section>(search.section ?? "menu");
 
   if (section === "menu") return <Menu onOpen={setSection} />;
 
