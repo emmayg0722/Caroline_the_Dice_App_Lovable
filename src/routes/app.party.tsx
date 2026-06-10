@@ -1,21 +1,39 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { Link2, Hash, QrCode, Clock } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link2, Hash, Clock, ChevronRight } from "lucide-react";
+import { useCarolineStore } from "@/lib/caroline-store";
 
 export const Route = createFileRoute("/app/party")({
   head: () => ({ meta: [{ title: "Party Pack — Caroline" }] }),
   component: PartyTab,
 });
 
+const TEN_HOURS = 10 * 60 * 60 * 1000;
+
 function PartyTab() {
   const navigate = useNavigate();
+  const { parties, packs } = useCarolineStore();
   const [code, setCode] = useState("");
   const [link, setLink] = useState("");
+  const [now, setNow] = useState(Date.now());
+
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 60_000);
+    return () => clearInterval(t);
+  }, []);
 
   function join(c: string) {
     if (!c) return;
     navigate({ to: "/party/$code", params: { code: c.toUpperCase() } });
   }
+
+  const active = parties
+    .map((p) => {
+      const pack = packs.find((pk) => pk.id === p.packId);
+      const remaining = TEN_HOURS - (now - p.createdAt);
+      return { party: p, pack, remaining };
+    })
+    .filter((x) => x.pack && x.remaining > 0);
 
   return (
     <div className="px-5 pt-12">
@@ -84,17 +102,48 @@ function PartyTab() {
               Join
             </button>
           </div>
-
-          <button className="flex w-full items-center justify-center gap-2 rounded-full border border-ink/20 bg-card py-3 text-sm font-semibold text-ink/70">
-            <QrCode className="h-4 w-4" /> Scan QR Code
-            <span className="ml-1 rounded-full bg-ink/10 px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-ink/60">
-              soon
-            </span>
-          </button>
         </div>
       </div>
 
-      <div className="mt-5 rounded-3xl border border-ink/12 bg-card p-5">
+      <section className="mt-6">
+        <div className="flex items-center justify-between">
+          <h2 className="font-display text-xl font-black">Your Party Packs</h2>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-ink/50">
+            Active links
+          </span>
+        </div>
+        {active.length === 0 ? (
+          <div className="mt-3 rounded-3xl border border-dashed border-ink/20 bg-card p-5 text-center text-sm text-ink/65">
+            No active party packs yet. Open a Party Link above to add one.
+          </div>
+        ) : (
+          <div className="mt-3 space-y-2">
+            {active.map(({ party, pack, remaining }) => {
+              const h = Math.floor(remaining / 3_600_000);
+              const m = Math.floor((remaining % 3_600_000) / 60_000);
+              return (
+                <Link
+                  key={party.code}
+                  to="/party/$code"
+                  params={{ code: party.code }}
+                  className="flex items-center justify-between gap-3 rounded-2xl border border-ink/12 p-3 shadow-pop"
+                  style={{ background: pack!.color }}
+                >
+                  <div className="min-w-0">
+                    <div className="font-display text-base font-black leading-tight">{pack!.name}</div>
+                    <div className="mt-0.5 text-[11px] uppercase tracking-wider text-ink/60">
+                      {party.code} · {h}h {m}m left
+                    </div>
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-ink/55" />
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
+      <div className="mt-6 rounded-3xl border border-ink/12 bg-card p-5">
         <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">
           How it works
         </div>
