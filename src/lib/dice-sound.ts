@@ -255,7 +255,18 @@ function cutoutWhiteBackgroundImpl(file: File, max: number): Promise<string> {
   });
 }
 
-export function compressPhoto(file: File, max = 320): Promise<string> {
+export function compressPhoto(file: File, max = 320, opts?: { force?: boolean }): Promise<string> {
+  const key = cacheKey(file, "compress", max);
+  if (!opts?.force) {
+    const hit = cacheGet(key);
+    if (hit) return Promise.resolve(hit);
+  }
+  return compressPhotoImpl(file, max).then((v) => {
+    cacheSet(key, v);
+    return v;
+  });
+}
+function compressPhotoImpl(file: File, max: number): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onerror = () => reject(new Error("read"));
