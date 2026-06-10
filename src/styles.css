@@ -61,20 +61,20 @@
   /* Caroline palette — soft, relaxed pastels so dice feel playful but calm */
   --cream: oklch(0.975 0.028 92);        /* warm paper */
   --ink: oklch(0.22 0.008 280);          /* soft near-black */
-  --pink: oklch(0.86 0.075 350);         /* gentle blush */
-  --butter: oklch(0.92 0.085 95);        /* light butter */
-  --powder: oklch(0.89 0.045 245);       /* powder blue */
-  --sage: oklch(0.86 0.055 135);         /* soft sage */
-  --lavender: oklch(0.86 0.06 305);      /* soft lavender */
+  --pink: oklch(0.82 0.105 350);         /* blush rose, pops on white */
+  --butter: oklch(0.9 0.13 92);          /* sunny butter */
+  --powder: oklch(0.83 0.085 240);       /* clear powder blue */
+  --sage: oklch(0.83 0.09 145);          /* fresh sage */
+  --lavender: oklch(0.8 0.1 305);        /* soft lavender */
   --coral: oklch(0.7 0.17 18);           /* relaxed coral accent */
   --mute: oklch(0.52 0.012 75);
-  --peach: oklch(0.88 0.075 45);         /* warm peach */
-  --mint: oklch(0.9 0.065 165);          /* soft mint */
-  --sky: oklch(0.88 0.06 220);           /* clear sky */
-  --lemon: oklch(0.94 0.095 105);        /* pale lemon */
-  --plum: oklch(0.78 0.07 335);          /* dusty plum */
+  --peach: oklch(0.84 0.11 45);          /* warm peach */
+  --mint: oklch(0.86 0.09 165);          /* fresh mint */
+  --sky: oklch(0.82 0.095 220);          /* open sky */
+  --lemon: oklch(0.92 0.13 105);         /* sunny lemon */
+  --plum: oklch(0.72 0.11 335);          /* dusty plum */
   --snow: oklch(0.985 0 0);              /* clean white */
-  --clay: oklch(0.82 0.045 55);          /* warm clay beige */
+  --clay: oklch(0.78 0.07 55);           /* warm clay beige */
 
   --background: var(--cream);
   --foreground: var(--ink);
