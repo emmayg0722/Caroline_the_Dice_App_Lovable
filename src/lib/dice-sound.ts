@@ -138,7 +138,16 @@ function cutoutWhiteBackgroundImpl(file: File, max: number): Promise<string> {
     reader.onload = () => {
       const img = new Image();
       img.onerror = () => reject(new Error("img"));
-      img.onload = () => {
+      img.onload = async () => {
+        // Yield once so the caller's loading UI can paint before we hog
+        // the main thread with the BFS + feather pass.
+        await new Promise<void>((r) => {
+          if (typeof (globalThis as any).requestIdleCallback === "function") {
+            (globalThis as any).requestIdleCallback(() => r(), { timeout: 50 });
+          } else {
+            setTimeout(r, 0);
+          }
+        });
         const scale = Math.min(1, max / Math.max(img.width, img.height));
         const w = Math.round(img.width * scale);
         const h = Math.round(img.height * scale);
