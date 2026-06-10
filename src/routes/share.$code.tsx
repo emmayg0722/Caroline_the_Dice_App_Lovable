@@ -51,8 +51,16 @@ function SharePage() {
   }
 
   return (
-    <div className="mx-auto min-h-screen max-w-[440px] bg-cream px-5 pb-16 pt-12">
-      <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">
+    <div className="mx-auto min-h-screen max-w-[440px] bg-cream px-5 pb-16 pt-5">
+      <button
+        onClick={back}
+        className="grid h-10 w-10 place-items-center rounded-full border border-ink/15 bg-card"
+        aria-label="Back"
+      >
+        <ArrowLeft className="h-4 w-4" />
+      </button>
+
+      <div className="mt-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">
         Party Link
       </div>
       <h1 className="mt-1 font-display text-[44px] font-black leading-[0.95]">
@@ -75,11 +83,7 @@ function SharePage() {
               <Clock className="h-3 w-3" /> 10 hrs
             </span>
           </div>
-          <div className="mt-3 grid grid-cols-3 gap-2">
-            {pack.sides.map((s, i) => (
-              <CustomDieFace key={i} text={s.text} emoji={s.emoji} photo={s.photo} size={86} bg="var(--cream)" />
-            ))}
-          </div>
+          <AllSidesButton sides={pack.sides} packName={pack.name} packColor={pack.color} />
         </div>
       )}
 
