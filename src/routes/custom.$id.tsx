@@ -143,7 +143,14 @@ export function Editor({ id }: { id: string }) {
           </div>
           <div className="mt-3 grid grid-cols-3 gap-2">
             {pack.sides.map((s, i) => (
-              <CustomDieFace key={i} text={s.text || "—"} emoji={s.emoji} size={92} bg="var(--cream)" />
+              <CustomDieFace
+                key={i}
+                text={s.text || "—"}
+                emoji={s.emoji}
+                photo={s.photo}
+                size={92}
+                bg="var(--cream)"
+              />
             ))}
           </div>
         </div>
@@ -153,25 +160,64 @@ export function Editor({ id }: { id: string }) {
             Six dice sides
           </div>
           {pack.sides.map((s, i) => (
-            <div key={i} className="flex items-center gap-2 rounded-2xl border border-ink/12 bg-card p-2">
-              <div className="grid h-9 w-9 place-items-center rounded-xl bg-cream font-display text-sm font-bold text-ink/70">
-                {i + 1}
+            <div key={i} className="rounded-2xl border border-ink/12 bg-card p-2">
+              <div className="flex items-center gap-2">
+                <div className="grid h-9 w-9 place-items-center rounded-xl bg-cream font-display text-sm font-bold text-ink/70">
+                  {i + 1}
+                </div>
+                <input
+                  value={s.emoji ?? ""}
+                  onChange={(e) => update(i, { emoji: e.target.value.slice(0, 2) })}
+                  placeholder="🎲"
+                  className="w-12 rounded-xl bg-cream py-2 text-center text-xl outline-none"
+                />
+                <input
+                  value={s.text}
+                  onChange={(e) => update(i, { text: e.target.value })}
+                  placeholder={`Side ${i + 1}`}
+                  className="flex-1 rounded-xl bg-cream px-3 py-2 text-sm outline-none"
+                />
+                {s.photo ? (
+                  <button
+                    onClick={() => update(i, { photo: null })}
+                    className="relative h-9 w-9 overflow-hidden rounded-xl border border-ink/15"
+                    aria-label="Remove photo"
+                  >
+                    <img src={s.photo} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                    <span className="absolute inset-0 grid place-items-center bg-ink/40 text-white">
+                      <X className="h-4 w-4" />
+                    </span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => fileInputs.current[i]?.click()}
+                    className="grid h-9 w-9 place-items-center rounded-xl bg-cream text-ink/60"
+                    aria-label="Add photo"
+                  >
+                    <Camera className="h-4 w-4" />
+                  </button>
+                )}
+                <input
+                  ref={(el) => {
+                    fileInputs.current[i] = el;
+                  }}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) onPickPhoto(i, file);
+                    e.target.value = "";
+                  }}
+                />
               </div>
-              <input
-                value={s.emoji ?? ""}
-                onChange={(e) => update(i, "emoji", e.target.value.slice(0, 2))}
-                placeholder="🎲"
-                className="w-12 rounded-xl bg-cream py-2 text-center text-xl outline-none"
-              />
-              <input
-                value={s.text}
-                onChange={(e) => update(i, "text", e.target.value)}
-                placeholder={`Side ${i + 1}`}
-                className="flex-1 rounded-xl bg-cream px-3 py-2 text-sm outline-none"
-              />
             </div>
           ))}
+          <p className="px-1 pt-1 text-[11px] text-ink/55">
+            Photos are stored locally on your device only.
+          </p>
         </div>
+
 
         {error && (
           <div className="mt-4 rounded-2xl bg-coral/15 p-3 text-sm text-coral">{error}</div>
