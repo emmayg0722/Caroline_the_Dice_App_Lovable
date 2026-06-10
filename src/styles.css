@@ -127,6 +127,10 @@
   --plum: oklch(0.32 0.04 335);
   --snow: oklch(0.85 0.005 90);
   --clay: oklch(0.34 0.03 55);
+  --paper: oklch(0.28 0.012 280);
+  --sand: oklch(0.27 0.014 80);
+  --mist: oklch(0.27 0.012 230);
+  --dusk: oklch(0.27 0.014 330);
 }
 
 .phone-shell {
