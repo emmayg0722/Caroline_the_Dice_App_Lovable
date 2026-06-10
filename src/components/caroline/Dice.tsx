@@ -55,8 +55,14 @@ export function Pip({ value, size = 144 }: { value: number; size?: number }) {
           <div key={i} className="flex items-center justify-center">
             {on && (
               <div
-                className="rounded-full bg-ink"
-                style={{ width: dot, height: dot }}
+                className="rounded-full"
+                style={{
+                  width: dot,
+                  height: dot,
+                  background: "var(--die-pip)",
+                  boxShadow:
+                    "inset 0 1px 0 var(--die-pip-highlight), 0 1px 0 rgba(0,0,0,0.08)",
+                }}
               />
             )}
           </div>
