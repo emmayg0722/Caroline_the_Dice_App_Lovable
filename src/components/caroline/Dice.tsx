@@ -60,28 +60,45 @@ export function DieFace({
 export function CustomDieFace({
   text,
   emoji,
+  photo,
   size = 96,
   bg = "var(--pink)",
   tumbling,
 }: {
   text: string;
   emoji?: string;
+  photo?: string;
   size?: number;
   bg?: string;
   tumbling?: boolean;
 }) {
   return (
     <div
-      className={`flex shrink-0 flex-col items-center justify-center rounded-2xl border border-ink/15 px-2 text-center shadow-pop ${tumbling ? "animate-tumble" : ""}`}
+      className={`relative flex shrink-0 flex-col items-center justify-center overflow-hidden rounded-2xl border border-ink/15 px-2 text-center shadow-pop ${tumbling ? "animate-tumble" : ""}`}
       style={{ width: size, height: size, background: bg }}
     >
-      {emoji && <div className="text-3xl leading-none">{emoji}</div>}
-      <div className="mt-1 line-clamp-2 font-display text-[13px] font-bold leading-tight text-ink">
-        {text}
+      {photo && (
+        <img
+          src={photo}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      )}
+      {photo && <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/10 to-transparent" />}
+      <div className="relative flex flex-col items-center">
+        {emoji && !photo && <div className="text-3xl leading-none">{emoji}</div>}
+        <div
+          className={`mt-1 line-clamp-2 font-display text-[13px] font-bold leading-tight ${
+            photo ? "text-white drop-shadow" : "text-ink"
+          }`}
+        >
+          {text}
+        </div>
       </div>
     </div>
   );
 }
+
 
 export function Confetti({ show }: { show: boolean }) {
   if (!show) return null;

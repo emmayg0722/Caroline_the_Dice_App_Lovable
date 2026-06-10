@@ -1,12 +1,15 @@
 import { useEffect, useState, useCallback } from "react";
 
+export type DiceSide = { text: string; emoji?: string; photo?: string };
+
 export type DicePack = {
   id: string;
   name: string;
-  sides: { text: string; emoji?: string }[];
+  sides: DiceSide[];
   color: string;
   createdAt: number;
 };
+
 
 export type PartyLink = {
   code: string;
