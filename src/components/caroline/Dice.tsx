@@ -4,7 +4,7 @@ import type { DiceSide } from "@/lib/caroline-store";
 
 export function PhoneShell({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_20%_-10%,var(--butter)_0%,transparent_45%),radial-gradient(circle_at_120%_10%,var(--pink)_0%,transparent_40%),var(--cream)]">
+    <div className="phone-shell min-h-screen">
       <div className="relative mx-auto min-h-screen w-full max-w-[440px] overflow-hidden">
         {children}
       </div>
