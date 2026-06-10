@@ -1,4 +1,6 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
+import { X } from "lucide-react";
+import type { DiceSide } from "@/lib/caroline-store";
 
 export function PhoneShell({ children }: { children: ReactNode }) {
   return (
@@ -38,7 +40,7 @@ export function Pip({ value }: { value: number }) {
 
 export function DieFace({
   value,
-  size = 96,
+  size = 144,
   bg = "var(--card)",
   tumbling,
 }: {
@@ -61,44 +63,132 @@ export function CustomDieFace({
   text,
   emoji,
   photo,
-  size = 96,
+  mode,
+  size = 144,
   bg = "var(--pink)",
   tumbling,
 }: {
   text: string;
   emoji?: string;
   photo?: string;
+  mode?: "side" | "pip";
   size?: number;
   bg?: string;
   tumbling?: boolean;
 }) {
+  const isPip = mode === "pip";
   return (
     <div
       className={`relative flex shrink-0 flex-col items-center justify-center overflow-hidden rounded-2xl border border-ink/15 px-2 text-center shadow-pop ${tumbling ? "animate-tumble" : ""}`}
       style={{ width: size, height: size, background: bg }}
     >
-      {photo && (
-        <img
-          src={photo}
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-      )}
-      {photo && <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/10 to-transparent" />}
-      <div className="relative flex flex-col items-center">
-        {emoji && !photo && <div className="text-3xl leading-none">{emoji}</div>}
-        <div
-          className={`mt-1 line-clamp-2 font-display text-[13px] font-bold leading-tight ${
-            photo ? "text-white drop-shadow" : "text-ink"
-          }`}
-        >
-          {text}
+      {isPip ? (
+        <div className="flex h-full w-full items-center justify-center">
+          {photo ? (
+            <img src={photo} alt="" className="max-h-[78%] max-w-[78%] object-contain" />
+          ) : (
+            <div style={{ fontSize: Math.round(size * 0.55) }} className="leading-none">
+              {emoji || "🎲"}
+            </div>
+          )}
         </div>
-      </div>
+      ) : (
+        <>
+          {photo && (
+            <img src={photo} alt="" className="absolute inset-0 h-full w-full object-cover" />
+          )}
+          {photo && (
+            <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/10 to-transparent" />
+          )}
+          <div className="relative flex flex-col items-center">
+            {emoji && !photo && (
+              <div style={{ fontSize: Math.round(size * 0.3) }} className="leading-none">
+                {emoji}
+              </div>
+            )}
+            {text && (
+              <div
+                className={`mt-1 line-clamp-2 font-display font-bold leading-tight ${
+                  photo ? "text-white drop-shadow" : "text-ink"
+                }`}
+                style={{ fontSize: Math.round(size * 0.13) }}
+              >
+                {text}
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
+export function AllSidesButton({
+  sides,
+  packName,
+  packColor,
+}: {
+  sides: DiceSide[];
+  packName: string;
+  packColor: string;
+}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="mt-4 w-full rounded-full border border-ink/15 bg-card py-3 text-sm font-semibold text-ink/75"
+      >
+        View all {sides.length} sides
+      </button>
+      {open && (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-ink/40 backdrop-blur-sm"
+          onClick={() => setOpen(false)}
+        >
+          <div
+            className="mx-auto w-full max-w-[440px] animate-fade-in rounded-t-[28px] border-t border-ink/15 bg-cream p-5 pb-8 shadow-pop"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">
+                  All sides
+                </div>
+                <div className="font-display text-xl font-black leading-tight">{packName}</div>
+              </div>
+              <button
+                onClick={() => setOpen(false)}
+                className="grid h-9 w-9 place-items-center rounded-full bg-ink/10"
+                aria-label="Close"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div
+              className="mt-4 rounded-2xl border border-ink/12 p-3"
+              style={{ background: packColor }}
+            >
+              <div className="grid grid-cols-3 gap-2">
+                {sides.map((s, i) => (
+                  <CustomDieFace
+                    key={i}
+                    text={s.text}
+                    emoji={s.emoji}
+                    photo={s.photo}
+                    mode={s.mode}
+                    size={96}
+                    bg="var(--cream)"
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
 
 export function Confetti({ show }: { show: boolean }) {
   if (!show) return null;

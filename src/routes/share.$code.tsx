@@ -1,8 +1,8 @@
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useParams, useRouter } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Copy, Share2, Check, Clock } from "lucide-react";
+import { ArrowLeft, Copy, Share2, Check, Clock } from "lucide-react";
 import { useCarolineStore } from "@/lib/caroline-store";
-import { CustomDieFace } from "@/components/caroline/Dice";
+import { AllSidesButton } from "@/components/caroline/Dice";
 
 export const Route = createFileRoute("/share/$code")({
   head: () => ({ meta: [{ title: "Party Link Ready — Caroline" }] }),
@@ -11,10 +11,17 @@ export const Route = createFileRoute("/share/$code")({
 
 function SharePage() {
   const { code } = useParams({ from: "/share/$code" });
+  const navigate = useNavigate();
+  const router = useRouter();
   const { parties, packs } = useCarolineStore();
   const party = useMemo(() => parties.find((p) => p.code === code), [parties, code]);
   const pack = useMemo(() => packs.find((p) => p.id === party?.packId), [packs, party]);
   const [copied, setCopied] = useState(false);
+
+  function back() {
+    if (typeof window !== "undefined" && window.history.length > 1) router.history.back();
+    else navigate({ to: "/app/custom" });
+  }
 
   const url =
     typeof window !== "undefined"
@@ -44,8 +51,16 @@ function SharePage() {
   }
 
   return (
-    <div className="mx-auto min-h-screen max-w-[440px] bg-cream px-5 pb-16 pt-12">
-      <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">
+    <div className="mx-auto min-h-screen max-w-[440px] bg-cream px-5 pb-16 pt-5">
+      <button
+        onClick={back}
+        className="grid h-10 w-10 place-items-center rounded-full border border-ink/15 bg-card"
+        aria-label="Back"
+      >
+        <ArrowLeft className="h-4 w-4" />
+      </button>
+
+      <div className="mt-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">
         Party Link
       </div>
       <h1 className="mt-1 font-display text-[44px] font-black leading-[0.95]">
@@ -68,11 +83,7 @@ function SharePage() {
               <Clock className="h-3 w-3" /> 10 hrs
             </span>
           </div>
-          <div className="mt-3 grid grid-cols-3 gap-2">
-            {pack.sides.map((s, i) => (
-              <CustomDieFace key={i} text={s.text} emoji={s.emoji} photo={s.photo} size={86} bg="var(--cream)" />
-            ))}
-          </div>
+          <AllSidesButton sides={pack.sides} packName={pack.name} packColor={pack.color} />
         </div>
       )}
 

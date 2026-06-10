@@ -1,9 +1,10 @@
-import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useParams, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, Share2 } from "lucide-react";
-import { CustomDieFace, Confetti, PhoneShell } from "@/components/caroline/Dice";
+import { CustomDieFace, Confetti, PhoneShell, AllSidesButton } from "@/components/caroline/Dice";
 import { useCarolineStore } from "@/lib/caroline-store";
 import { findPack, PRESET_PACKS } from "@/lib/preset-packs";
+import { playRollSound } from "@/lib/dice-sound";
 
 export const Route = createFileRoute("/pack/$id")({
   head: () => ({ meta: [{ title: "Roll — Caroline" }] }),
@@ -13,6 +14,7 @@ export const Route = createFileRoute("/pack/$id")({
 function RollPack() {
   const { id } = useParams({ from: "/pack/$id" });
   const navigate = useNavigate();
+  const router = useRouter();
   const { packs, pro, createParty } = useCarolineStore();
   const pack = findPack(id, packs);
   const isPreset = PRESET_PACKS.some((p) => p.id === id);
@@ -41,23 +43,7 @@ function RollPack() {
 
   function roll() {
     setTumbling(true);
-    try {
-      const AC = (window as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext }).AudioContext
-        ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      if (AC) {
-        const ctx = new AC();
-        const o = ctx.createOscillator();
-        const g = ctx.createGain();
-        o.type = "triangle";
-        o.frequency.setValueAtTime(420, ctx.currentTime);
-        o.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.25);
-        g.gain.setValueAtTime(0.15, ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-        o.connect(g).connect(ctx.destination);
-        o.start();
-        o.stop(ctx.currentTime + 0.32);
-      }
-    } catch {}
+    playRollSound();
     setTimeout(() => {
       const next = Array.from({ length: count }, () => Math.floor(Math.random() * pack!.sides.length));
       setRolled(next);
@@ -70,16 +56,17 @@ function RollPack() {
   }
 
   function shareParty() {
-    if (!pro) {
-      navigate({ to: "/app/pro" });
-      return;
-    }
-    if (isPreset) {
+    if (!pro || isPreset) {
       navigate({ to: "/app/pro" });
       return;
     }
     const party = createParty(pack!.id);
     navigate({ to: "/share/$code", params: { code: party.code } });
+  }
+
+  function back() {
+    if (window.history.length > 1) router.history.back();
+    else navigate({ to: "/app/custom" });
   }
 
   return (
@@ -88,7 +75,7 @@ function RollPack() {
       <div className="px-5 pb-16 pt-12">
         <div className="flex items-center justify-between">
           <button
-            onClick={() => navigate({ to: "/app/custom" })}
+            onClick={back}
             className="grid h-10 w-10 place-items-center rounded-full border border-ink/15 bg-card"
             aria-label="Back"
           >
@@ -146,7 +133,8 @@ function RollPack() {
                   text={s.text}
                   emoji={s.emoji}
                   photo={s.photo}
-                  size={count <= 2 ? 110 : count <= 4 ? 86 : 70}
+                  mode={s.mode}
+                  size={count <= 2 ? 165 : count <= 4 ? 128 : 100}
                   bg="var(--cream)"
                   tumbling={tumbling}
                 />
@@ -162,23 +150,7 @@ function RollPack() {
           Roll
         </button>
 
-        <div className="mt-6 rounded-3xl border border-ink/12 bg-card p-4">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">
-            All sides
-          </div>
-          <div className="mt-3 grid grid-cols-3 gap-2">
-            {pack.sides.map((s, i) => (
-              <CustomDieFace
-                key={i}
-                text={s.text}
-                emoji={s.emoji}
-                photo={s.photo}
-                size={86}
-                bg={pack.color}
-              />
-            ))}
-          </div>
-        </div>
+        <AllSidesButton sides={pack.sides} packName={pack.name} packColor={pack.color} />
       </div>
     </PhoneShell>
   );

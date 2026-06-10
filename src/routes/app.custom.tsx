@@ -31,54 +31,8 @@ function CustomTab() {
         )}
       </div>
 
-      {/* Preset Packs — available to everyone */}
-      <section className="mt-6">
-        <div className="flex items-center justify-between">
-          <h2 className="font-display text-xl font-black">Preset Packs</h2>
-          <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-ink/50">
-            Free · Tap to roll
-          </span>
-        </div>
-        <div className="mt-3 space-y-3">
-          {PRESET_PACKS.map((p, i) => (
-            <Link
-              key={p.id}
-              to="/pack/$id"
-              params={{ id: p.id }}
-              className="block rounded-3xl border border-ink/12 p-4 shadow-pop"
-              style={{ background: p.color, transform: `rotate(${i % 2 === 0 ? -0.4 : 0.4}deg)` }}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-ink/60">
-                    Preset
-                  </div>
-                  <div className="mt-0.5 font-display text-xl font-black leading-tight">
-                    {p.name}
-                  </div>
-                </div>
-                <span className="flex shrink-0 items-center gap-1 rounded-full bg-ink px-3 py-1.5 text-[11px] font-semibold text-cream">
-                  <Dices className="h-3.5 w-3.5" /> Roll
-                </span>
-              </div>
-              <div className="mt-3 flex gap-2 overflow-hidden">
-                {p.sides.slice(0, 4).map((s, j) => (
-                  <CustomDieFace
-                    key={j}
-                    text={s.text}
-                    emoji={s.emoji}
-                    size={64}
-                    bg="var(--cream)"
-                  />
-                ))}
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
       {/* My Packs — Pro only */}
-      <section className="mt-7">
+      <section className="mt-6">
         <div className="flex items-center justify-between">
           <h2 className="font-display text-xl font-black">My Packs</h2>
           {!pro && (
@@ -173,6 +127,52 @@ function CustomTab() {
             ))}
           </div>
         )}
+      </section>
+
+      {/* Preset Packs — available to everyone */}
+      <section className="mt-7">
+        <div className="flex items-center justify-between">
+          <h2 className="font-display text-xl font-black">Preset Packs</h2>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-ink/50">
+            Free · Tap to roll
+          </span>
+        </div>
+        <div className="mt-3 space-y-3">
+          {PRESET_PACKS.map((p, i) => (
+            <Link
+              key={p.id}
+              to="/pack/$id"
+              params={{ id: p.id }}
+              className="block rounded-3xl border border-ink/12 p-4 shadow-pop"
+              style={{ background: p.color, transform: `rotate(${i % 2 === 0 ? -0.4 : 0.4}deg)` }}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-ink/60">
+                    Preset
+                  </div>
+                  <div className="mt-0.5 font-display text-xl font-black leading-tight">
+                    {p.name}
+                  </div>
+                </div>
+                <span className="flex shrink-0 items-center gap-1 rounded-full bg-ink px-3 py-1.5 text-[11px] font-semibold text-cream">
+                  <Dices className="h-3.5 w-3.5" /> Roll
+                </span>
+              </div>
+              <div className="mt-3 flex gap-2 overflow-hidden">
+                {p.sides.slice(0, 4).map((s, j) => (
+                  <CustomDieFace
+                    key={j}
+                    text={s.text}
+                    emoji={s.emoji}
+                    size={64}
+                    bg="var(--cream)"
+                  />
+                ))}
+              </div>
+            </Link>
+          ))}
+        </div>
       </section>
     </div>
   );

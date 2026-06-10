@@ -4,6 +4,7 @@ import { Settings } from "lucide-react";
 import { DieFace, Confetti } from "@/components/caroline/Dice";
 import { useCarolineStore } from "@/lib/caroline-store";
 import { BeerPopup, useBeerTrigger } from "@/components/caroline/BeerPopup";
+import { playRollSound } from "@/lib/dice-sound";
 
 export const Route = createFileRoute("/app/classic")({
   head: () => ({ meta: [{ title: "Classic Dice — Caroline" }] }),
@@ -33,24 +34,7 @@ function ClassicPage() {
 
   function roll() {
     setTumbling(true);
-    // simple "audio click" using webaudio (no asset needed)
-    try {
-      const AC = (window as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext }).AudioContext
-        ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      if (AC) {
-        const ctx = new AC();
-        const o = ctx.createOscillator();
-        const g = ctx.createGain();
-        o.type = "triangle";
-        o.frequency.setValueAtTime(420, ctx.currentTime);
-        o.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.25);
-        g.gain.setValueAtTime(0.15, ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-        o.connect(g).connect(ctx.destination);
-        o.start();
-        o.stop(ctx.currentTime + 0.32);
-      }
-    } catch {}
+    playRollSound();
 
     setTimeout(() => {
       const next = Array.from({ length: count }, () => 1 + Math.floor(Math.random() * 6));
@@ -136,14 +120,14 @@ function ClassicPage() {
       </section>
 
       <section className="relative mt-8">
-        <div className="absolute inset-x-6 top-6 -z-10 h-44 rounded-[36px] bg-pink/60 blur-2xl" />
-        <div className="relative grid min-h-[220px] place-items-center rounded-3xl border border-ink/12 bg-card p-6 shadow-pop">
+        <div className="absolute inset-x-6 top-6 -z-10 h-56 rounded-[36px] bg-pink/60 blur-2xl" />
+        <div className="relative grid min-h-[280px] place-items-center rounded-3xl border border-ink/12 bg-card p-5 shadow-pop">
           <div className="flex flex-wrap items-center justify-center gap-3">
             {dice.map((v, i) => (
               <DieFace
                 key={i}
                 value={v}
-                size={count <= 2 ? 96 : count <= 4 ? 78 : 64}
+                size={count <= 2 ? 144 : count <= 4 ? 112 : 88}
                 bg={DIE_BG[i % DIE_BG.length]}
                 tumbling={tumbling}
               />
