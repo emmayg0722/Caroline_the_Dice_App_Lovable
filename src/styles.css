@@ -53,6 +53,10 @@
   --color-plum: var(--plum);
   --color-snow: var(--snow);
   --color-clay: var(--clay);
+  --color-sand: var(--sand);
+  --color-mist: var(--mist);
+  --color-dusk: var(--dusk);
+  --color-paper: var(--paper);
 }
 
 :root {
