@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Plus, Pencil, Share2, Trash2, Lock, Dices } from "lucide-react";
-import { useCarolineStore } from "@/lib/caroline-store";
+import { useCarolineStore, pickCardSurface, CARD_SURFACES } from "@/lib/caroline-store";
 import { PRESET_PACKS } from "@/lib/preset-packs";
 import { CustomDieFace } from "@/components/caroline/Dice";
 
