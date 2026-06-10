@@ -88,10 +88,17 @@ function CustomTab() {
                 style={{ background: pickCardSurface(p.color) }}
               >
                 <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="font-display text-xl font-black leading-tight">{p.name}</div>
-                    <div className="mt-1 line-clamp-1 text-xs text-ink/65">
-                      {p.sides.map((s) => `${s.emoji ?? ""}${s.text}`.trim()).join(" · ")}
+                  <div className="flex min-w-0 items-start gap-3">
+                    <span
+                      className="mt-1 inline-block h-4 w-4 shrink-0 rounded-full border border-ink/20"
+                      style={{ background: p.color }}
+                      aria-hidden
+                    />
+                    <div className="min-w-0">
+                      <div className="font-display text-xl font-black leading-tight">{p.name}</div>
+                      <div className="mt-1 line-clamp-1 text-xs text-ink/65">
+                        {p.sides.map((s) => `${s.emoji ?? ""}${s.text}`.trim()).join(" · ")}
+                      </div>
                     </div>
                   </div>
                   <button
@@ -101,6 +108,20 @@ function CustomTab() {
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
+                </div>
+                <div className="mt-3 flex gap-2 overflow-hidden">
+                  {p.sides.slice(0, 4).map((s, j) => (
+                    <CustomDieFace
+                      key={j}
+                      text={s.text}
+                      emoji={s.emoji}
+                      photo={s.photo}
+                      mode={s.mode}
+                      pipCount={s.mode === "pip" ? j + 1 : undefined}
+                      size={56}
+                      bg={p.color}
+                    />
+                  ))}
                 </div>
                 <div className="mt-4 grid grid-cols-3 gap-2">
                   <Link
