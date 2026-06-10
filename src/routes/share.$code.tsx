@@ -1,8 +1,8 @@
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useParams, useRouter } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Copy, Share2, Check, Clock } from "lucide-react";
+import { ArrowLeft, Copy, Share2, Check, Clock } from "lucide-react";
 import { useCarolineStore } from "@/lib/caroline-store";
-import { CustomDieFace } from "@/components/caroline/Dice";
+import { CustomDieFace, AllSidesButton } from "@/components/caroline/Dice";
 
 export const Route = createFileRoute("/share/$code")({
   head: () => ({ meta: [{ title: "Party Link Ready — Caroline" }] }),
