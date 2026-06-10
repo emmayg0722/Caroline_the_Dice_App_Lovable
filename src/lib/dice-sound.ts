@@ -58,6 +58,32 @@ export function playRollSound() {
   playSoundById(id);
 }
 
+const DEFAULT_ROLL_MS = 825;
+
+function audioDurationMs(id: string): number {
+  const a = getAudio(id);
+  if (!a) return 0;
+  const d = a.duration;
+  if (!d || !isFinite(d) || d <= 0) return 0;
+  return Math.round(d * 1000);
+}
+
+/** Returns the roll animation duration in ms, aligned to the active sound.
+ *  If sound is "off", falls back to the first sound's duration. */
+export function getRollDurationMs(): number {
+  let id = "b";
+  try { id = getStoredSoundId(); } catch { /* SSR */ }
+  const effective = id === "off" ? "b" : id;
+  return audioDurationMs(effective) || DEFAULT_ROLL_MS;
+}
+
+/** Warm audio metadata so durations are available before first roll. */
+if (typeof window !== "undefined") {
+  for (const opt of SOUND_OPTIONS) {
+    if (opt.url) getAudio(opt.id);
+  }
+}
+
 // Naive "background removal": clears near-white pixels and softens edges.
 export function cutoutWhiteBackground(file: File, max = 320): Promise<string> {
   return new Promise((resolve, reject) => {

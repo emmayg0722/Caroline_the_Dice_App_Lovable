@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { DieFace, Confetti } from "@/components/caroline/Dice";
 import { useCarolineStore } from "@/lib/caroline-store";
 import { BeerPopup, useBeerTrigger } from "@/components/caroline/BeerPopup";
-import { playRollSound } from "@/lib/dice-sound";
+import { playRollSound, getRollDurationMs } from "@/lib/dice-sound";
 
 export const Route = createFileRoute("/app/classic")({
   head: () => ({ meta: [{ title: "Classic Dice — Caroline" }] }),
@@ -34,6 +34,8 @@ function ClassicPage() {
   function roll() {
     setTumbling(true);
     playRollSound();
+    const ms = getRollDurationMs();
+    document.documentElement.style.setProperty("--tumble-ms", `${ms}ms`);
 
     setTimeout(() => {
       const next = Array.from({ length: count }, () => 1 + Math.floor(Math.random() * 6));
@@ -48,7 +50,7 @@ function ClassicPage() {
       setTimeout(() => {
         if (showBeer) setBeer(true);
       }, 600);
-    }, 675);
+    }, ms);
   }
 
   useEffect(() => {
