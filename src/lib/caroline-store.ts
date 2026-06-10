@@ -116,7 +116,13 @@ export function useCarolineStore() {
     return party;
   }, []);
 
-  return { ...s, setPro, recordRoll, savePack, deletePack, createParty };
+  const setSoundId = useCallback((soundId: string) => save({ ...ensure(), soundId }), []);
+
+  return { ...s, setPro, recordRoll, savePack, deletePack, createParty, setSoundId };
+}
+
+export function getStoredSoundId(): string {
+  return ensure().soundId;
 }
 
 export function shouldShowBeer(rolls: number): boolean {
