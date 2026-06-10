@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { Plus, Pencil, Share2, Trash2, Lock, Dices } from "lucide-react";
 import { useCarolineStore } from "@/lib/caroline-store";
 import { PRESET_PACKS } from "@/lib/preset-packs";
@@ -11,6 +12,8 @@ export const Route = createFileRoute("/app/custom")({
 
 function CustomTab() {
   const { pro, packs, deletePack, createParty } = useCarolineStore();
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const pendingPack = packs.find((p) => p.id === confirmDelete);
 
   return (
     <div className="px-5 pt-12">
