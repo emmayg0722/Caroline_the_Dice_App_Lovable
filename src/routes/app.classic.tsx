@@ -34,24 +34,7 @@ function ClassicPage() {
 
   function roll() {
     setTumbling(true);
-    // simple "audio click" using webaudio (no asset needed)
-    try {
-      const AC = (window as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext }).AudioContext
-        ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      if (AC) {
-        const ctx = new AC();
-        const o = ctx.createOscillator();
-        const g = ctx.createGain();
-        o.type = "triangle";
-        o.frequency.setValueAtTime(420, ctx.currentTime);
-        o.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.25);
-        g.gain.setValueAtTime(0.15, ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-        o.connect(g).connect(ctx.destination);
-        o.start();
-        o.stop(ctx.currentTime + 0.32);
-      }
-    } catch {}
+    playRollSound();
 
     setTimeout(() => {
       const next = Array.from({ length: count }, () => 1 + Math.floor(Math.random() * 6));
