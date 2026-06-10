@@ -1,51 +1,20 @@
 // Real dice-roll sounds (CC0 samples served from CDN).
 import { getStoredSoundId } from "./caroline-store";
-import diceA from "@/assets/dice-roll.mp3.asset.json";
 
 export type SoundOption = { id: string; label: string; description: string; url: string };
 
 export const SOUND_OPTIONS: SoundOption[] = [
   {
-    id: "a",
-    label: "Two dice · wooden table",
-    description: "Sharp, classic clatter.",
-    url: "/__l5e/assets-v1/586c394e-55d4-412e-bb08-1dfa443b79de/dice-a.mp3",
-  },
-  {
     id: "b",
-    label: "Four dice · wooden table",
-    description: "Fuller, heavier tumble.",
+    label: "Wooden table tumble",
+    description: "Full, heavy clatter on wood.",
     url: "/__l5e/assets-v1/24ce48c4-d21c-466f-b304-43cefe87246c/dice-b.mp3",
   },
   {
-    id: "c",
-    label: "Four dice · shaken in hand",
-    description: "Rattle only, no table impact.",
-    url: "/__l5e/assets-v1/88e298ac-57fd-4b71-a3d5-04fcf7951130/dice-c.mp3",
-  },
-  {
-    id: "d",
-    label: "Single die · soft drop",
-    description: "Light, quick tap.",
-    url: "/__l5e/assets-v1/b7dd3375-80d5-4f97-bbfc-6572af065373/dice-d.mp3",
-  },
-  {
-    id: "e",
-    label: "Cup shake · classic",
-    description: "Rolled out of a leather cup.",
-    url: "/__l5e/assets-v1/c82e484f-842f-49ee-b15f-892bf909916a/dice-e.mp3",
-  },
-  {
-    id: "f",
-    label: "Quick tumble",
-    description: "Snappy short roll.",
-    url: "/__l5e/assets-v1/dae6f38b-a5ed-4584-9c40-f644ed8ba6e3/dice-f.mp3",
-  },
-  {
-    id: "legacy",
-    label: "Original sample",
-    description: "The first dice clip used in the app.",
-    url: diceA.url,
+    id: "clack",
+    label: "Click-clack",
+    description: "Sharp, snappy click-clack.",
+    url: "/__l5e/assets-v1/b90475b1-be20-473e-a67c-5c0c5d410b33/dice-clack.mp3",
   },
 ];
 
@@ -77,7 +46,7 @@ export function playSoundById(id: string) {
 }
 
 export function playRollSound() {
-  let id = "a";
+  let id = "b";
   try { id = getStoredSoundId(); } catch { /* SSR */ }
   playSoundById(id);
 }
