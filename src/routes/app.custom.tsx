@@ -85,7 +85,7 @@ function CustomTab() {
               <div
                 key={p.id}
                 className="rounded-3xl border border-ink/12 p-4 shadow-pop"
-                style={{ background: p.color }}
+                style={{ background: pickCardSurface(p.color) }}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
