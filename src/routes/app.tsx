@@ -13,7 +13,6 @@ function AppLayout() {
   useEffect(() => {
     if (typeof document === "undefined") return;
     document.documentElement.classList.toggle("theme-dark", theme === "dark");
-    return () => document.documentElement.classList.remove("theme-dark");
   }, [theme]);
   return (
     <PhoneShell>
