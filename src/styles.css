@@ -46,6 +46,13 @@
   --color-lavender: var(--lavender);
   --color-coral: var(--coral);
   --color-mute: var(--mute);
+  --color-peach: var(--peach);
+  --color-mint: var(--mint);
+  --color-sky: var(--sky);
+  --color-lemon: var(--lemon);
+  --color-plum: var(--plum);
+  --color-snow: var(--snow);
+  --color-clay: var(--clay);
 }
 
 :root {
