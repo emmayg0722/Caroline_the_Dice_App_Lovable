@@ -68,6 +68,13 @@
   --lavender: oklch(0.86 0.06 305);      /* soft lavender */
   --coral: oklch(0.7 0.17 18);           /* relaxed coral accent */
   --mute: oklch(0.52 0.012 75);
+  --peach: oklch(0.88 0.075 45);         /* warm peach */
+  --mint: oklch(0.9 0.065 165);          /* soft mint */
+  --sky: oklch(0.88 0.06 220);           /* clear sky */
+  --lemon: oklch(0.94 0.095 105);        /* pale lemon */
+  --plum: oklch(0.78 0.07 335);          /* dusty plum */
+  --snow: oklch(0.985 0 0);              /* clean white */
+  --clay: oklch(0.82 0.045 55);          /* warm clay beige */
 
   --background: var(--cream);
   --foreground: var(--ink);
