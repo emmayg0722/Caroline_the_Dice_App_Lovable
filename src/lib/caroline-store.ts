@@ -33,6 +33,7 @@ type State = {
   packs: DicePack[];
   parties: PartyLink[];
   soundId: string;
+  dieScale: number;
 };
 
 const DEFAULT_STATE: State = {
@@ -42,6 +43,7 @@ const DEFAULT_STATE: State = {
   packs: [],
   parties: [],
   soundId: "a",
+  dieScale: 1,
 };
 
 function load(): State {
@@ -72,20 +74,20 @@ function save(next: State) {
 }
 
 export function useCarolineStore() {
+  // Gate SSR + first client render to DEFAULT_STATE to avoid hydration mismatch.
+  const [hydrated, setHydrated] = useState(false);
   const [, force] = useState(0);
   useEffect(() => {
     const l = () => force((n) => n + 1);
     listeners.add(l);
-    if (state === null) {
-      state = load();
-      force((n) => n + 1);
-    }
+    if (state === null) state = load();
+    setHydrated(true);
     return () => {
       listeners.delete(l);
     };
   }, []);
 
-  const s = ensure();
+  const s = hydrated ? ensure() : DEFAULT_STATE;
 
   const setPro = useCallback((pro: boolean) => save({ ...ensure(), pro }), []);
   const recordRoll = useCallback((total: number) => {
@@ -115,10 +117,15 @@ export function useCarolineStore() {
     save({ ...cur, parties: [party, ...cur.parties].slice(0, 20) });
     return party;
   }, []);
+  const deleteParty = useCallback((code: string) => {
+    const cur = ensure();
+    save({ ...cur, parties: cur.parties.filter((p) => p.code !== code) });
+  }, []);
 
   const setSoundId = useCallback((soundId: string) => save({ ...ensure(), soundId }), []);
+  const setDieScale = useCallback((dieScale: number) => save({ ...ensure(), dieScale }), []);
 
-  return { ...s, setPro, recordRoll, savePack, deletePack, createParty, setSoundId };
+  return { ...s, setPro, recordRoll, savePack, deletePack, createParty, deleteParty, setSoundId, setDieScale };
 }
 
 export function getStoredSoundId(): string {

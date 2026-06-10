@@ -1,11 +1,11 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Dices, Sparkles, PartyPopper, Crown } from "lucide-react";
+import { Dices, Sparkles, PartyPopper, Settings } from "lucide-react";
 
 const tabs = [
   { to: "/app/classic", label: "Classic", Icon: Dices },
   { to: "/app/party", label: "Party", Icon: PartyPopper },
   { to: "/app/custom", label: "Custom", Icon: Sparkles },
-  { to: "/app/pro", label: "Pro", Icon: Crown },
+  { to: "/app/settings", label: "Settings", Icon: Settings },
 ] as const;
 
 export function BottomNav() {

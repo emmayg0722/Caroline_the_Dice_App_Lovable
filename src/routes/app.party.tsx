@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Link2, Hash, Clock, ChevronRight } from "lucide-react";
-import { useCarolineStore } from "@/lib/caroline-store";
+import { useEffect, useRef, useState } from "react";
+import { Link2, Hash, Clock, ChevronRight, Trash2 } from "lucide-react";
+import { useCarolineStore, type PartyLink, type DicePack } from "@/lib/caroline-store";
 
 export const Route = createFileRoute("/app/party")({
   head: () => ({ meta: [{ title: "Party Pack — Caroline" }] }),
@@ -10,14 +10,76 @@ export const Route = createFileRoute("/app/party")({
 
 const TEN_HOURS = 10 * 60 * 60 * 1000;
 
+function SwipeRow({
+  party,
+  pack,
+  remaining,
+  onDelete,
+}: {
+  party: PartyLink;
+  pack: DicePack;
+  remaining: number;
+  onDelete: () => void;
+}) {
+  const [dx, setDx] = useState(0);
+  const startX = useRef<number | null>(null);
+  const h = Math.floor(remaining / 3_600_000);
+  const m = Math.floor((remaining % 3_600_000) / 60_000);
+
+  function start(x: number) { startX.current = x; }
+  function move(x: number) {
+    if (startX.current == null) return;
+    const d = Math.min(0, x - startX.current);
+    setDx(Math.max(d, -120));
+  }
+  function end() {
+    if (dx < -70) setDx(-96);
+    else setDx(0);
+    startX.current = null;
+  }
+
+  return (
+    <div className="relative overflow-hidden rounded-2xl">
+      <button
+        onClick={onDelete}
+        className="absolute inset-y-0 right-0 flex w-24 items-center justify-center gap-1 bg-coral text-xs font-semibold text-white"
+      >
+        <Trash2 className="h-4 w-4" /> Delete
+      </button>
+      <Link
+        to="/party/$code"
+        params={{ code: party.code }}
+        onTouchStart={(e) => start(e.touches[0].clientX)}
+        onTouchMove={(e) => move(e.touches[0].clientX)}
+        onTouchEnd={end}
+        onMouseDown={(e) => start(e.clientX)}
+        onMouseMove={(e) => e.buttons === 1 && move(e.clientX)}
+        onMouseUp={end}
+        onMouseLeave={end}
+        style={{ transform: `translateX(${dx}px)`, transition: startX.current == null ? "transform 0.2s" : "none" }}
+        className="relative flex items-center justify-between gap-3 rounded-2xl border border-ink/12 p-3 shadow-pop"
+      >
+        <div className="min-w-0" style={{ background: pack.color }}>
+          <div className="font-display text-base font-black leading-tight">{pack.name}</div>
+          <div className="mt-0.5 text-[11px] uppercase tracking-wider text-ink/60">
+            {party.code} · {h}h {m}m left
+          </div>
+        </div>
+        <ChevronRight className="h-5 w-5 text-ink/55" />
+      </Link>
+    </div>
+  );
+}
+
 function PartyTab() {
   const navigate = useNavigate();
-  const { parties, packs } = useCarolineStore();
+  const { parties, packs, deleteParty } = useCarolineStore();
   const [code, setCode] = useState("");
   const [link, setLink] = useState("");
-  const [now, setNow] = useState(Date.now());
+  const [now, setNow] = useState(0);
 
   useEffect(() => {
+    setNow(Date.now());
     const t = setInterval(() => setNow(Date.now()), 60_000);
     return () => clearInterval(t);
   }, []);
@@ -36,29 +98,26 @@ function PartyTab() {
     .filter((x) => x.pack && x.remaining > 0);
 
   return (
-    <div className="px-5 pt-12">
+    <div className="px-5 pt-5">
       <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">
         Party
       </div>
-      <h1 className="mt-1 font-display text-5xl font-black leading-[0.95]">
+      <h1 className="mt-1 font-display text-4xl font-black leading-[0.95]">
         Party Pack
       </h1>
       <p className="mt-2 max-w-[20rem] text-sm text-ink/70">
         Join a shared dice pack and play for 10 hours.
       </p>
 
-      <div className="mt-6 rounded-3xl border border-ink/15 bg-lavender p-5 shadow-pop">
+      <div className="mt-4 rounded-3xl border border-ink/15 bg-lavender p-5 shadow-pop">
         <div className="flex items-center justify-between">
-          <span className="font-display text-2xl font-black leading-tight">
+          <span className="font-display text-xl font-black leading-tight">
             Got a Party Link?
           </span>
           <span className="flex items-center gap-1 rounded-full bg-ink px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-cream">
             <Clock className="h-3 w-3" /> 10 hrs
           </span>
         </div>
-        <p className="mt-1 text-sm text-ink/75">
-          Open a shared custom dice pack and use it temporarily.
-        </p>
 
         <div className="mt-4 space-y-2">
           <div className="flex items-center gap-2 rounded-2xl border border-ink/15 bg-cream px-3">
@@ -109,7 +168,7 @@ function PartyTab() {
         <div className="flex items-center justify-between">
           <h2 className="font-display text-xl font-black">Your Party Packs</h2>
           <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-ink/50">
-            Active links
+            Swipe ← to delete
           </span>
         </div>
         {active.length === 0 ? (
@@ -118,47 +177,18 @@ function PartyTab() {
           </div>
         ) : (
           <div className="mt-3 space-y-2">
-            {active.map(({ party, pack, remaining }) => {
-              const h = Math.floor(remaining / 3_600_000);
-              const m = Math.floor((remaining % 3_600_000) / 60_000);
-              return (
-                <Link
-                  key={party.code}
-                  to="/party/$code"
-                  params={{ code: party.code }}
-                  className="flex items-center justify-between gap-3 rounded-2xl border border-ink/12 p-3 shadow-pop"
-                  style={{ background: pack!.color }}
-                >
-                  <div className="min-w-0">
-                    <div className="font-display text-base font-black leading-tight">{pack!.name}</div>
-                    <div className="mt-0.5 text-[11px] uppercase tracking-wider text-ink/60">
-                      {party.code} · {h}h {m}m left
-                    </div>
-                  </div>
-                  <ChevronRight className="h-5 w-5 text-ink/55" />
-                </Link>
-              );
-            })}
+            {active.map(({ party, pack, remaining }) => (
+              <SwipeRow
+                key={party.code}
+                party={party}
+                pack={pack!}
+                remaining={remaining}
+                onDelete={() => deleteParty(party.code)}
+              />
+            ))}
           </div>
         )}
       </section>
-
-      <div className="mt-6 rounded-3xl border border-ink/12 bg-card p-5">
-        <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">
-          How it works
-        </div>
-        <ol className="mt-3 space-y-2 text-sm text-ink/75">
-          <li><span className="mr-1.5 font-display font-bold text-coral">1.</span>A Pro friend creates a custom dice pack.</li>
-          <li><span className="mr-1.5 font-display font-bold text-coral">2.</span>They share a Party Link with you.</li>
-          <li><span className="mr-1.5 font-display font-bold text-coral">3.</span>You roll for free for 10 hours.</li>
-        </ol>
-        <Link
-          to="/app/pro"
-          className="mt-4 inline-flex rounded-full bg-ink px-4 py-2 text-xs font-semibold text-cream"
-        >
-          Want to host? Unlock Pro
-        </Link>
-      </div>
     </div>
   );
 }
