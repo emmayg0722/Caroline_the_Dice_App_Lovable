@@ -95,7 +95,7 @@ function CustomTab() {
                     </div>
                   </div>
                   <button
-                    onClick={() => deletePack(p.id)}
+                    onClick={() => setConfirmDelete(p.id)}
                     className="grid h-8 w-8 place-items-center rounded-full bg-ink/10 text-ink/70"
                     aria-label="Delete pack"
                   >
