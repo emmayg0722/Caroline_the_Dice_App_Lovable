@@ -120,14 +120,14 @@ function ClassicPage() {
       </section>
 
       <section className="relative mt-8">
-        <div className="absolute inset-x-6 top-6 -z-10 h-44 rounded-[36px] bg-pink/60 blur-2xl" />
-        <div className="relative grid min-h-[220px] place-items-center rounded-3xl border border-ink/12 bg-card p-6 shadow-pop">
+        <div className="absolute inset-x-6 top-6 -z-10 h-56 rounded-[36px] bg-pink/60 blur-2xl" />
+        <div className="relative grid min-h-[280px] place-items-center rounded-3xl border border-ink/12 bg-card p-5 shadow-pop">
           <div className="flex flex-wrap items-center justify-center gap-3">
             {dice.map((v, i) => (
               <DieFace
                 key={i}
                 value={v}
-                size={count <= 2 ? 96 : count <= 4 ? 78 : 64}
+                size={count <= 2 ? 144 : count <= 4 ? 112 : 88}
                 bg={DIE_BG[i % DIE_BG.length]}
                 tumbling={tumbling}
               />
