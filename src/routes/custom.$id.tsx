@@ -400,9 +400,16 @@ export function Editor({ id }: { id: string }) {
             <div className="mt-5 flex gap-2">
               <button
                 onClick={retryPreview}
-                className="flex-1 rounded-full border border-ink/20 bg-card py-3 text-sm font-semibold"
+                disabled={reprocessing}
+                className="flex-1 rounded-full border border-ink/20 bg-card py-3 text-sm font-semibold disabled:opacity-60"
               >
-                Re-process
+                {reprocessing ? (
+                  <span className="inline-flex items-center justify-center gap-1.5">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" /> Processing
+                  </span>
+                ) : (
+                  "Re-process"
+                )}
               </button>
               <button
                 onClick={cancelPreview}
