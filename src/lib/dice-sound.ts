@@ -14,7 +14,13 @@ export const SOUND_OPTIONS: SoundOption[] = [
     id: "clack",
     label: "Click-clack",
     description: "Sharp, snappy click-clack.",
-    url: "/__l5e/assets-v1/b90475b1-be20-473e-a67c-5c0c5d410b33/dice-clack.mp3",
+    url: "/__l5e/assets-v1/b7dd3375-80d5-4f97-bbfc-6572af065373/dice-d.mp3",
+  },
+  {
+    id: "off",
+    label: "Off",
+    description: "Silent rolls — no sound effect.",
+    url: "",
   },
 ];
 
@@ -23,6 +29,7 @@ const cache = new Map<string, HTMLAudioElement>();
 function getAudio(id: string): HTMLAudioElement | null {
   if (typeof window === "undefined") return null;
   const opt = SOUND_OPTIONS.find((s) => s.id === id) ?? SOUND_OPTIONS[0];
+  if (!opt.url) return null;
   let a = cache.get(opt.id);
   if (!a) {
     a = new Audio(opt.url);

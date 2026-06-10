@@ -87,13 +87,18 @@ export function CustomDieFace({
     const n = Math.max(1, Math.min(6, pipCount ?? 1));
     const dots = PIP_POSITIONS[n];
     // Photo pip uses a black outline silhouette filter.
-    const cellSize = Math.round(size * (n <= 2 ? 0.36 : n <= 4 ? 0.3 : 0.26));
+    // Smaller cells + more padding so emojis/photos don't hug the dice edge.
+    const cellSize = Math.round(size * (n <= 2 ? 0.28 : n <= 4 ? 0.24 : 0.2));
+    const pad = Math.round(size * 0.16);
     return (
       <div
         className={`relative shrink-0 overflow-hidden rounded-2xl border border-ink/15 shadow-pop ${tumbling ? "animate-tumble" : ""}`}
         style={{ width: size, height: size, background: bg }}
       >
-        <div className="grid h-full w-full grid-cols-3 grid-rows-3 gap-1 p-3">
+        <div
+          className="grid h-full w-full grid-cols-3 grid-rows-3"
+          style={{ padding: pad, gap: Math.round(size * 0.04) }}
+        >
           {Array.from({ length: 9 }).map((_, i) => {
             const r = Math.floor(i / 3);
             const c = i % 3;
@@ -201,10 +206,7 @@ export function AllSidesButton({
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <div
-              className="mt-4 rounded-2xl border border-ink/12 p-3"
-              style={{ background: packColor }}
-            >
+            <div className="mt-4 rounded-2xl border border-ink/12 bg-card p-3">
               <div className="grid grid-cols-3 gap-2">
                 {sides.map((s, i) => (
                   <CustomDieFace
@@ -215,7 +217,7 @@ export function AllSidesButton({
                     mode={s.mode}
                     pipCount={s.mode === "pip" ? i + 1 : undefined}
                     size={96}
-                    bg="var(--cream)"
+                    bg={packColor}
                   />
                 ))}
               </div>

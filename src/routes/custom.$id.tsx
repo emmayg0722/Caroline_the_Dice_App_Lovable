@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Camera, Save, X, Loader2 } from "lucide-react";
 import { CustomDieFace } from "@/components/caroline/Dice";
 import { useCarolineStore, newPackId, PACK_COLORS, type DicePack, type DiceSide } from "@/lib/caroline-store";
@@ -15,27 +15,37 @@ function EditorPage() {
   return <Editor id={id} />;
 }
 
+function defaultPack(id: string): DicePack {
+  return {
+    id: id === "new" ? newPackId() : id,
+    name: "My Pack",
+    sides: [
+      { text: "Lukas", emoji: "🧑", mode: "side" },
+      { text: "Emma", emoji: "👩", mode: "side" },
+      { text: "Pizza", emoji: "🍕", mode: "side" },
+      { text: "Take a shot", emoji: "🥃", mode: "side" },
+      { text: "Truth", emoji: "💭", mode: "side" },
+      { text: "Dare", emoji: "🔥", mode: "side" },
+    ],
+    color: PACK_COLORS[Math.floor(Math.random() * PACK_COLORS.length)],
+    createdAt: Date.now(),
+  };
+}
+
 export function Editor({ id }: { id: string }) {
   const { packs, savePack } = useCarolineStore();
   const navigate = useNavigate();
 
   const existing = useMemo(() => packs.find((p) => p.id === id), [packs, id]);
-  const [pack, setPack] = useState<DicePack>(
-    existing ?? {
-      id: id === "new" ? newPackId() : id,
-      name: "",
-      sides: [
-        { text: "Lukas", emoji: "🧑", mode: "side" },
-        { text: "Emma", emoji: "👩", mode: "side" },
-        { text: "Pizza", emoji: "🍕", mode: "side" },
-        { text: "Take a shot", emoji: "🥃", mode: "side" },
-        { text: "Truth", emoji: "💭", mode: "side" },
-        { text: "Dare", emoji: "🔥", mode: "side" },
-      ],
-      color: PACK_COLORS[Math.floor(Math.random() * PACK_COLORS.length)],
-      createdAt: Date.now(),
+  const [pack, setPack] = useState<DicePack>(() => existing ?? defaultPack(id));
+  const [loadedExistingId, setLoadedExistingId] = useState<string | null>(existing?.id ?? null);
+  // Sync once when existing pack hydrates from the store (avoid clobbering user edits).
+  useEffect(() => {
+    if (existing && loadedExistingId !== existing.id) {
+      setPack(existing);
+      setLoadedExistingId(existing.id);
     }
-  );
+  }, [existing, loadedExistingId]);
   const [error, setError] = useState<string | null>(null);
   const [busyIdx, setBusyIdx] = useState<number | null>(null);
   const fileInputs = useRef<(HTMLInputElement | null)[]>([]);
@@ -139,7 +149,7 @@ export function Editor({ id }: { id: string }) {
           </div>
         </div>
 
-        <div className="mt-5 rounded-3xl border border-ink/12 p-4" style={{ background: pack.color }}>
+        <div className="mt-5 rounded-3xl border border-ink/12 bg-card p-4">
           <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/65">
             Preview
           </div>
@@ -153,7 +163,7 @@ export function Editor({ id }: { id: string }) {
                 mode={s.mode}
                 pipCount={s.mode === "pip" ? i + 1 : undefined}
                 size={92}
-                bg="var(--cream)"
+                bg={pack.color}
               />
             ))}
           </div>

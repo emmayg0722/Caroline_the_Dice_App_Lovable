@@ -1,22 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import {
-  ArrowLeft, ChevronRight, Play, Check, Sliders, Volume2,
+  ArrowLeft, ChevronRight, Play, Check, Sliders, Volume2, VolumeX,
   Palette, Crown, Info, Gift, RefreshCw,
 } from "lucide-react";
 import { useCarolineStore } from "@/lib/caroline-store";
 import { SOUND_OPTIONS, playSoundById } from "@/lib/dice-sound";
 import { DieFace } from "@/components/caroline/Dice";
 
+type Section = "menu" | "size" | "sound" | "theme" | "premium" | "about";
+
 export const Route = createFileRoute("/app/settings")({
   head: () => ({ meta: [{ title: "Settings — Caroline" }] }),
+  validateSearch: (s: Record<string, unknown>): { section?: Section } => {
+    const v = s.section;
+    if (v === "size" || v === "sound" || v === "theme" || v === "premium" || v === "about") {
+      return { section: v };
+    }
+    return {};
+  },
   component: SettingsPage,
 });
 
-type Section = "menu" | "size" | "sound" | "theme" | "premium" | "about";
-
 function SettingsPage() {
-  const [section, setSection] = useState<Section>("menu");
+  const search = Route.useSearch();
+  const [section, setSection] = useState<Section>(search.section ?? "menu");
 
   if (section === "menu") return <Menu onOpen={setSection} />;
 
@@ -90,20 +98,22 @@ function DiceSizeSection() {
   const previewSize = Math.round(96 * (dieScale || 1));
   return (
     <Section title="Dice size">
-      <div className="grid place-items-center rounded-3xl border border-ink/12 bg-card p-5 shadow-pop">
-        <DieFace value={5} size={previewSize} bg="var(--butter)" />
-        <div className="mt-3 font-display text-sm font-bold text-ink/70">
-          {Math.round((dieScale || 1) * 100)}%
+      <div className="flex min-h-[60vh] flex-col items-center justify-center">
+        <div className="grid place-items-center rounded-3xl border border-ink/12 bg-card p-6 shadow-pop">
+          <DieFace value={5} size={previewSize} bg="var(--butter)" />
+          <div className="mt-3 font-display text-sm font-bold text-ink/70">
+            {Math.round((dieScale || 1) * 100)}%
+          </div>
         </div>
-      </div>
-      <input
-        type="range" min={70} max={180} step={5}
-        value={Math.round((dieScale || 1) * 100)}
-        onChange={(e) => setDieScale(Number(e.target.value) / 100)}
-        className="mt-4 w-full accent-coral"
-      />
-      <div className="mt-1 flex justify-between text-[10px] uppercase tracking-wider text-ink/50">
-        <span>Small</span><span>Default</span><span>XL</span>
+        <input
+          type="range" min={70} max={180} step={5}
+          value={Math.round((dieScale || 1) * 100)}
+          onChange={(e) => setDieScale(Number(e.target.value) / 100)}
+          className="mt-6 w-full accent-coral"
+        />
+        <div className="mt-1 flex w-full justify-between text-[10px] uppercase tracking-wider text-ink/50">
+          <span>Small</span><span>Default</span><span>XL</span>
+        </div>
       </div>
     </Section>
   );
@@ -133,15 +143,26 @@ function SoundSection() {
                     {opt.description}
                   </div>
                 </button>
-                <button
-                  onClick={() => playSoundById(opt.id)}
-                  className={`grid h-10 w-10 place-items-center rounded-full ${
-                    active ? "bg-coral text-white" : "bg-ink text-cream"
-                  }`}
-                  aria-label="Preview"
-                >
-                  <Play className="h-4 w-4" />
-                </button>
+                {opt.id === "off" ? (
+                  <div
+                    className={`grid h-10 w-10 place-items-center rounded-full ${
+                      active ? "bg-coral text-white" : "bg-ink/10 text-ink/60"
+                    }`}
+                    aria-hidden
+                  >
+                    <VolumeX className="h-4 w-4" />
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => playSoundById(opt.id)}
+                    className={`grid h-10 w-10 place-items-center rounded-full ${
+                      active ? "bg-coral text-white" : "bg-ink text-cream"
+                    }`}
+                    aria-label="Preview"
+                  >
+                    <Play className="h-4 w-4" />
+                  </button>
+                )}
               </div>
             </div>
           );

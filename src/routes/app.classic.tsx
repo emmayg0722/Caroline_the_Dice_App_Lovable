@@ -48,7 +48,7 @@ function ClassicPage() {
       setTimeout(() => {
         if (showBeer) setBeer(true);
       }, 600);
-    }, 450);
+    }, 675);
   }
 
   useEffect(() => {

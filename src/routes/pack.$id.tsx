@@ -52,12 +52,12 @@ function RollPack() {
         setConfetti(true);
         setTimeout(() => setConfetti(false), 2200);
       }
-    }, 450);
+    }, 675);
   }
 
   function shareParty() {
     if (!pro) {
-      navigate({ to: "/app/settings" });
+      navigate({ to: "/app/settings", search: { section: "premium" } });
       return;
     }
     const party = createParty(pack!.id);
@@ -124,14 +124,8 @@ function RollPack() {
           </div>
         </div>
 
-        <div
-          className="relative mt-4 rounded-3xl border border-ink/15 p-4 shadow-pop"
-          style={{ background: pack.color }}
-        >
-          <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/65">
-            Rolled
-          </div>
-          <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
+        <div className="relative mt-4 grid min-h-[340px] place-content-center rounded-3xl border border-ink/15 bg-card p-4 shadow-pop">
+          <div className="flex flex-wrap items-center justify-center gap-3">
             {rolled.map((idx, i) => {
               const s = pack.sides[idx];
               return (
@@ -143,7 +137,7 @@ function RollPack() {
                   mode={s.mode}
                   pipCount={s.mode === "pip" ? idx + 1 : undefined}
                   size={dieSize}
-                  bg="var(--cream)"
+                  bg={pack.color}
                   tumbling={tumbling}
                 />
               );
@@ -153,7 +147,7 @@ function RollPack() {
 
         <button
           onClick={roll}
-          className="mt-4 w-full rounded-full bg-coral py-4 font-display text-xl font-black text-white shadow-pop active:scale-[0.99]"
+          className="mt-6 w-full rounded-full bg-coral py-4 font-display text-xl font-black text-white shadow-pop active:scale-[0.99]"
         >
           Roll
         </button>
