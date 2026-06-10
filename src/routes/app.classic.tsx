@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Settings } from "lucide-react";
 import { DieFace, Confetti } from "@/components/caroline/Dice";
