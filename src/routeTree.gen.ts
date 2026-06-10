@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppProRouteImport } from './routes/app.pro'
 import { Route as AppPartyRouteImport } from './routes/app.party'
 import { Route as AppCustomRouteImport } from './routes/app.custom'
 import { Route as AppClassicRouteImport } from './routes/app.classic'
@@ -24,6 +25,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppProRoute = AppProRouteImport.update({
+  id: '/pro',
+  path: '/pro',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppPartyRoute = AppPartyRouteImport.update({
   id: '/party',
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/app/classic': typeof AppClassicRoute
   '/app/custom': typeof AppCustomRoute
   '/app/party': typeof AppPartyRoute
+  '/app/pro': typeof AppProRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/app/classic': typeof AppClassicRoute
   '/app/custom': typeof AppCustomRoute
   '/app/party': typeof AppPartyRoute
+  '/app/pro': typeof AppProRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,27 @@ export interface FileRoutesById {
   '/app/classic': typeof AppClassicRoute
   '/app/custom': typeof AppCustomRoute
   '/app/party': typeof AppPartyRoute
+  '/app/pro': typeof AppProRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/app' | '/app/classic' | '/app/custom' | '/app/party'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/app/classic'
+    | '/app/custom'
+    | '/app/party'
+    | '/app/pro'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/app' | '/app/classic' | '/app/custom' | '/app/party'
-  id: '__root__' | '/' | '/app' | '/app/classic' | '/app/custom' | '/app/party'
+  to: '/' | '/app' | '/app/classic' | '/app/custom' | '/app/party' | '/app/pro'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/app/classic'
+    | '/app/custom'
+    | '/app/party'
+    | '/app/pro'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -91,6 +113,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/app/pro': {
+      id: '/app/pro'
+      path: '/pro'
+      fullPath: '/app/pro'
+      preLoaderRoute: typeof AppProRouteImport
+      parentRoute: typeof AppRoute
     }
     '/app/party': {
       id: '/app/party'
@@ -120,12 +149,14 @@ interface AppRouteChildren {
   AppClassicRoute: typeof AppClassicRoute
   AppCustomRoute: typeof AppCustomRoute
   AppPartyRoute: typeof AppPartyRoute
+  AppProRoute: typeof AppProRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppClassicRoute: AppClassicRoute,
   AppCustomRoute: AppCustomRoute,
   AppPartyRoute: AppPartyRoute,
+  AppProRoute: AppProRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
