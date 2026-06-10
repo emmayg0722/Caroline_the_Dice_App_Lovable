@@ -90,9 +90,13 @@ function ClassicPage() {
           </h1>
           <div className="mt-1 font-display text-2xl italic text-coral">the dice</div>
         </div>
-        <button className="grid h-10 w-10 place-items-center rounded-full border border-ink/15 bg-card">
+        <Link
+          to="/app/settings"
+          className="grid h-10 w-10 place-items-center rounded-full border border-ink/15 bg-card"
+          aria-label="Settings"
+        >
           <Settings className="h-4 w-4" />
-        </button>
+        </Link>
       </div>
 
       <section className="mt-6">
