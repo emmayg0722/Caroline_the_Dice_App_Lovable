@@ -201,10 +201,7 @@ export function AllSidesButton({
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <div
-              className="mt-4 rounded-2xl border border-ink/12 p-3"
-              style={{ background: packColor }}
-            >
+            <div className="mt-4 rounded-2xl border border-ink/12 bg-card p-3">
               <div className="grid grid-cols-3 gap-2">
                 {sides.map((s, i) => (
                   <CustomDieFace
@@ -215,7 +212,7 @@ export function AllSidesButton({
                     mode={s.mode}
                     pipCount={s.mode === "pip" ? i + 1 : undefined}
                     size={96}
-                    bg="var(--cream)"
+                    bg={packColor}
                   />
                 ))}
               </div>
