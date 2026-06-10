@@ -121,7 +121,7 @@
   75% { transform: rotate(270deg) scale(0.95); }
   100% { transform: rotate(360deg) scale(1); }
 }
-@utility animate-tumble { animation: dice-tumble 0.55s ease-in-out; }
+@utility animate-tumble { animation: dice-tumble 0.825s ease-in-out; }
 
 @keyframes confetti-fall {
   0% { transform: translateY(-20px) rotate(0deg); opacity: 0; }
