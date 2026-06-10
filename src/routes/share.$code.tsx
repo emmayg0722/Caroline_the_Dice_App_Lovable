@@ -11,10 +11,17 @@ export const Route = createFileRoute("/share/$code")({
 
 function SharePage() {
   const { code } = useParams({ from: "/share/$code" });
+  const navigate = useNavigate();
+  const router = useRouter();
   const { parties, packs } = useCarolineStore();
   const party = useMemo(() => parties.find((p) => p.code === code), [parties, code]);
   const pack = useMemo(() => packs.find((p) => p.id === party?.packId), [packs, party]);
   const [copied, setCopied] = useState(false);
+
+  function back() {
+    if (typeof window !== "undefined" && window.history.length > 1) router.history.back();
+    else navigate({ to: "/app/custom" });
+  }
 
   const url =
     typeof window !== "undefined"
