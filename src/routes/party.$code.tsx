@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Clock } from "lucide-react";
 import { useCarolineStore } from "@/lib/caroline-store";
 import { CustomDieFace, PhoneShell, AllSidesButton } from "@/components/caroline/Dice";
-import { playRollSound } from "@/lib/dice-sound";
+import { playRollSound, getRollDurationMs } from "@/lib/dice-sound";
 
 export const Route = createFileRoute("/party/$code")({
   head: () => ({ meta: [{ title: "Party Pack — Caroline" }] }),
