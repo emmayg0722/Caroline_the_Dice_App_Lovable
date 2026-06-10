@@ -1,23 +1,47 @@
-// Real dice-roll sound (CC0 sample served from CDN) + photo helpers.
-import diceRollAsset from "@/assets/dice-roll.mp3.asset.json";
+// Real dice-roll sounds (CC0 samples served from CDN).
+import { getStoredSoundId } from "./caroline-store";
 
-let diceAudio: HTMLAudioElement | null = null;
+export type SoundOption = { id: string; label: string; description: string; url: string };
 
-function getAudio(): HTMLAudioElement | null {
+export const SOUND_OPTIONS: SoundOption[] = [
+  {
+    id: "a",
+    label: "Two dice · wooden table",
+    description: "Sharp, classic clatter.",
+    url: "/__l5e/assets-v1/586c394e-55d4-412e-bb08-1dfa443b79de/dice-a.mp3",
+  },
+  {
+    id: "b",
+    label: "Four dice · wooden table",
+    description: "Fuller, heavier tumble.",
+    url: "/__l5e/assets-v1/24ce48c4-d21c-466f-b304-43cefe87246c/dice-b.mp3",
+  },
+  {
+    id: "c",
+    label: "Four dice · shaken in hand",
+    description: "Rattle only, no table impact.",
+    url: "/__l5e/assets-v1/88e298ac-57fd-4b71-a3d5-04fcf7951130/dice-c.mp3",
+  },
+];
+
+const cache = new Map<string, HTMLAudioElement>();
+
+function getAudio(id: string): HTMLAudioElement | null {
   if (typeof window === "undefined") return null;
-  if (!diceAudio) {
-    diceAudio = new Audio(diceRollAsset.url);
-    diceAudio.preload = "auto";
-    diceAudio.volume = 0.9;
+  const opt = SOUND_OPTIONS.find((s) => s.id === id) ?? SOUND_OPTIONS[0];
+  let a = cache.get(opt.id);
+  if (!a) {
+    a = new Audio(opt.url);
+    a.preload = "auto";
+    cache.set(opt.id, a);
   }
-  return diceAudio;
+  return a;
 }
 
-export function playRollSound() {
-  const a = getAudio();
+export function playSoundById(id: string) {
+  const a = getAudio(id);
   if (!a) return;
   try {
-    // Clone so rapid taps overlap naturally instead of being cut off.
     const node = a.cloneNode(true) as HTMLAudioElement;
     node.volume = 0.9;
     const p = node.play();
@@ -25,6 +49,12 @@ export function playRollSound() {
   } catch {
     // ignore
   }
+}
+
+export function playRollSound() {
+  let id = "a";
+  try { id = getStoredSoundId(); } catch { /* SSR */ }
+  playSoundById(id);
 }
 
 

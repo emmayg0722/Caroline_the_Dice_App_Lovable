@@ -32,6 +32,7 @@ type State = {
   recentScores: number[];
   packs: DicePack[];
   parties: PartyLink[];
+  soundId: string;
 };
 
 const DEFAULT_STATE: State = {
@@ -40,6 +41,7 @@ const DEFAULT_STATE: State = {
   recentScores: [],
   packs: [],
   parties: [],
+  soundId: "a",
 };
 
 function load(): State {
@@ -114,7 +116,13 @@ export function useCarolineStore() {
     return party;
   }, []);
 
-  return { ...s, setPro, recordRoll, savePack, deletePack, createParty };
+  const setSoundId = useCallback((soundId: string) => save({ ...ensure(), soundId }), []);
+
+  return { ...s, setPro, recordRoll, savePack, deletePack, createParty, setSoundId };
+}
+
+export function getStoredSoundId(): string {
+  return ensure().soundId;
 }
 
 export function shouldShowBeer(rolls: number): boolean {
