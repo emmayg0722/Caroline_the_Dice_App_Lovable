@@ -31,7 +31,7 @@ export const PRESET_PACKS: DicePack[] = [
   },
   {
     id: "preset_team",
-    name: "Company Team Building 🏢",
+    name: "Team Building 🏢",
     color: "var(--powder)",
     createdAt: 0,
     sides: [
