@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate, useParams, useRouter } from "@tanst
 import { useMemo, useState } from "react";
 import { ArrowLeft, Copy, Share2, Check, Clock } from "lucide-react";
 import { useCarolineStore } from "@/lib/caroline-store";
-import { CustomDieFace, AllSidesButton } from "@/components/caroline/Dice";
+import { AllSidesButton } from "@/components/caroline/Dice";
 
 export const Route = createFileRoute("/share/$code")({
   head: () => ({ meta: [{ title: "Party Link Ready — Caroline" }] }),
