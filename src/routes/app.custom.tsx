@@ -171,7 +171,7 @@ function CustomTab() {
               className="block rounded-3xl border border-ink/12 p-4 shadow-pop"
               style={{
                 transform: `rotate(${i % 2 === 0 ? -0.4 : 0.4}deg)`,
-                background: CARD_SURFACES[i % CARD_SURFACES.length],
+                background: pickCardSurface(p.color),
               }}
             >
               <div className="flex items-start justify-between gap-3">
