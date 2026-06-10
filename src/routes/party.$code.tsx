@@ -124,10 +124,12 @@ function PartyActive() {
                   key={i}
                   text={s.text}
                   emoji={s.emoji}
+                  photo={s.photo}
                   size={96}
                   bg={pack.color}
                   tumbling={tumbling}
                 />
+
               );
             })}
           </div>
