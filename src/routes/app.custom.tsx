@@ -56,6 +56,7 @@ function CustomTab() {
             </p>
             <Link
               to="/app/settings"
+              search={{ section: "premium" }}
               className="mt-4 inline-flex rounded-full bg-coral px-5 py-3 text-sm font-semibold text-white"
             >
               Unlock Pro · $4.99
