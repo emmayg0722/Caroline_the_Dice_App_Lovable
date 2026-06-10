@@ -1,8 +1,9 @@
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useParams, useRouter } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Clock } from "lucide-react";
+import { ArrowLeft, Clock } from "lucide-react";
 import { useCarolineStore } from "@/lib/caroline-store";
-import { CustomDieFace, PhoneShell } from "@/components/caroline/Dice";
+import { CustomDieFace, PhoneShell, AllSidesButton } from "@/components/caroline/Dice";
+import { playRollSound } from "@/lib/dice-sound";
 
 export const Route = createFileRoute("/party/$code")({
   head: () => ({ meta: [{ title: "Party Pack — Caroline" }] }),
@@ -13,6 +14,8 @@ const TEN_HOURS = 10 * 60 * 60 * 1000;
 
 function PartyActive() {
   const { code } = useParams({ from: "/party/$code" });
+  const navigate = useNavigate();
+  const router = useRouter();
   const { parties, packs } = useCarolineStore();
   const party = useMemo(() => parties.find((p) => p.code === code), [parties, code]);
   const pack = useMemo(() => packs.find((p) => p.id === party?.packId), [packs, party]);
@@ -23,20 +26,26 @@ function PartyActive() {
     return () => clearInterval(t);
   }, []);
 
-  const [rolled, setRolled] = useState<number[]>([]);
+  const [count, setCount] = useState(2);
+  const [rolled, setRolled] = useState<number[]>([0, 0]);
   const [tumbling, setTumbling] = useState(false);
 
-  // No matching party in local store, or expired
   const expired = !party || now - party.createdAt > TEN_HOURS;
   const remaining = party ? Math.max(0, TEN_HOURS - (now - party.createdAt)) : 0;
   const hoursLeft = Math.floor(remaining / 3_600_000);
   const minsLeft = Math.floor((remaining % 3_600_000) / 60_000);
 
+  function back() {
+    if (window.history.length > 1) router.history.back();
+    else navigate({ to: "/app/party" });
+  }
+
   function roll() {
     if (!pack) return;
     setTumbling(true);
+    playRollSound();
     setTimeout(() => {
-      setRolled([0, 1, 2].map(() => Math.floor(Math.random() * pack.sides.length)));
+      setRolled(Array.from({ length: count }, () => Math.floor(Math.random() * pack.sides.length)));
       setTumbling(false);
     }, 450);
   }
@@ -44,26 +53,27 @@ function PartyActive() {
   if (!party || !pack) {
     return (
       <PhoneShell>
-        <div className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
+        <div className="px-5 pt-5">
+          <button
+            onClick={back}
+            className="grid h-10 w-10 place-items-center rounded-full border border-ink/15 bg-card"
+            aria-label="Back"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+        </div>
+        <div className="flex min-h-[70vh] flex-col items-center justify-center px-6 text-center">
           <div className="text-5xl">⌛</div>
           <h1 className="mt-3 font-display text-3xl font-black">This Party Link expired.</h1>
           <p className="mt-2 text-sm text-ink/65">
             Party packs are valid for 10 hours. Ask your friend for a fresh link.
           </p>
-          <div className="mt-6 flex flex-col gap-2">
-            <Link
-              to="/app/party"
-              className="rounded-full border border-ink/20 bg-card px-5 py-3 text-sm font-semibold"
-            >
-              Back to Party
-            </Link>
-            <Link
-              to="/app/pro"
-              className="rounded-full bg-coral px-5 py-3 text-sm font-semibold text-white"
-            >
-              Unlock Pro to host your own
-            </Link>
-          </div>
+          <Link
+            to="/app/pro"
+            className="mt-6 rounded-full bg-coral px-5 py-3 text-sm font-semibold text-white"
+          >
+            Unlock Pro to host your own
+          </Link>
         </div>
       </PhoneShell>
     );
@@ -72,7 +82,16 @@ function PartyActive() {
   if (expired) {
     return (
       <PhoneShell>
-        <div className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
+        <div className="px-5 pt-5">
+          <button
+            onClick={back}
+            className="grid h-10 w-10 place-items-center rounded-full border border-ink/15 bg-card"
+            aria-label="Back"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+        </div>
+        <div className="flex min-h-[70vh] flex-col items-center justify-center px-6 text-center">
           <h1 className="font-display text-3xl font-black">This Party Link expired.</h1>
           <Link
             to="/app/pro"
@@ -87,37 +106,56 @@ function PartyActive() {
 
   return (
     <PhoneShell>
-      <div className="px-5 pb-16 pt-12">
-        <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">
-          Party Pack · {code}
-        </div>
-        <div className="mt-1 flex items-end justify-between">
-          <h1 className="font-display text-4xl font-black leading-[0.95]">{pack.name}</h1>
+      <div className="px-5 pb-16 pt-5">
+        <div className="flex items-center justify-between">
+          <button
+            onClick={back}
+            className="grid h-10 w-10 place-items-center rounded-full border border-ink/15 bg-card"
+            aria-label="Back"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
           <span className="flex items-center gap-1 rounded-full bg-ink px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-cream">
             <Clock className="h-3 w-3" /> {hoursLeft}h {minsLeft}m
           </span>
         </div>
 
-        <div
-          className="mt-6 rounded-3xl border border-ink/15 p-4 shadow-pop"
-          style={{ background: pack.color }}
-        >
-          <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/65">
-            All sides
+        <div className="mt-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">
+          Party Pack · {code}
+        </div>
+        <h1 className="mt-1 font-display text-4xl font-black leading-[0.95]">{pack.name}</h1>
+
+        <div className="mt-5">
+          <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-ink/55">
+            Dice count
           </div>
-          <div className="mt-3 grid grid-cols-3 gap-2">
-            {pack.sides.map((s, i) => (
-              <CustomDieFace key={i} text={s.text} emoji={s.emoji} photo={s.photo} size={86} bg="var(--cream)" />
+          <div className="mt-2 flex gap-2">
+            {[1, 2, 3, 4, 5, 6].map((n) => (
+              <button
+                key={n}
+                onClick={() => {
+                  setCount(n);
+                  setRolled(Array.from({ length: n }, () => 0));
+                }}
+                className={`flex-1 rounded-xl border py-2.5 font-display text-base font-bold ${
+                  count === n ? "border-ink bg-ink text-cream" : "border-ink/15 bg-card text-ink/70"
+                }`}
+              >
+                {n}
+              </button>
             ))}
           </div>
         </div>
 
-        <div className="mt-5 rounded-3xl border border-ink/12 bg-card p-5 shadow-pop">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">
+        <div
+          className="mt-5 rounded-3xl border border-ink/12 p-5 shadow-pop"
+          style={{ background: pack.color }}
+        >
+          <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/65">
             Rolled
           </div>
           <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
-            {(rolled.length ? rolled : [0, 0, 0]).map((idx, i) => {
+            {rolled.map((idx, i) => {
               const s = pack.sides[idx];
               return (
                 <CustomDieFace
@@ -125,11 +163,11 @@ function PartyActive() {
                   text={s.text}
                   emoji={s.emoji}
                   photo={s.photo}
-                  size={96}
-                  bg={pack.color}
+                  mode={s.mode}
+                  size={count <= 2 ? 144 : count <= 4 ? 112 : 88}
+                  bg="var(--cream)"
                   tumbling={tumbling}
                 />
-
               );
             })}
           </div>
@@ -142,9 +180,11 @@ function PartyActive() {
           Roll
         </button>
 
+        <AllSidesButton sides={pack.sides} packName={pack.name} packColor={pack.color} />
+
         <Link
           to="/app/pro"
-          className="mt-4 block rounded-2xl bg-ink p-4 text-cream"
+          className="mt-6 block rounded-2xl bg-ink p-4 text-cream"
         >
           <div className="font-display text-base font-bold">Love this pack?</div>
           <div className="text-xs opacity-75">
