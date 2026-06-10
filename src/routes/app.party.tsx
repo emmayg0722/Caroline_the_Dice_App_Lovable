@@ -56,10 +56,14 @@ function SwipeRow({
         onMouseMove={(e) => e.buttons === 1 && move(e.clientX)}
         onMouseUp={end}
         onMouseLeave={end}
-        style={{ transform: `translateX(${dx}px)`, transition: startX.current == null ? "transform 0.2s" : "none" }}
-        className="relative flex items-center justify-between gap-3 rounded-2xl border border-ink/12 p-3 shadow-pop"
+        style={{
+          transform: `translateX(${dx}px)`,
+          transition: startX.current == null ? "transform 0.2s" : "none",
+          background: pack.color,
+        }}
+        className="relative flex items-center justify-between gap-3 rounded-2xl border border-ink/12 p-4 shadow-pop"
       >
-        <div className="min-w-0" style={{ background: pack.color }}>
+        <div className="min-w-0">
           <div className="font-display text-base font-black leading-tight">{pack.name}</div>
           <div className="mt-0.5 text-[11px] uppercase tracking-wider text-ink/60">
             {party.code} · {h}h {m}m left

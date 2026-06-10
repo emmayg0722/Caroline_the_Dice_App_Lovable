@@ -23,10 +23,10 @@ function SharePage() {
     else navigate({ to: "/app/custom" });
   }
 
-  const url =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/party/${code}`
-      : `/party/${code}`;
+  const [url, setUrl] = useState(`/party/${code}`);
+  useMemo(() => {
+    if (typeof window !== "undefined") setUrl(`${window.location.origin}/party/${code}`);
+  }, [code]);
 
   async function copy() {
     try {

@@ -151,6 +151,7 @@ export function Editor({ id }: { id: string }) {
                 emoji={s.emoji}
                 photo={s.photo}
                 mode={s.mode}
+                pipCount={s.mode === "pip" ? i + 1 : undefined}
                 size={92}
                 bg="var(--cream)"
               />
