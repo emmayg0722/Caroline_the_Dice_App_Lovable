@@ -29,6 +29,7 @@ const cache = new Map<string, HTMLAudioElement>();
 function getAudio(id: string): HTMLAudioElement | null {
   if (typeof window === "undefined") return null;
   const opt = SOUND_OPTIONS.find((s) => s.id === id) ?? SOUND_OPTIONS[0];
+  if (!opt.url) return null;
   let a = cache.get(opt.id);
   if (!a) {
     a = new Audio(opt.url);
