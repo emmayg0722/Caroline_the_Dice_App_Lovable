@@ -178,14 +178,13 @@ export function CustomDieFace({
 
   return (
     <div
-      className={`relative flex shrink-0 flex-col items-center justify-center overflow-hidden border border-ink/15 px-2 text-center shadow-pop ${tumbling ? "animate-tumble" : ""}`}
+      className={`relative flex shrink-0 flex-col items-center justify-center overflow-hidden px-2 text-center ${tumbling ? "animate-tumble" : ""}`}
       style={{
         width: size,
         height: size,
         background: bg,
         borderRadius: Math.round(size * 0.18),
-        boxShadow:
-          "inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -2px 0 rgba(0,0,0,0.06), 0 1px 0 rgba(17,17,17,0.06), 0 10px 24px -14px rgba(17,17,17,0.25)",
+        boxShadow: dieShadow(size),
       }}
     >
       {photo && (
