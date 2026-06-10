@@ -1,38 +1,56 @@
 // Shared dice-roll sound + simple white-background cutout helper.
 
-export function playRollSound() {
-  if (typeof window === "undefined") return;
+let sharedCtx: AudioContext | null = null;
+function getCtx(): AudioContext | null {
+  if (typeof window === "undefined") return null;
+  if (sharedCtx) return sharedCtx;
+  const AC =
+    (window as unknown as { AudioContext?: typeof AudioContext }).AudioContext ??
+    (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+  if (!AC) return null;
   try {
-    const AC =
-      (window as unknown as { AudioContext?: typeof AudioContext }).AudioContext ??
-      (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!AC) return;
-    const ctx = new AC();
+    sharedCtx = new AC();
+  } catch {
+    return null;
+  }
+  return sharedCtx;
+}
+
+export function playRollSound() {
+  const ctx = getCtx();
+  if (!ctx) return;
+  // iOS/Safari starts suspended until a user gesture. Resume on each call.
+  if (ctx.state === "suspended") {
+    try { ctx.resume(); } catch { /* noop */ }
+  }
+  try {
+    const t0 = ctx.currentTime;
     // Two quick clacks for a "tumbling dice" feel.
-    [0, 0.09].forEach((delay, idx) => {
+    [0, 0.09, 0.18].forEach((delay, idx) => {
       const o = ctx.createOscillator();
       const g = ctx.createGain();
       o.type = "triangle";
-      const t = ctx.currentTime + delay;
-      o.frequency.setValueAtTime(idx === 0 ? 480 : 380, t);
+      const t = t0 + delay;
+      const f = idx === 0 ? 520 : idx === 1 ? 400 : 320;
+      o.frequency.setValueAtTime(f, t);
       o.frequency.exponentialRampToValueAtTime(110, t + 0.22);
-      g.gain.setValueAtTime(0.16, t);
+      g.gain.setValueAtTime(0.22, t);
       g.gain.exponentialRampToValueAtTime(0.001, t + 0.26);
       o.connect(g).connect(ctx.destination);
       o.start(t);
       o.stop(t + 0.28);
     });
     // Small noise burst at the end for "settle"
-    const noiseDur = 0.15;
+    const noiseDur = 0.18;
     const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * noiseDur), ctx.sampleRate);
     const data = buffer.getChannelData(0);
     for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
     const src = ctx.createBufferSource();
     const ng = ctx.createGain();
-    ng.gain.value = 0.08;
+    ng.gain.value = 0.12;
     src.buffer = buffer;
     src.connect(ng).connect(ctx.destination);
-    src.start(ctx.currentTime + 0.2);
+    src.start(t0 + 0.25);
   } catch {
     // ignore
   }
