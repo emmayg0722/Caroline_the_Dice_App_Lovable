@@ -98,20 +98,22 @@ function DiceSizeSection() {
   const previewSize = Math.round(96 * (dieScale || 1));
   return (
     <Section title="Dice size">
-      <div className="grid place-items-center rounded-3xl border border-ink/12 bg-card p-5 shadow-pop">
-        <DieFace value={5} size={previewSize} bg="var(--butter)" />
-        <div className="mt-3 font-display text-sm font-bold text-ink/70">
-          {Math.round((dieScale || 1) * 100)}%
+      <div className="flex min-h-[60vh] flex-col items-center justify-center">
+        <div className="grid place-items-center rounded-3xl border border-ink/12 bg-card p-6 shadow-pop">
+          <DieFace value={5} size={previewSize} bg="var(--butter)" />
+          <div className="mt-3 font-display text-sm font-bold text-ink/70">
+            {Math.round((dieScale || 1) * 100)}%
+          </div>
         </div>
-      </div>
-      <input
-        type="range" min={70} max={180} step={5}
-        value={Math.round((dieScale || 1) * 100)}
-        onChange={(e) => setDieScale(Number(e.target.value) / 100)}
-        className="mt-4 w-full accent-coral"
-      />
-      <div className="mt-1 flex justify-between text-[10px] uppercase tracking-wider text-ink/50">
-        <span>Small</span><span>Default</span><span>XL</span>
+        <input
+          type="range" min={70} max={180} step={5}
+          value={Math.round((dieScale || 1) * 100)}
+          onChange={(e) => setDieScale(Number(e.target.value) / 100)}
+          className="mt-6 w-full accent-coral"
+        />
+        <div className="mt-1 flex w-full justify-between text-[10px] uppercase tracking-wider text-ink/50">
+          <span>Small</span><span>Default</span><span>XL</span>
+        </div>
       </div>
     </Section>
   );
