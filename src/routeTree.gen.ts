@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppPartyRouteImport } from './routes/app.party'
 import { Route as AppClassicRouteImport } from './routes/app.classic'
 
 const AppRoute = AppRouteImport.update({
@@ -23,6 +24,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppPartyRoute = AppPartyRouteImport.update({
+  id: '/party',
+  path: '/party',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppClassicRoute = AppClassicRouteImport.update({
   id: '/classic',
   path: '/classic',
@@ -33,24 +39,27 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/app/classic': typeof AppClassicRoute
+  '/app/party': typeof AppPartyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/app/classic': typeof AppClassicRoute
+  '/app/party': typeof AppPartyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/app/classic': typeof AppClassicRoute
+  '/app/party': typeof AppPartyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/app' | '/app/classic'
+  fullPaths: '/' | '/app' | '/app/classic' | '/app/party'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/app' | '/app/classic'
-  id: '__root__' | '/' | '/app' | '/app/classic'
+  to: '/' | '/app' | '/app/classic' | '/app/party'
+  id: '__root__' | '/' | '/app' | '/app/classic' | '/app/party'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -74,6 +83,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/party': {
+      id: '/app/party'
+      path: '/party'
+      fullPath: '/app/party'
+      preLoaderRoute: typeof AppPartyRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/classic': {
       id: '/app/classic'
       path: '/classic'
@@ -86,10 +102,12 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppClassicRoute: typeof AppClassicRoute
+  AppPartyRoute: typeof AppPartyRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppClassicRoute: AppClassicRoute,
+  AppPartyRoute: AppPartyRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
