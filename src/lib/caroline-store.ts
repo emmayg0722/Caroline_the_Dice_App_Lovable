@@ -148,6 +148,13 @@ export const PACK_COLORS = [
   "var(--powder)",
   "var(--sage)",
   "var(--lavender)",
+  "var(--peach)",
+  "var(--mint)",
+  "var(--sky)",
+  "var(--lemon)",
+  "var(--plum)",
+  "var(--clay)",
+  "var(--snow)",
 ];
 
 export function newPackId() {
