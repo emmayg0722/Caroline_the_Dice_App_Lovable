@@ -83,6 +83,16 @@
   --ring: var(--coral);
 }
 
+.theme-dark {
+  --cream: oklch(0.22 0.01 280);
+  --ink: oklch(0.97 0.01 90);
+  --card: oklch(0.27 0.012 280);
+  --background: var(--cream);
+  --foreground: var(--ink);
+  --card-foreground: var(--ink);
+  --border: oklch(1 0 0 / 0.12);
+}
+
 @layer base {
   * { border-color: var(--color-border); }
   html, body { background-color: var(--color-cream); color: var(--color-ink); }

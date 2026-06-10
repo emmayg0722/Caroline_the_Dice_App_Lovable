@@ -126,8 +126,9 @@ export function useCarolineStore() {
 
   const setSoundId = useCallback((soundId: string) => save({ ...ensure(), soundId }), []);
   const setDieScale = useCallback((dieScale: number) => save({ ...ensure(), dieScale }), []);
+  const setTheme = useCallback((theme: "default" | "dark") => save({ ...ensure(), theme }), []);
 
-  return { ...s, setPro, recordRoll, savePack, deletePack, createParty, deleteParty, setSoundId, setDieScale };
+  return { ...s, setPro, recordRoll, savePack, deletePack, createParty, deleteParty, setSoundId, setDieScale, setTheme };
 }
 
 export function getStoredSoundId(): string {
