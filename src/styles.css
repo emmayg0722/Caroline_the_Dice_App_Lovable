@@ -53,6 +53,10 @@
   --color-plum: var(--plum);
   --color-snow: var(--snow);
   --color-clay: var(--clay);
+  --color-sand: var(--sand);
+  --color-mist: var(--mist);
+  --color-dusk: var(--dusk);
+  --color-paper: var(--paper);
 }
 
 :root {
@@ -75,6 +79,12 @@
   --plum: oklch(0.72 0.11 335);          /* dusty plum */
   --snow: oklch(0.985 0 0);              /* clean white */
   --clay: oklch(0.78 0.07 55);           /* warm clay beige */
+
+  /* Card surfaces — softer than dice fills so dice always pop */
+  --paper: oklch(1 0 0);                 /* clean paper */
+  --sand: oklch(0.96 0.022 80);          /* warm sand */
+  --mist: oklch(0.965 0.012 230);        /* cool mist */
+  --dusk: oklch(0.94 0.02 330);          /* soft dusk */
 
   --background: var(--cream);
   --foreground: var(--ink);
@@ -117,6 +127,10 @@
   --plum: oklch(0.32 0.04 335);
   --snow: oklch(0.85 0.005 90);
   --clay: oklch(0.34 0.03 55);
+  --paper: oklch(0.28 0.012 280);
+  --sand: oklch(0.27 0.014 80);
+  --mist: oklch(0.27 0.012 230);
+  --dusk: oklch(0.27 0.014 330);
 }
 
 .phone-shell {

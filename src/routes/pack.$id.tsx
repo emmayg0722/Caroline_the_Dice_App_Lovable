@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate, useParams, useRouter } from "@tanst
 import { useState } from "react";
 import { ArrowLeft, Share2 } from "lucide-react";
 import { CustomDieFace, Confetti, PhoneShell, AllSidesButton } from "@/components/caroline/Dice";
-import { useCarolineStore } from "@/lib/caroline-store";
+import { useCarolineStore, pickCardSurface } from "@/lib/caroline-store";
 import { findPack, PRESET_PACKS } from "@/lib/preset-packs";
 import { playRollSound, getRollDurationMs } from "@/lib/dice-sound";
 
@@ -126,7 +126,10 @@ function RollPack() {
           </div>
         </div>
 
-        <div className="relative mt-4 grid min-h-[340px] place-content-center rounded-3xl border border-ink/15 bg-card p-4 shadow-pop">
+        <div
+          className="relative mt-4 grid min-h-[340px] place-content-center rounded-3xl border border-ink/15 p-4 shadow-pop"
+          style={{ background: pickCardSurface(pack.color) }}
+        >
           <div className="flex flex-wrap items-center justify-center gap-3">
             {rolled.map((idx, i) => {
               const s = pack.sides[idx];

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Plus, Pencil, Share2, Trash2, Lock, Dices } from "lucide-react";
-import { useCarolineStore } from "@/lib/caroline-store";
+import { useCarolineStore, pickCardSurface, CARD_SURFACES } from "@/lib/caroline-store";
 import { PRESET_PACKS } from "@/lib/preset-packs";
 import { CustomDieFace } from "@/components/caroline/Dice";
 
@@ -85,13 +85,20 @@ function CustomTab() {
               <div
                 key={p.id}
                 className="rounded-3xl border border-ink/12 p-4 shadow-pop"
-                style={{ background: p.color }}
+                style={{ background: pickCardSurface(p.color) }}
               >
                 <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="font-display text-xl font-black leading-tight">{p.name}</div>
-                    <div className="mt-1 line-clamp-1 text-xs text-ink/65">
-                      {p.sides.map((s) => `${s.emoji ?? ""}${s.text}`.trim()).join(" · ")}
+                  <div className="flex min-w-0 items-start gap-3">
+                    <span
+                      className="mt-1 inline-block h-4 w-4 shrink-0 rounded-full border border-ink/20"
+                      style={{ background: p.color }}
+                      aria-hidden
+                    />
+                    <div className="min-w-0">
+                      <div className="font-display text-xl font-black leading-tight">{p.name}</div>
+                      <div className="mt-1 line-clamp-1 text-xs text-ink/65">
+                        {p.sides.map((s) => `${s.emoji ?? ""}${s.text}`.trim()).join(" · ")}
+                      </div>
                     </div>
                   </div>
                   <button
@@ -101,6 +108,20 @@ function CustomTab() {
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
+                </div>
+                <div className="mt-3 flex gap-2 overflow-hidden">
+                  {p.sides.slice(0, 4).map((s, j) => (
+                    <CustomDieFace
+                      key={j}
+                      text={s.text}
+                      emoji={s.emoji}
+                      photo={s.photo}
+                      mode={s.mode}
+                      pipCount={s.mode === "pip" ? j + 1 : undefined}
+                      size={56}
+                      bg={p.color}
+                    />
+                  ))}
                 </div>
                 <div className="mt-4 grid grid-cols-3 gap-2">
                   <Link
@@ -147,8 +168,11 @@ function CustomTab() {
               key={p.id}
               to="/pack/$id"
               params={{ id: p.id }}
-              className="block rounded-3xl border border-ink/12 bg-card p-4 shadow-pop"
-              style={{ transform: `rotate(${i % 2 === 0 ? -0.4 : 0.4}deg)` }}
+              className="block rounded-3xl border border-ink/12 p-4 shadow-pop"
+              style={{
+                transform: `rotate(${i % 2 === 0 ? -0.4 : 0.4}deg)`,
+                background: pickCardSurface(p.color),
+              }}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
