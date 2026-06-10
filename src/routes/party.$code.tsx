@@ -107,7 +107,7 @@ function PartyActive() {
           </div>
           <div className="mt-3 grid grid-cols-3 gap-2">
             {pack.sides.map((s, i) => (
-              <CustomDieFace key={i} text={s.text} emoji={s.emoji} size={86} bg="var(--cream)" />
+              <CustomDieFace key={i} text={s.text} emoji={s.emoji} photo={s.photo} size={86} bg="var(--cream)" />
             ))}
           </div>
         </div>
