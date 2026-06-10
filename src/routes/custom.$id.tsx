@@ -99,7 +99,7 @@ export function Editor({ id }: { id: string }) {
           <ArrowLeft className="h-4 w-4" />
         </button>
         <span className="font-display text-base font-bold">
-          {existing ? "Edit Pack" : "New Pack"}
+          {id === "new" ? "New Pack" : "Edit Pack"}
         </span>
         <button
           onClick={onSave}
@@ -151,6 +151,7 @@ export function Editor({ id }: { id: string }) {
                 emoji={s.emoji}
                 photo={s.photo}
                 mode={s.mode}
+                pipCount={s.mode === "pip" ? i + 1 : undefined}
                 size={92}
                 bg="var(--cream)"
               />

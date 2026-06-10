@@ -34,6 +34,7 @@ type State = {
   parties: PartyLink[];
   soundId: string;
   dieScale: number;
+  theme: "default" | "dark";
 };
 
 const DEFAULT_STATE: State = {
@@ -42,8 +43,9 @@ const DEFAULT_STATE: State = {
   recentScores: [],
   packs: [],
   parties: [],
-  soundId: "a",
+  soundId: "b",
   dieScale: 1,
+  theme: "default",
 };
 
 function load(): State {
@@ -124,8 +126,9 @@ export function useCarolineStore() {
 
   const setSoundId = useCallback((soundId: string) => save({ ...ensure(), soundId }), []);
   const setDieScale = useCallback((dieScale: number) => save({ ...ensure(), dieScale }), []);
+  const setTheme = useCallback((theme: "default" | "dark") => save({ ...ensure(), theme }), []);
 
-  return { ...s, setPro, recordRoll, savePack, deletePack, createParty, deleteParty, setSoundId, setDieScale };
+  return { ...s, setPro, recordRoll, savePack, deletePack, createParty, deleteParty, setSoundId, setDieScale, setTheme };
 }
 
 export function getStoredSoundId(): string {

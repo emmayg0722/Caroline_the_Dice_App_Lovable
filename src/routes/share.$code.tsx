@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate, useParams, useRouter } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Copy, Share2, Check, Clock } from "lucide-react";
 import { useCarolineStore } from "@/lib/caroline-store";
 import { AllSidesButton } from "@/components/caroline/Dice";
@@ -23,10 +23,10 @@ function SharePage() {
     else navigate({ to: "/app/custom" });
   }
 
-  const url =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/party/${code}`
-      : `/party/${code}`;
+  const [url, setUrl] = useState(`/party/${code}`);
+  useEffect(() => {
+    if (typeof window !== "undefined") setUrl(`${window.location.origin}/party/${code}`);
+  }, [code]);
 
   async function copy() {
     try {
