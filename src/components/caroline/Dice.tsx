@@ -22,17 +22,28 @@ const PIP_POSITIONS: Record<number, [number, number][]> = {
   6: [[0, 0], [0, 2], [1, 0], [1, 2], [2, 0], [2, 2]],
 };
 
-export function Pip({ value }: { value: number }) {
+export function Pip({ value, size = 144 }: { value: number; size?: number }) {
   const dots = PIP_POSITIONS[value] ?? [];
+  const dot = Math.max(4, Math.round(size * 0.13));
+  const pad = Math.round(size * 0.1);
+  const gap = Math.round(size * 0.04);
   return (
-    <div className="grid h-full w-full grid-cols-3 grid-rows-3 gap-1 p-3">
+    <div
+      className="grid h-full w-full grid-cols-3 grid-rows-3"
+      style={{ padding: pad, gap }}
+    >
       {Array.from({ length: 9 }).map((_, i) => {
         const r = Math.floor(i / 3);
         const c = i % 3;
         const on = dots.some(([dr, dc]) => dr === r && dc === c);
         return (
           <div key={i} className="flex items-center justify-center">
-            {on && <div className="h-2.5 w-2.5 rounded-full bg-ink sm:h-3 sm:w-3" />}
+            {on && (
+              <div
+                className="rounded-full bg-ink"
+                style={{ width: dot, height: dot }}
+              />
+            )}
           </div>
         );
       })}
@@ -63,7 +74,7 @@ export function DieFace({
           "inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -2px 0 rgba(0,0,0,0.06), 0 1px 0 rgba(17,17,17,0.06), 0 10px 24px -14px rgba(17,17,17,0.25)",
       }}
     >
-      <Pip value={value} />
+      <Pip value={value} size={size} />
     </div>
   );
 }
