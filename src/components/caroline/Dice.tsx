@@ -53,8 +53,15 @@ export function DieFace({
 }) {
   return (
     <div
-      className={`shrink-0 rounded-2xl border border-ink/15 shadow-pop ${tumbling ? "animate-tumble" : ""}`}
-      style={{ width: size, height: size, background: bg }}
+      className={`shrink-0 border border-ink/15 shadow-pop ${tumbling ? "animate-tumble" : ""}`}
+      style={{
+        width: size,
+        height: size,
+        background: bg,
+        borderRadius: Math.round(size * 0.18),
+        boxShadow:
+          "inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -2px 0 rgba(0,0,0,0.06), 0 1px 0 rgba(17,17,17,0.06), 0 10px 24px -14px rgba(17,17,17,0.25)",
+      }}
     >
       <Pip value={value} />
     </div>
@@ -92,8 +99,15 @@ export function CustomDieFace({
     const pad = Math.round(size * 0.16);
     return (
       <div
-        className={`relative shrink-0 overflow-hidden rounded-2xl border border-ink/15 shadow-pop ${tumbling ? "animate-tumble" : ""}`}
-        style={{ width: size, height: size, background: bg }}
+        className={`relative shrink-0 overflow-hidden border border-ink/15 shadow-pop ${tumbling ? "animate-tumble" : ""}`}
+        style={{
+          width: size,
+          height: size,
+          background: bg,
+          borderRadius: Math.round(size * 0.18),
+          boxShadow:
+            "inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -2px 0 rgba(0,0,0,0.06), 0 1px 0 rgba(17,17,17,0.06), 0 10px 24px -14px rgba(17,17,17,0.25)",
+        }}
       >
         <div
           className="grid h-full w-full grid-cols-3 grid-rows-3"
@@ -134,8 +148,15 @@ export function CustomDieFace({
 
   return (
     <div
-      className={`relative flex shrink-0 flex-col items-center justify-center overflow-hidden rounded-2xl border border-ink/15 px-2 text-center shadow-pop ${tumbling ? "animate-tumble" : ""}`}
-      style={{ width: size, height: size, background: bg }}
+      className={`relative flex shrink-0 flex-col items-center justify-center overflow-hidden border border-ink/15 px-2 text-center shadow-pop ${tumbling ? "animate-tumble" : ""}`}
+      style={{
+        width: size,
+        height: size,
+        background: bg,
+        borderRadius: Math.round(size * 0.18),
+        boxShadow:
+          "inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -2px 0 rgba(0,0,0,0.06), 0 1px 0 rgba(17,17,17,0.06), 0 10px 24px -14px rgba(17,17,17,0.25)",
+      }}
     >
       {photo && (
         <img src={photo} alt="" className="absolute inset-0 h-full w-full object-cover" />
