@@ -126,7 +126,10 @@ function RollPack() {
           </div>
         </div>
 
-        <div className="relative mt-4 grid min-h-[340px] place-content-center rounded-3xl border border-ink/15 bg-card p-4 shadow-pop">
+        <div
+          className="relative mt-4 grid min-h-[340px] place-content-center rounded-3xl border border-ink/15 p-4 shadow-pop"
+          style={{ background: pickCardSurface(pack.color) }}
+        >
           <div className="flex flex-wrap items-center justify-center gap-3">
             {rolled.map((idx, i) => {
               const s = pack.sides[idx];
