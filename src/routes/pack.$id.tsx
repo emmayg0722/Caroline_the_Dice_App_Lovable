@@ -52,7 +52,7 @@ function RollPack() {
         setConfetti(true);
         setTimeout(() => setConfetti(false), 2200);
       }
-    }, 450);
+    }, 675);
   }
 
   function shareParty() {
