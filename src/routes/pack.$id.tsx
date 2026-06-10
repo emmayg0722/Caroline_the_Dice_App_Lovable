@@ -57,7 +57,7 @@ function RollPack() {
 
   function shareParty() {
     if (!pro) {
-      navigate({ to: "/app/settings" });
+      navigate({ to: "/app/settings", search: { section: "premium" } });
       return;
     }
     const party = createParty(pack!.id);
