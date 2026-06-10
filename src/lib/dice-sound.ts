@@ -1,60 +1,32 @@
-// Shared dice-roll sound + simple white-background cutout helper.
+// Real dice-roll sound (CC0 sample served from CDN) + photo helpers.
+import diceRollAsset from "@/assets/dice-roll.mp3.asset.json";
 
-let sharedCtx: AudioContext | null = null;
-function getCtx(): AudioContext | null {
+let diceAudio: HTMLAudioElement | null = null;
+
+function getAudio(): HTMLAudioElement | null {
   if (typeof window === "undefined") return null;
-  if (sharedCtx) return sharedCtx;
-  const AC =
-    (window as unknown as { AudioContext?: typeof AudioContext }).AudioContext ??
-    (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-  if (!AC) return null;
-  try {
-    sharedCtx = new AC();
-  } catch {
-    return null;
+  if (!diceAudio) {
+    diceAudio = new Audio(diceRollAsset.url);
+    diceAudio.preload = "auto";
+    diceAudio.volume = 0.9;
   }
-  return sharedCtx;
+  return diceAudio;
 }
 
 export function playRollSound() {
-  const ctx = getCtx();
-  if (!ctx) return;
-  // iOS/Safari starts suspended until a user gesture. Resume on each call.
-  if (ctx.state === "suspended") {
-    try { ctx.resume(); } catch { /* noop */ }
-  }
+  const a = getAudio();
+  if (!a) return;
   try {
-    const t0 = ctx.currentTime;
-    // Two quick clacks for a "tumbling dice" feel.
-    [0, 0.09, 0.18].forEach((delay, idx) => {
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.type = "triangle";
-      const t = t0 + delay;
-      const f = idx === 0 ? 520 : idx === 1 ? 400 : 320;
-      o.frequency.setValueAtTime(f, t);
-      o.frequency.exponentialRampToValueAtTime(110, t + 0.22);
-      g.gain.setValueAtTime(0.22, t);
-      g.gain.exponentialRampToValueAtTime(0.001, t + 0.26);
-      o.connect(g).connect(ctx.destination);
-      o.start(t);
-      o.stop(t + 0.28);
-    });
-    // Small noise burst at the end for "settle"
-    const noiseDur = 0.18;
-    const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * noiseDur), ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
-    const src = ctx.createBufferSource();
-    const ng = ctx.createGain();
-    ng.gain.value = 0.12;
-    src.buffer = buffer;
-    src.connect(ng).connect(ctx.destination);
-    src.start(t0 + 0.25);
+    // Clone so rapid taps overlap naturally instead of being cut off.
+    const node = a.cloneNode(true) as HTMLAudioElement;
+    node.volume = 0.9;
+    const p = node.play();
+    if (p && typeof p.catch === "function") p.catch(() => { /* autoplay blocked */ });
   } catch {
     // ignore
   }
 }
+
 
 // Naive "background removal": clears near-white pixels and softens edges.
 // Good enough for prototype emoji-style pip art on light backgrounds.
