@@ -9,38 +9,172 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as ShareCodeRouteImport } from './routes/share.$code'
+import { Route as PartyCodeRouteImport } from './routes/party.$code'
+import { Route as CustomNewRouteImport } from './routes/custom.new'
+import { Route as CustomIdRouteImport } from './routes/custom.$id'
+import { Route as AppProRouteImport } from './routes/app.pro'
+import { Route as AppPartyRouteImport } from './routes/app.party'
+import { Route as AppCustomRouteImport } from './routes/app.custom'
+import { Route as AppClassicRouteImport } from './routes/app.classic'
 
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const ShareCodeRoute = ShareCodeRouteImport.update({
+  id: '/share/$code',
+  path: '/share/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartyCodeRoute = PartyCodeRouteImport.update({
+  id: '/party/$code',
+  path: '/party/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CustomNewRoute = CustomNewRouteImport.update({
+  id: '/custom/new',
+  path: '/custom/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CustomIdRoute = CustomIdRouteImport.update({
+  id: '/custom/$id',
+  path: '/custom/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppProRoute = AppProRouteImport.update({
+  id: '/pro',
+  path: '/pro',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPartyRoute = AppPartyRouteImport.update({
+  id: '/party',
+  path: '/party',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCustomRoute = AppCustomRouteImport.update({
+  id: '/custom',
+  path: '/custom',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppClassicRoute = AppClassicRouteImport.update({
+  id: '/classic',
+  path: '/classic',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/app/classic': typeof AppClassicRoute
+  '/app/custom': typeof AppCustomRoute
+  '/app/party': typeof AppPartyRoute
+  '/app/pro': typeof AppProRoute
+  '/custom/$id': typeof CustomIdRoute
+  '/custom/new': typeof CustomNewRoute
+  '/party/$code': typeof PartyCodeRoute
+  '/share/$code': typeof ShareCodeRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app/classic': typeof AppClassicRoute
+  '/app/custom': typeof AppCustomRoute
+  '/app/party': typeof AppPartyRoute
+  '/app/pro': typeof AppProRoute
+  '/custom/$id': typeof CustomIdRoute
+  '/custom/new': typeof CustomNewRoute
+  '/party/$code': typeof PartyCodeRoute
+  '/share/$code': typeof ShareCodeRoute
+  '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/app/classic': typeof AppClassicRoute
+  '/app/custom': typeof AppCustomRoute
+  '/app/party': typeof AppPartyRoute
+  '/app/pro': typeof AppProRoute
+  '/custom/$id': typeof CustomIdRoute
+  '/custom/new': typeof CustomNewRoute
+  '/party/$code': typeof PartyCodeRoute
+  '/share/$code': typeof ShareCodeRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/app/classic'
+    | '/app/custom'
+    | '/app/party'
+    | '/app/pro'
+    | '/custom/$id'
+    | '/custom/new'
+    | '/party/$code'
+    | '/share/$code'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/app/classic'
+    | '/app/custom'
+    | '/app/party'
+    | '/app/pro'
+    | '/custom/$id'
+    | '/custom/new'
+    | '/party/$code'
+    | '/share/$code'
+    | '/app'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/app/classic'
+    | '/app/custom'
+    | '/app/party'
+    | '/app/pro'
+    | '/custom/$id'
+    | '/custom/new'
+    | '/party/$code'
+    | '/share/$code'
+    | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  CustomIdRoute: typeof CustomIdRoute
+  CustomNewRoute: typeof CustomNewRoute
+  PartyCodeRoute: typeof PartyCodeRoute
+  ShareCodeRoute: typeof ShareCodeRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +182,97 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/share/$code': {
+      id: '/share/$code'
+      path: '/share/$code'
+      fullPath: '/share/$code'
+      preLoaderRoute: typeof ShareCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/party/$code': {
+      id: '/party/$code'
+      path: '/party/$code'
+      fullPath: '/party/$code'
+      preLoaderRoute: typeof PartyCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/custom/new': {
+      id: '/custom/new'
+      path: '/custom/new'
+      fullPath: '/custom/new'
+      preLoaderRoute: typeof CustomNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/custom/$id': {
+      id: '/custom/$id'
+      path: '/custom/$id'
+      fullPath: '/custom/$id'
+      preLoaderRoute: typeof CustomIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app/pro': {
+      id: '/app/pro'
+      path: '/pro'
+      fullPath: '/app/pro'
+      preLoaderRoute: typeof AppProRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/party': {
+      id: '/app/party'
+      path: '/party'
+      fullPath: '/app/party'
+      preLoaderRoute: typeof AppPartyRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/custom': {
+      id: '/app/custom'
+      path: '/custom'
+      fullPath: '/app/custom'
+      preLoaderRoute: typeof AppCustomRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/classic': {
+      id: '/app/classic'
+      path: '/classic'
+      fullPath: '/app/classic'
+      preLoaderRoute: typeof AppClassicRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppClassicRoute: typeof AppClassicRoute
+  AppCustomRoute: typeof AppCustomRoute
+  AppPartyRoute: typeof AppPartyRoute
+  AppProRoute: typeof AppProRoute
+  AppIndexRoute: typeof AppIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppClassicRoute: AppClassicRoute,
+  AppCustomRoute: AppCustomRoute,
+  AppPartyRoute: AppPartyRoute,
+  AppProRoute: AppProRoute,
+  AppIndexRoute: AppIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  CustomIdRoute: CustomIdRoute,
+  CustomNewRoute: CustomNewRoute,
+  PartyCodeRoute: PartyCodeRoute,
+  ShareCodeRoute: ShareCodeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
