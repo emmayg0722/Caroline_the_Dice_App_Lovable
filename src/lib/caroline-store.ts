@@ -32,6 +32,7 @@ type State = {
   recentScores: number[];
   packs: DicePack[];
   parties: PartyLink[];
+  soundId: string;
 };
 
 const DEFAULT_STATE: State = {
@@ -40,6 +41,7 @@ const DEFAULT_STATE: State = {
   recentScores: [],
   packs: [],
   parties: [],
+  soundId: "a",
 };
 
 function load(): State {
