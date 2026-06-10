@@ -1,8 +1,9 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { ArrowLeft, Save } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
+import { ArrowLeft, Camera, Save, X } from "lucide-react";
 import { CustomDieFace } from "@/components/caroline/Dice";
 import { useCarolineStore, newPackId, PACK_COLORS, type DicePack } from "@/lib/caroline-store";
+
 
 export const Route = createFileRoute("/custom/$id")({
   head: () => ({ meta: [{ title: "Edit Pack — Caroline" }] }),
