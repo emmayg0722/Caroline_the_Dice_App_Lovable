@@ -88,7 +88,7 @@ export const PRESET_PACKS: DicePack[] = [
   {
     id: "preset_hearts_pip",
     name: "Bluelover",
-    color: "var(--pink)",
+    color: "var(--snow)",
     createdAt: 0,
     sides: [
       { text: "", emoji: "💙", mode: "pip" },
