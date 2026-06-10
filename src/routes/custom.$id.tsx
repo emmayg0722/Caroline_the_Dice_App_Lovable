@@ -37,14 +37,47 @@ export function Editor({ id }: { id: string }) {
     }
   );
   const [error, setError] = useState<string | null>(null);
+  const fileInputs = useRef<(HTMLInputElement | null)[]>([]);
 
-  function update(i: number, key: "text" | "emoji", val: string) {
+  function update(i: number, patch: { text?: string; emoji?: string; photo?: string | null }) {
     setPack((p) => {
       const sides = p.sides.slice();
-      sides[i] = { ...sides[i], [key]: val };
+      const next = { ...sides[i] };
+      if (patch.text !== undefined) next.text = patch.text;
+      if (patch.emoji !== undefined) next.emoji = patch.emoji;
+      if (patch.photo !== undefined) {
+        if (patch.photo === null) delete next.photo;
+        else next.photo = patch.photo;
+      }
+      sides[i] = next;
       return { ...p, sides };
     });
   }
+
+  function onPickPhoto(i: number, file: File) {
+    // Compress to keep localStorage small
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const max = 320;
+        const scale = Math.min(1, max / Math.max(img.width, img.height));
+        const w = Math.round(img.width * scale);
+        const h = Math.round(img.height * scale);
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+        ctx.drawImage(img, 0, 0, w, h);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.78);
+        update(i, { photo: dataUrl });
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  }
+
 
   function onSave() {
     if (!pack.name.trim()) return setError("Give your pack a name.");
