@@ -238,7 +238,10 @@ export function AllSidesButton({
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="mt-4 rounded-2xl border border-ink/12 bg-card p-3">
+            <div
+              className="mt-4 rounded-2xl border border-ink/12 p-3"
+              style={{ background: surfaceFor(packColor) }}
+            >
               <div className="grid grid-cols-3 gap-2">
                 {sides.map((s, i) => (
                   <CustomDieFace
