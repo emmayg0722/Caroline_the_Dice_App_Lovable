@@ -109,18 +109,33 @@ export function cutoutWhiteBackground(file: File, max = 384): Promise<string> {
         const id = ctx.getImageData(0, 0, w, h);
         const d = id.data;
 
-        // 1) Sample border pixels for the background reference color.
-        let br = 0, bg = 0, bb = 0, bn = 0;
+        // 1) Sample border pixels for the background reference color, using
+        //    the median per-channel so a stray subject pixel on the edge
+        //    doesn't poison the reference.
+        const rs: number[] = [], gs: number[] = [], bs: number[] = [];
         const sample = (x: number, y: number) => {
           const i = (y * w + x) * 4;
-          br += d[i]; bg += d[i + 1]; bb += d[i + 2]; bn++;
+          rs.push(d[i]); gs.push(d[i + 1]); bs.push(d[i + 2]);
         };
         for (let x = 0; x < w; x++) { sample(x, 0); sample(x, h - 1); }
         for (let y = 0; y < h; y++) { sample(0, y); sample(w - 1, y); }
-        const bgR = br / bn, bgG = bg / bn, bgB = bb / bn;
+        const med = (a: number[]) => {
+          a.sort((x, y) => x - y);
+          return a[a.length >> 1];
+        };
+        const bgR = med(rs), bgG = med(gs), bgB = med(bs);
         const bgLum = (bgR + bgG + bgB) / 3;
-        // Tolerance loosens for light backgrounds (paper photos), tightens for colored.
-        const tol = bgLum > 220 ? 48 : 36;
+        // Variance among border samples tells us how clean the background is.
+        // High-variance backgrounds (busy / textured) need a wider tolerance,
+        // clean studio backgrounds need a tighter one to keep edges crisp.
+        let variance = 0;
+        for (let k = 0; k < rs.length; k++) {
+          const dr = rs[k] - bgR, dg = gs[k] - bgG, db = bs[k] - bgB;
+          variance += dr * dr + dg * dg + db * db;
+        }
+        variance = Math.sqrt(variance / rs.length);
+        const baseTol = bgLum > 220 ? 40 : bgLum < 40 ? 38 : 32;
+        const tol = Math.min(72, Math.round(baseTol + variance * 0.7));
         const tol2 = tol * tol;
 
         // 2) BFS flood-fill from edges in background-similar pixels.
@@ -147,21 +162,46 @@ export function cutoutWhiteBackground(file: File, max = 384): Promise<string> {
           if (y < h - 1) enqueue(x, y + 1);
         }
 
-        // 3) Feather edge: any opaque pixel touching a transparent neighbour
-        //    gets its alpha softened by how close its color is to the bg.
+        // 3) Feather edge across a wider band, then de-fringe halo color.
+        //    A pixel is in the feather band if any neighbour up to `radius`
+        //    away is transparent. Alpha ramps from 0 → 255 across the band
+        //    by color distance, and we subtract the bg tint from semi-
+        //    transparent pixels so light halos don't outline the subject.
         const out = new Uint8ClampedArray(d);
-        for (let y = 1; y < h - 1; y++) {
-          for (let x = 1; x < w - 1; x++) {
+        const radius = Math.max(1, Math.round(Math.min(w, h) / 220));
+        const featherLow = tol * 0.45;
+        const featherHigh = tol * 1.15;
+        const range = featherHigh - featherLow;
+        for (let y = 0; y < h; y++) {
+          for (let x = 0; x < w; x++) {
             const p = y * w + x;
             if (visited[p]) continue;
+            // Quick neighbour scan
+            let nearTransparent = false;
+            for (let dy = -radius; dy <= radius && !nearTransparent; dy++) {
+              const yy = y + dy;
+              if (yy < 0 || yy >= h) continue;
+              for (let dx = -radius; dx <= radius; dx++) {
+                const xx = x + dx;
+                if (xx < 0 || xx >= w) continue;
+                if (visited[yy * w + xx]) { nearTransparent = true; break; }
+              }
+            }
+            if (!nearTransparent) continue;
             const i = p * 4;
-            const tNeighbour =
-              visited[p - 1] || visited[p + 1] || visited[p - w] || visited[p + w];
-            if (!tNeighbour) continue;
             const dr = d[i] - bgR, dg = d[i + 1] - bgG, db = d[i + 2] - bgB;
             const dist = Math.sqrt(dr * dr + dg * dg + db * db);
-            const t = Math.min(1, Math.max(0, (dist - tol * 0.6) / (tol * 0.8)));
-            out[i + 3] = Math.round(255 * t);
+            const t = Math.min(1, Math.max(0, (dist - featherLow) / range));
+            const a = Math.round(255 * t);
+            out[i + 3] = a;
+            if (a > 0 && a < 255) {
+              // Un-premultiply the background tint to remove the halo:
+              // observed = subject*a + bg*(1-a) ⇒ subject = (observed - bg*(1-a)) / a
+              const inv = a / 255;
+              out[i]     = Math.max(0, Math.min(255, (d[i]     - bgR * (1 - inv)) / inv));
+              out[i + 1] = Math.max(0, Math.min(255, (d[i + 1] - bgG * (1 - inv)) / inv));
+              out[i + 2] = Math.max(0, Math.min(255, (d[i + 2] - bgB * (1 - inv)) / inv));
+            }
           }
         }
         ctx.putImageData(new ImageData(out, w, h), 0, 0);

@@ -49,6 +49,12 @@ export function Editor({ id }: { id: string }) {
   const [error, setError] = useState<string | null>(null);
   const [busyIdx, setBusyIdx] = useState<number | null>(null);
   const fileInputs = useRef<(HTMLInputElement | null)[]>([]);
+  // Staged cutout shown in a preview modal so the user can confirm before it
+  // commits to the side.
+  const [preview, setPreview] = useState<
+    | { idx: number; mode: "side" | "pip"; data: string; originalUrl: string; originalFile: File }
+    | null
+  >(null);
 
   function update(i: number, patch: Partial<Omit<DiceSide, "photo">> & { photo?: string | null }) {
     setPack((p) => {
@@ -73,12 +79,34 @@ export function Editor({ id }: { id: string }) {
         mode === "pip"
           ? await cutoutWhiteBackground(file, 320)
           : await compressPhoto(file, 320);
-      update(i, { photo: data });
+      const originalUrl = URL.createObjectURL(file);
+      setPreview({ idx: i, mode, data, originalUrl, originalFile: file });
     } catch {
       setError("Couldn't process that photo.");
     } finally {
       setBusyIdx(null);
     }
+  }
+
+  function confirmPreview() {
+    if (!preview) return;
+    update(preview.idx, { photo: preview.data });
+    URL.revokeObjectURL(preview.originalUrl);
+    setPreview(null);
+  }
+
+  function cancelPreview() {
+    if (!preview) return;
+    URL.revokeObjectURL(preview.originalUrl);
+    setPreview(null);
+  }
+
+  async function retryPreview() {
+    if (!preview) return;
+    const { idx, mode, originalFile, originalUrl } = preview;
+    URL.revokeObjectURL(originalUrl);
+    setPreview(null);
+    await onPickPhoto(idx, originalFile, mode);
   }
 
   function onSave() {
@@ -296,6 +324,91 @@ export function Editor({ id }: { id: string }) {
           <div className="mt-4 rounded-2xl bg-coral/15 p-3 text-sm text-coral">{error}</div>
         )}
       </div>
+
+      {preview && (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-ink/45 backdrop-blur-sm"
+          onClick={cancelPreview}
+        >
+          <div
+            className="mx-auto w-full max-w-[440px] animate-fade-in rounded-t-[28px] border-t border-ink/15 bg-cream p-5 pb-8 shadow-pop"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between">
+              <div>
+                <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">
+                  Preview
+                </div>
+                <div className="font-display text-xl font-black leading-tight">
+                  {preview.mode === "pip" ? "Background removed" : "Photo side"}
+                </div>
+                <div className="mt-0.5 text-xs text-ink/60">
+                  How it'll look on the die. Confirm to add it.
+                </div>
+              </div>
+              <button
+                onClick={cancelPreview}
+                className="grid h-9 w-9 place-items-center rounded-full bg-ink/10"
+                aria-label="Close"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <div className="rounded-2xl border border-ink/12 bg-card p-3">
+                <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-ink/55">
+                  Original
+                </div>
+                <div className="grid aspect-square place-items-center overflow-hidden rounded-xl bg-cream">
+                  <img
+                    src={preview.originalUrl}
+                    alt=""
+                    className="h-full w-full object-contain"
+                  />
+                </div>
+              </div>
+              <div className="rounded-2xl border border-ink/12 bg-card p-3">
+                <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-ink/55">
+                  On the die
+                </div>
+                <div className="grid aspect-square place-items-center">
+                  <CustomDieFace
+                    text={pack.sides[preview.idx]?.text ?? ""}
+                    emoji={pack.sides[preview.idx]?.emoji}
+                    photo={preview.data}
+                    mode={preview.mode}
+                    pipCount={preview.mode === "pip" ? preview.idx + 1 : undefined}
+                    size={132}
+                    bg={pack.color}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-5 flex gap-2">
+              <button
+                onClick={retryPreview}
+                className="flex-1 rounded-full border border-ink/20 bg-card py-3 text-sm font-semibold"
+              >
+                Re-process
+              </button>
+              <button
+                onClick={cancelPreview}
+                className="flex-1 rounded-full border border-ink/20 bg-card py-3 text-sm font-semibold"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmPreview}
+                className="flex-[1.4] rounded-full bg-ink py-3 text-sm font-semibold text-cream"
+              >
+                Use photo
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
