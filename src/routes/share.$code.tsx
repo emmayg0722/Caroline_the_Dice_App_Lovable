@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate, useParams, useRouter } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Copy, Share2, Check, Clock } from "lucide-react";
 import { useCarolineStore } from "@/lib/caroline-store";
 import { AllSidesButton } from "@/components/caroline/Dice";
@@ -24,7 +24,7 @@ function SharePage() {
   }
 
   const [url, setUrl] = useState(`/party/${code}`);
-  useMemo(() => {
+  useEffect(() => {
     if (typeof window !== "undefined") setUrl(`${window.location.origin}/party/${code}`);
   }, [code]);
 
