@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { X } from "lucide-react";
-import type { DiceSide } from "@/lib/caroline-store";
+import { type DiceSide, pickCardSurface as surfaceFor } from "@/lib/caroline-store";
 
 export function PhoneShell({ children }: { children: ReactNode }) {
   return (
