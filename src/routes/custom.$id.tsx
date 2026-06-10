@@ -40,7 +40,7 @@ export function Editor({ id }: { id: string }) {
   const [busyIdx, setBusyIdx] = useState<number | null>(null);
   const fileInputs = useRef<(HTMLInputElement | null)[]>([]);
 
-  function update(i: number, patch: Partial<DiceSide> & { photo?: string | null }) {
+  function update(i: number, patch: Partial<Omit<DiceSide, "photo">> & { photo?: string | null }) {
     setPack((p) => {
       const sides = p.sides.slice();
       const next: DiceSide = { ...sides[i] };
