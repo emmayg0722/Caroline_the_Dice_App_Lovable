@@ -84,19 +84,70 @@ if (typeof window !== "undefined") {
   }
 }
 
+// In-memory cache keyed by file identity + mode so re-opening the same
+// photo (or toggling the preview) reuses the previous result instantly.
+const photoCache = new Map<string, string>();
+const CACHE_LIMIT = 24;
+function cacheKey(file: File, mode: "cutout" | "compress", max: number) {
+  return `${mode}:${max}:${file.name}:${file.size}:${file.lastModified}`;
+}
+function cacheGet(key: string) {
+  const v = photoCache.get(key);
+  if (v) {
+    // bump recency
+    photoCache.delete(key);
+    photoCache.set(key, v);
+  }
+  return v;
+}
+function cacheSet(key: string, value: string) {
+  photoCache.set(key, value);
+  if (photoCache.size > CACHE_LIMIT) {
+    const first = photoCache.keys().next().value;
+    if (first) photoCache.delete(first);
+  }
+}
+export function clearPhotoCacheFor(file: File) {
+  for (const k of Array.from(photoCache.keys())) {
+    if (k.endsWith(`:${file.name}:${file.size}:${file.lastModified}`)) {
+      photoCache.delete(k);
+    }
+  }
+}
+
 // Edge-flood background removal:
 //  1. Sample the four borders to learn the dominant background color(s).
 //  2. BFS from every edge pixel, knocking out alpha for pixels within tolerance.
 //  3. Feather the cutout edge so silhouettes don't look jagged.
 // Works for white, near-white, and uniform colored backgrounds.
-export function cutoutWhiteBackground(file: File, max = 384): Promise<string> {
+export function cutoutWhiteBackground(file: File, max = 384, opts?: { force?: boolean }): Promise<string> {
+  const key = cacheKey(file, "cutout", max);
+  if (!opts?.force) {
+    const hit = cacheGet(key);
+    if (hit) return Promise.resolve(hit);
+  }
+  return cutoutWhiteBackgroundImpl(file, max).then((v) => {
+    cacheSet(key, v);
+    return v;
+  });
+}
+function cutoutWhiteBackgroundImpl(file: File, max: number): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onerror = () => reject(new Error("read"));
     reader.onload = () => {
       const img = new Image();
       img.onerror = () => reject(new Error("img"));
-      img.onload = () => {
+      img.onload = async () => {
+        // Yield once so the caller's loading UI can paint before we hog
+        // the main thread with the BFS + feather pass.
+        await new Promise<void>((r) => {
+          if (typeof (globalThis as any).requestIdleCallback === "function") {
+            (globalThis as any).requestIdleCallback(() => r(), { timeout: 50 });
+          } else {
+            setTimeout(r, 0);
+          }
+        });
         const scale = Math.min(1, max / Math.max(img.width, img.height));
         const w = Math.round(img.width * scale);
         const h = Math.round(img.height * scale);
@@ -213,7 +264,18 @@ export function cutoutWhiteBackground(file: File, max = 384): Promise<string> {
   });
 }
 
-export function compressPhoto(file: File, max = 320): Promise<string> {
+export function compressPhoto(file: File, max = 320, opts?: { force?: boolean }): Promise<string> {
+  const key = cacheKey(file, "compress", max);
+  if (!opts?.force) {
+    const hit = cacheGet(key);
+    if (hit) return Promise.resolve(hit);
+  }
+  return compressPhotoImpl(file, max).then((v) => {
+    cacheSet(key, v);
+    return v;
+  });
+}
+function compressPhotoImpl(file: File, max: number): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onerror = () => reject(new Error("read"));
