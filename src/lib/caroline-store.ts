@@ -1,6 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
 
-export type DiceSide = { text: string; emoji?: string; photo?: string };
+export type DiceSide = {
+  text: string;
+  emoji?: string;
+  photo?: string;
+  // "side" (default) = free combo of text + emoji + photo.
+  // "pip" = classic die feel: emoji OR cutout image only, no text.
+  mode?: "side" | "pip";
+};
 
 export type DicePack = {
   id: string;
