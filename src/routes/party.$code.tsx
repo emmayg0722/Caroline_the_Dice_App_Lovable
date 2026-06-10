@@ -44,10 +44,12 @@ function PartyActive() {
     if (!pack) return;
     setTumbling(true);
     playRollSound();
+    const ms = getRollDurationMs();
+    document.documentElement.style.setProperty("--tumble-ms", `${ms}ms`);
     setTimeout(() => {
       setRolled(Array.from({ length: count }, () => Math.floor(Math.random() * pack.sides.length)));
       setTumbling(false);
-    }, 450);
+    }, ms);
   }
 
   if (!party || !pack) {
