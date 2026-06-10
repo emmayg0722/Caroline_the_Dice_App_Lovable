@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ShareCodeRouteImport } from './routes/share.$code'
 import { Route as CustomNewRouteImport } from './routes/custom.new'
 import { Route as CustomIdRouteImport } from './routes/custom.$id'
 import { Route as AppProRouteImport } from './routes/app.pro'
@@ -26,6 +27,11 @@ const AppRoute = AppRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShareCodeRoute = ShareCodeRouteImport.update({
+  id: '/share/$code',
+  path: '/share/$code',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CustomNewRoute = CustomNewRouteImport.update({
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/app/pro': typeof AppProRoute
   '/custom/$id': typeof CustomIdRoute
   '/custom/new': typeof CustomNewRoute
+  '/share/$code': typeof ShareCodeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/app/pro': typeof AppProRoute
   '/custom/$id': typeof CustomIdRoute
   '/custom/new': typeof CustomNewRoute
+  '/share/$code': typeof ShareCodeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/app/pro': typeof AppProRoute
   '/custom/$id': typeof CustomIdRoute
   '/custom/new': typeof CustomNewRoute
+  '/share/$code': typeof ShareCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/app/pro'
     | '/custom/$id'
     | '/custom/new'
+    | '/share/$code'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/app/pro'
     | '/custom/$id'
     | '/custom/new'
+    | '/share/$code'
   id:
     | '__root__'
     | '/'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/app/pro'
     | '/custom/$id'
     | '/custom/new'
+    | '/share/$code'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -128,6 +140,7 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   CustomIdRoute: typeof CustomIdRoute
   CustomNewRoute: typeof CustomNewRoute
+  ShareCodeRoute: typeof ShareCodeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -144,6 +157,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/share/$code': {
+      id: '/share/$code'
+      path: '/share/$code'
+      fullPath: '/share/$code'
+      preLoaderRoute: typeof ShareCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/custom/new': {
@@ -212,6 +232,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   CustomIdRoute: CustomIdRoute,
   CustomNewRoute: CustomNewRoute,
+  ShareCodeRoute: ShareCodeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
