@@ -108,6 +108,11 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var s=localStorage.getItem('caroline.state.v1');if(s&&JSON.parse(s).theme==='dark'){document.documentElement.classList.add('theme-dark')}}catch(e){}`,
+          }}
+        />
       </head>
       <body>
         {children}
