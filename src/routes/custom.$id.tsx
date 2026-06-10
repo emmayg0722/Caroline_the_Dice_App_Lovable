@@ -72,13 +72,13 @@ export function Editor({ id }: { id: string }) {
     });
   }
 
-  async function onPickPhoto(i: number, file: File, mode: "side" | "pip") {
+  async function onPickPhoto(i: number, file: File, mode: "side" | "pip", opts?: { force?: boolean }) {
     setBusyIdx(i);
     try {
       const data =
         mode === "pip"
-          ? await cutoutWhiteBackground(file, 320)
-          : await compressPhoto(file, 320);
+          ? await cutoutWhiteBackground(file, 320, { force: opts?.force })
+          : await compressPhoto(file, 320, { force: opts?.force });
       const originalUrl = URL.createObjectURL(file);
       setPreview({ idx: i, mode, data, originalUrl, originalFile: file });
     } catch {
@@ -101,12 +101,23 @@ export function Editor({ id }: { id: string }) {
     setPreview(null);
   }
 
+  const [reprocessing, setReprocessing] = useState(false);
   async function retryPreview() {
-    if (!preview) return;
+    if (!preview || reprocessing) return;
     const { idx, mode, originalFile, originalUrl } = preview;
-    URL.revokeObjectURL(originalUrl);
-    setPreview(null);
-    await onPickPhoto(idx, originalFile, mode);
+    setReprocessing(true);
+    try {
+      // Force-bypass the cache so the user sees a fresh attempt.
+      const data =
+        mode === "pip"
+          ? await cutoutWhiteBackground(originalFile, 320, { force: true })
+          : await compressPhoto(originalFile, 320, { force: true });
+      setPreview({ idx, mode, data, originalUrl, originalFile });
+    } catch {
+      setError("Couldn't process that photo.");
+    } finally {
+      setReprocessing(false);
+    }
   }
 
   function onSave() {
