@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as ShareCodeRouteImport } from './routes/share.$code'
 import { Route as PartyCodeRouteImport } from './routes/party.$code'
 import { Route as CustomNewRouteImport } from './routes/custom.new'
@@ -29,6 +30,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
 } as any)
 const ShareCodeRoute = ShareCodeRouteImport.update({
   id: '/share/$code',
@@ -82,10 +88,10 @@ export interface FileRoutesByFullPath {
   '/custom/new': typeof CustomNewRoute
   '/party/$code': typeof PartyCodeRoute
   '/share/$code': typeof ShareCodeRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/app': typeof AppRouteWithChildren
   '/app/classic': typeof AppClassicRoute
   '/app/custom': typeof AppCustomRoute
   '/app/party': typeof AppPartyRoute
@@ -94,6 +100,7 @@ export interface FileRoutesByTo {
   '/custom/new': typeof CustomNewRoute
   '/party/$code': typeof PartyCodeRoute
   '/share/$code': typeof ShareCodeRoute
+  '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -107,6 +114,7 @@ export interface FileRoutesById {
   '/custom/new': typeof CustomNewRoute
   '/party/$code': typeof PartyCodeRoute
   '/share/$code': typeof ShareCodeRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -121,10 +129,10 @@ export interface FileRouteTypes {
     | '/custom/new'
     | '/party/$code'
     | '/share/$code'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/app'
     | '/app/classic'
     | '/app/custom'
     | '/app/party'
@@ -133,6 +141,7 @@ export interface FileRouteTypes {
     | '/custom/new'
     | '/party/$code'
     | '/share/$code'
+    | '/app'
   id:
     | '__root__'
     | '/'
@@ -145,6 +154,7 @@ export interface FileRouteTypes {
     | '/custom/new'
     | '/party/$code'
     | '/share/$code'
+    | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -171,6 +181,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
     }
     '/share/$code': {
       id: '/share/$code'
@@ -236,6 +253,7 @@ interface AppRouteChildren {
   AppCustomRoute: typeof AppCustomRoute
   AppPartyRoute: typeof AppPartyRoute
   AppProRoute: typeof AppProRoute
+  AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -243,6 +261,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppCustomRoute: AppCustomRoute,
   AppPartyRoute: AppPartyRoute,
   AppProRoute: AppProRoute,
+  AppIndexRoute: AppIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
