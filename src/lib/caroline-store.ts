@@ -157,6 +157,36 @@ export const PACK_COLORS = [
   "var(--snow)",
 ];
 
+export const CARD_SURFACES = [
+  "var(--paper)",
+  "var(--cream)",
+  "var(--sand)",
+  "var(--mist)",
+  "var(--dusk)",
+] as const;
+
+/** Pick a card surface that contrasts with a given pack color so dice stand out.
+ *  The mapping is hue-aware: warm dice → cool surfaces, cool dice → warm surfaces,
+ *  and white/very-light dice always get a tinted surface so they never disappear. */
+export function pickCardSurface(packColor: string): string {
+  const c = packColor;
+  // White / very light dice need a tinted surface to keep an edge.
+  if (c.includes("--snow") || c.includes("--cream")) return "var(--mist)";
+  // Warm yellows/peaches → cool surface
+  if (c.includes("--butter") || c.includes("--lemon") || c.includes("--peach") || c.includes("--clay")) {
+    return "var(--mist)";
+  }
+  // Cool blues/greens → warm surface
+  if (c.includes("--powder") || c.includes("--sky") || c.includes("--sage") || c.includes("--mint")) {
+    return "var(--sand)";
+  }
+  // Pinks / purples → neutral paper with a hint of warmth
+  if (c.includes("--pink") || c.includes("--plum") || c.includes("--lavender")) {
+    return "var(--cream)";
+  }
+  return "var(--paper)";
+}
+
 export function newPackId() {
   return "pk_" + Math.random().toString(36).slice(2, 10);
 }
