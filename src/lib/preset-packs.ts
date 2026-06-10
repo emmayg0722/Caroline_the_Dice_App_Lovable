@@ -32,7 +32,7 @@ export const PRESET_PACKS: DicePack[] = [
   {
     id: "preset_team",
     name: "Team Building 🏢",
-    color: "var(--powder)",
+    color: "var(--mint)",
     createdAt: 0,
     sides: [
       { text: "Team Pose", emoji: "💪" },
