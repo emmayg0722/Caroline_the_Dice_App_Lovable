@@ -36,6 +36,7 @@ type State = {
   dieScale: number;
   theme: "default" | "minimal" | "dark" | "pastel" | "meme";
   shakeEnabled: boolean;
+  dieColorMode: "rainbow" | "white";
 };
 
 const DEFAULT_STATE: State = {
@@ -48,7 +49,18 @@ const DEFAULT_STATE: State = {
   dieScale: 1,
   theme: "default",
   shakeEnabled: true,
+  dieColorMode: "rainbow",
 };
+
+/** Per-die color palette used by Classic and pack rolls (one color per die index). */
+export const DIE_PALETTE = [
+  "var(--butter)",
+  "var(--pink)",
+  "var(--powder)",
+  "var(--sage)",
+  "var(--lavender)",
+  "var(--cream)",
+];
 
 function load(): State {
   if (typeof window === "undefined") return DEFAULT_STATE;
@@ -130,8 +142,9 @@ export function useCarolineStore() {
   const setDieScale = useCallback((dieScale: number) => save({ ...ensure(), dieScale }), []);
   const setTheme = useCallback((theme: State["theme"]) => save({ ...ensure(), theme }), []);
   const setShakeEnabled = useCallback((shakeEnabled: boolean) => save({ ...ensure(), shakeEnabled }), []);
+  const setDieColorMode = useCallback((dieColorMode: State["dieColorMode"]) => save({ ...ensure(), dieColorMode }), []);
 
-  return { ...s, setPro, recordRoll, savePack, deletePack, createParty, deleteParty, setSoundId, setDieScale, setTheme, setShakeEnabled };
+  return { ...s, setPro, recordRoll, savePack, deletePack, createParty, deleteParty, setSoundId, setDieScale, setTheme, setShakeEnabled, setDieColorMode };
 }
 
 export function getStoredSoundId(): string {

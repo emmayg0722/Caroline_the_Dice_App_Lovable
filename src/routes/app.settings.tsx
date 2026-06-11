@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import {
   ArrowLeft, ChevronRight, Play, Check, Sliders, Volume2, VolumeX,
-  Palette, Crown, Info, Gift, RefreshCw, Smartphone,
+  Palette, Crown, Info, Gift, RefreshCw, Smartphone, Dices,
 } from "lucide-react";
 import { useCarolineStore } from "@/lib/caroline-store";
 import { SOUND_OPTIONS, playSoundById } from "@/lib/dice-sound";
@@ -46,7 +46,7 @@ function SettingsPage() {
 }
 
 function Menu({ onOpen }: { onOpen: (s: Section) => void }) {
-  const { shakeEnabled, setShakeEnabled } = useCarolineStore();
+  const { shakeEnabled, setShakeEnabled, dieColorMode, setDieColorMode } = useCarolineStore();
   const items: { id: Section; label: string; desc: string; Icon: typeof Sliders }[] = [
     { id: "size", label: "Dice size", desc: "Make dice bigger or smaller", Icon: Sliders },
     { id: "sound", label: "Sound", desc: "Choose your dice clatter", Icon: Volume2 },
@@ -82,6 +82,31 @@ function Menu({ onOpen }: { onOpen: (s: Section) => void }) {
             <span
               className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition ${
                 shakeEnabled ? "left-[22px]" : "left-0.5"
+              }`}
+            />
+          </button>
+        </div>
+        <div className="flex w-full items-center gap-3 rounded-2xl border border-ink/12 bg-card p-4 text-left shadow-pop">
+          <span className="grid h-10 w-10 place-items-center rounded-xl bg-cream text-ink">
+            <Dices className="h-5 w-5" />
+          </span>
+          <span className="flex-1">
+            <span className="block font-display text-base font-black">All-white dice</span>
+            <span className="block text-xs text-ink/60">
+              Use plain white dice instead of the colorful palette.
+            </span>
+          </span>
+          <button
+            role="switch"
+            aria-checked={dieColorMode === "white"}
+            onClick={() => setDieColorMode(dieColorMode === "white" ? "rainbow" : "white")}
+            className={`relative h-7 w-12 rounded-full transition ${
+              dieColorMode === "white" ? "bg-coral" : "bg-ink/20"
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition ${
+                dieColorMode === "white" ? "left-[22px]" : "left-0.5"
               }`}
             />
           </button>

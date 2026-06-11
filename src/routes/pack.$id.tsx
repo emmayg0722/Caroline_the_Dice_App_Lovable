@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate, useParams, useRouter } from "@tanst
 import { useRef, useState } from "react";
 import { ArrowLeft, Share2 } from "lucide-react";
 import { CustomDieFace, Confetti, PhoneShell, AllSidesButton } from "@/components/caroline/Dice";
-import { useCarolineStore, pickCardSurface } from "@/lib/caroline-store";
+import { useCarolineStore, pickCardSurface, DIE_PALETTE } from "@/lib/caroline-store";
 import { findPack, PRESET_PACKS } from "@/lib/preset-packs";
 import { playRollSound, getRollDurationMs } from "@/lib/dice-sound";
 import { useShakeToRoll } from "@/hooks/use-shake";
@@ -16,7 +16,7 @@ function RollPack() {
   const { id } = useParams({ from: "/pack/$id" });
   const navigate = useNavigate();
   const router = useRouter();
-  const { packs, pro, createParty, dieScale, shakeEnabled } = useCarolineStore();
+  const { packs, pro, createParty, dieScale, shakeEnabled, dieColorMode } = useCarolineStore();
   const pack = findPack(id, packs);
   const isPreset = PRESET_PACKS.some((p) => p.id === id);
 
@@ -139,11 +139,15 @@ function RollPack() {
 
         <div
           className="relative mt-4 grid min-h-[340px] place-content-center rounded-3xl border border-ink/15 p-4 shadow-pop"
-          style={{ background: pickCardSurface(pack.color) }}
+          style={{ background: pickCardSurface(dieColorMode === "white" ? "var(--snow)" : pack.color) }}
         >
           <div className="flex flex-wrap items-center justify-center gap-3">
             {rolled.map((idx, i) => {
               const s = pack.sides[idx];
+              const dieBg =
+                dieColorMode === "white"
+                  ? "#ffffff"
+                  : DIE_PALETTE[i % DIE_PALETTE.length];
               return (
                 <CustomDieFace
                   key={i}
@@ -153,7 +157,7 @@ function RollPack() {
                   mode={s.mode}
                   pipCount={s.mode === "pip" ? idx + 1 : undefined}
                   size={dieSize}
-                  bg={pack.color}
+                  bg={dieBg}
                   tumbling={tumbling}
                 />
               );

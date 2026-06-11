@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DieFace, Confetti } from "@/components/caroline/Dice";
-import { useCarolineStore } from "@/lib/caroline-store";
+import { useCarolineStore, DIE_PALETTE } from "@/lib/caroline-store";
 import { BeerPopup, useBeerTrigger } from "@/components/caroline/BeerPopup";
 import { playRollSound, getRollDurationMs } from "@/lib/dice-sound";
 import { useShakeToRoll } from "@/hooks/use-shake";
@@ -11,16 +11,23 @@ export const Route = createFileRoute("/app/classic")({
   component: ClassicPage,
 });
 
-const DIE_BG = ["var(--butter)", "var(--pink)", "var(--powder)", "var(--sage)", "var(--lavender)", "var(--cream)"];
-
 function ClassicPage() {
-  const { recentScores, recordRoll, dieScale, shakeEnabled } = useCarolineStore();
+  const { recentScores, recordRoll, dieScale, shakeEnabled, dieColorMode } = useCarolineStore();
   const [count, setCount] = useState(2);
   const [dice, setDice] = useState<number[]>([3, 5]);
   const [tumbling, setTumbling] = useState(false);
   const [confetti, setConfetti] = useState(false);
   const [beer, setBeer] = useState(false);
   const showBeer = useBeerTrigger();
+  const rollBtnRef = useRef<HTMLButtonElement>(null);
+  const [hintRoll, setHintRoll] = useState(true);
+
+  useEffect(() => {
+    // Focus the Roll button on mount so a user can just press Enter / tap.
+    rollBtnRef.current?.focus({ preventScroll: true });
+    const t = setTimeout(() => setHintRoll(false), 3200);
+    return () => clearTimeout(t);
+  }, []);
 
   useEffect(() => {
     setDice((d) => {
@@ -109,7 +116,7 @@ function ClassicPage() {
                 key={i}
                 value={v}
                 size={dieSize}
-                bg={DIE_BG[i % DIE_BG.length]}
+                bg={dieColorMode === "white" ? "#ffffff" : DIE_PALETTE[i % DIE_PALETTE.length]}
                 tumbling={tumbling}
               />
             ))}
@@ -148,8 +155,11 @@ function ClassicPage() {
       </section>
 
       <button
-        onClick={roll}
-        className="mt-3 w-full rounded-full bg-coral py-3.5 font-display text-xl font-black text-white shadow-pop active:scale-[0.99]"
+        ref={rollBtnRef}
+        onClick={() => { setHintRoll(false); roll(); }}
+        className={`mt-3 w-full rounded-full bg-coral py-3.5 font-display text-xl font-black text-white shadow-pop outline-none transition focus-visible:ring-4 focus-visible:ring-coral/40 active:scale-[0.99] ${
+          hintRoll ? "animate-pulse ring-4 ring-coral/40" : ""
+        }`}
       >
         Roll
       </button>
