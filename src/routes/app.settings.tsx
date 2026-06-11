@@ -86,6 +86,31 @@ function Menu({ onOpen }: { onOpen: (s: Section) => void }) {
             />
           </button>
         </div>
+        <div className="flex w-full items-center gap-3 rounded-2xl border border-ink/12 bg-card p-4 text-left shadow-pop">
+          <span className="grid h-10 w-10 place-items-center rounded-xl bg-cream text-ink">
+            <Dices className="h-5 w-5" />
+          </span>
+          <span className="flex-1">
+            <span className="block font-display text-base font-black">All-white dice</span>
+            <span className="block text-xs text-ink/60">
+              Use plain white dice instead of the colorful palette.
+            </span>
+          </span>
+          <button
+            role="switch"
+            aria-checked={dieColorMode === "white"}
+            onClick={() => setDieColorMode(dieColorMode === "white" ? "rainbow" : "white")}
+            className={`relative h-7 w-12 rounded-full transition ${
+              dieColorMode === "white" ? "bg-coral" : "bg-ink/20"
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition ${
+                dieColorMode === "white" ? "left-[22px]" : "left-0.5"
+              }`}
+            />
+          </button>
+        </div>
         {items.map(({ id, label, desc, Icon }) => (
           <button
             key={id}
