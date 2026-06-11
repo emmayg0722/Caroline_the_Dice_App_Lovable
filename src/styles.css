@@ -116,16 +116,21 @@
   --die-pip-highlight: rgba(255, 255, 255, 0.35);
 }
 
+/* ───────────────────────────── Style B · Dark Drama ───────────────────────── */
 .theme-dark {
-  --cream: oklch(0.22 0.01 280);
-  --ink: oklch(0.97 0.01 90);
-  --card: oklch(0.27 0.012 280);
+  --cream: #1a1a2e;
+  --ink: #ffffff;
+  --card: rgba(255, 255, 255, 0.07);
   --background: var(--cream);
   --foreground: var(--ink);
   --card-foreground: var(--ink);
-  --border: oklch(1 0 0 / 0.12);
-  /* Dice faces stay vivid in dark mode so pips + edges read clearly
-     against the dark card surface. */
+  --border: rgba(255, 255, 255, 0.14);
+  --coral: #e94560;
+  --accent: #e94560;
+  --ring: #e94560;
+  --mute: rgba(255, 255, 255, 0.7);
+  --muted-foreground: rgba(255, 255, 255, 0.7);
+  /* Dice faces stay vivid against the deep navy background. */
   --butter: oklch(0.84 0.14 92);
   --pink: oklch(0.78 0.12 350);
   --powder: oklch(0.78 0.1 240);
@@ -138,19 +143,104 @@
   --plum: oklch(0.74 0.11 335);
   --snow: oklch(0.93 0.005 90);
   --clay: oklch(0.78 0.08 55);
-  --paper: oklch(0.28 0.012 280);
-  --sand: oklch(0.27 0.014 80);
-  --mist: oklch(0.27 0.012 230);
-  --dusk: oklch(0.27 0.014 330);
+  --paper: rgba(255, 255, 255, 0.07);
+  --sand: rgba(255, 255, 255, 0.06);
+  --mist: rgba(255, 255, 255, 0.08);
+  --dusk: rgba(233, 69, 96, 0.12);
 
-  /* Dice rendering — brighter rim + stronger drop on dark surfaces */
-  --die-stroke: rgba(0, 0, 0, 0.28);
+  --die-stroke: rgba(0, 0, 0, 0.32);
   --die-highlight: rgba(255, 255, 255, 0.55);
-  --die-inner-shade: rgba(0, 0, 0, 0.18);
-  --die-shadow-soft: rgba(0, 0, 0, 0.5);
-  --die-shadow-drop: rgba(0, 0, 0, 0.7);
+  --die-inner-shade: rgba(0, 0, 0, 0.22);
+  --die-shadow-soft: rgba(0, 0, 0, 0.55);
+  --die-shadow-drop: rgba(233, 69, 96, 0.38);
   --die-pip: oklch(0.18 0.008 280);
   --die-pip-highlight: rgba(255, 255, 255, 0.5);
+}
+
+/* ──────────────────────────── Style A · Minimal Float ─────────────────────── */
+.theme-minimal {
+  --cream: #f4f6ff;
+  --ink: #333333;
+  --card: #ffffff;
+  --background: var(--cream);
+  --foreground: var(--ink);
+  --card-foreground: var(--ink);
+  --border: rgba(108, 99, 255, 0.14);
+  --coral: #6c63ff;
+  --accent: #6c63ff;
+  --ring: #6c63ff;
+  --mute: rgba(51, 51, 51, 0.5);
+  --muted-foreground: rgba(51, 51, 51, 0.5);
+  --paper: #ffffff;
+  --sand: #f1f3ff;
+  --mist: #eef0ff;
+  --dusk: #f5f3ff;
+
+  --die-stroke: rgba(108, 99, 255, 0.18);
+  --die-highlight: rgba(255, 255, 255, 0.85);
+  --die-inner-shade: rgba(51, 51, 80, 0.06);
+  --die-shadow-soft: rgba(108, 99, 255, 0.1);
+  --die-shadow-drop: rgba(108, 99, 255, 0.22);
+  --die-pip: #333333;
+  --die-pip-highlight: rgba(255, 255, 255, 0.5);
+}
+
+/* ──────────────────────────── Style C · Pastel Party ──────────────────────── */
+.theme-pastel {
+  --cream: #fce4ec;
+  --ink: #333333;
+  --card: rgba(255, 255, 255, 0.6);
+  --background: var(--cream);
+  --foreground: var(--ink);
+  --card-foreground: var(--ink);
+  --border: rgba(233, 30, 140, 0.18);
+  --coral: #e91e8c;
+  --accent: #e91e8c;
+  --ring: #e91e8c;
+  --mute: #888888;
+  --muted-foreground: #888888;
+  --paper: rgba(255, 255, 255, 0.65);
+  --sand: rgba(255, 255, 255, 0.5);
+  --mist: rgba(224, 247, 250, 0.7);
+  --dusk: rgba(232, 234, 246, 0.7);
+
+  --die-stroke: rgba(233, 30, 140, 0.18);
+  --die-highlight: rgba(255, 255, 255, 0.7);
+  --die-inner-shade: rgba(51, 51, 51, 0.06);
+  --die-shadow-soft: rgba(233, 30, 140, 0.1);
+  --die-shadow-drop: rgba(233, 30, 140, 0.22);
+  --die-pip: #333333;
+  --die-pip-highlight: rgba(255, 255, 255, 0.45);
+}
+
+/* ──────────────────────────── Style D · Meme Stamp ────────────────────────── */
+.theme-meme {
+  --cream: #fffde7;
+  --ink: #555555;
+  --card: #ffffff;
+  --background: var(--cream);
+  --foreground: var(--ink);
+  --card-foreground: var(--ink);
+  --border: rgba(244, 67, 54, 0.25);
+  --coral: #f44336;
+  --accent: #f44336;
+  --ring: #f44336;
+  --mute: rgba(85, 85, 85, 0.65);
+  --muted-foreground: rgba(85, 85, 85, 0.65);
+  --paper: #ffffff;
+  --sand: #fff9c4;
+  --mist: #fffde7;
+  --dusk: #ffe0b2;
+
+  --font-display: Impact, "Arial Black", "Haettenschweiler", sans-serif;
+
+  --die-stroke: rgba(0, 0, 0, 0.6);
+  --die-highlight: rgba(255, 255, 255, 0.7);
+  --die-inner-shade: rgba(0, 0, 0, 0.1);
+  --die-shadow-soft: rgba(0, 0, 0, 0.15);
+  --die-shadow-drop: rgba(244, 67, 54, 0.4);
+  --die-pip: #111111;
+  --die-pip-highlight: rgba(255, 255, 255, 0.4);
 }
 
 .phone-shell {
@@ -160,10 +250,16 @@
     var(--cream);
 }
 .theme-dark .phone-shell {
-  background:
-    radial-gradient(circle at 20% -10%, oklch(0.28 0.04 90) 0%, transparent 45%),
-    radial-gradient(circle at 120% 10%, oklch(0.26 0.04 310) 0%, transparent 40%),
-    var(--cream);
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+.theme-minimal .phone-shell {
+  background: linear-gradient(160deg, #f8f9ff 0%, #eef0ff 100%);
+}
+.theme-pastel .phone-shell {
+  background: linear-gradient(135deg, #fce4ec 0%, #e8eaf6 50%, #e0f7fa 100%);
+}
+.theme-meme .phone-shell {
+  background: #fffde7;
 }
 
 @layer base {
