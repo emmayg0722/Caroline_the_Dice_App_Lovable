@@ -142,8 +142,9 @@ export function useCarolineStore() {
   const setDieScale = useCallback((dieScale: number) => save({ ...ensure(), dieScale }), []);
   const setTheme = useCallback((theme: State["theme"]) => save({ ...ensure(), theme }), []);
   const setShakeEnabled = useCallback((shakeEnabled: boolean) => save({ ...ensure(), shakeEnabled }), []);
+  const setDieColorMode = useCallback((dieColorMode: State["dieColorMode"]) => save({ ...ensure(), dieColorMode }), []);
 
-  return { ...s, setPro, recordRoll, savePack, deletePack, createParty, deleteParty, setSoundId, setDieScale, setTheme, setShakeEnabled };
+  return { ...s, setPro, recordRoll, savePack, deletePack, createParty, deleteParty, setSoundId, setDieScale, setTheme, setShakeEnabled, setDieColorMode };
 }
 
 export function getStoredSoundId(): string {
