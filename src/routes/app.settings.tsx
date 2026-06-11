@@ -46,7 +46,7 @@ function SettingsPage() {
 }
 
 function Menu({ onOpen }: { onOpen: (s: Section) => void }) {
-  const { shakeEnabled, setShakeEnabled } = useCarolineStore();
+  const { shakeEnabled, setShakeEnabled, dieColorMode, setDieColorMode } = useCarolineStore();
   const items: { id: Section; label: string; desc: string; Icon: typeof Sliders }[] = [
     { id: "size", label: "Dice size", desc: "Make dice bigger or smaller", Icon: Sliders },
     { id: "sound", label: "Sound", desc: "Choose your dice clatter", Icon: Volume2 },
