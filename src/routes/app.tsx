@@ -12,7 +12,11 @@ function AppLayout() {
   const { theme } = useCarolineStore();
   useEffect(() => {
     if (typeof document === "undefined") return;
-    document.documentElement.classList.toggle("theme-dark", theme === "dark");
+    const root = document.documentElement;
+    ["theme-minimal", "theme-dark", "theme-pastel", "theme-meme"].forEach((c) =>
+      root.classList.remove(c)
+    );
+    if (theme !== "default") root.classList.add(`theme-${theme}`);
   }, [theme]);
   return (
     <PhoneShell>

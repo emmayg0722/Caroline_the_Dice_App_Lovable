@@ -110,7 +110,7 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var s=localStorage.getItem('caroline.state.v1');if(s&&JSON.parse(s).theme==='dark'){document.documentElement.classList.add('theme-dark')}}catch(e){}`,
+            __html: `try{var s=localStorage.getItem('caroline.state.v1');if(s){var t=JSON.parse(s).theme;if(t&&t!=='default'){document.documentElement.classList.add('theme-'+t)}}}catch(e){}`,
           }}
         />
       </head>

@@ -50,7 +50,7 @@ function Menu({ onOpen }: { onOpen: (s: Section) => void }) {
   const items: { id: Section; label: string; desc: string; Icon: typeof Sliders }[] = [
     { id: "size", label: "Dice size", desc: "Make dice bigger or smaller", Icon: Sliders },
     { id: "sound", label: "Sound", desc: "Choose your dice clatter", Icon: Volume2 },
-    { id: "theme", label: "Theme", desc: "Default or Dark", Icon: Palette },
+    { id: "theme", label: "Theme", desc: "Minimal, Dark, Pastel, Meme & more", Icon: Palette },
     { id: "premium", label: "Premium", desc: "Unlock Caroline Pro", Icon: Crown },
     { id: "about", label: "About", desc: "Terms, Privacy, Support", Icon: Info },
   ];
@@ -200,9 +200,55 @@ function SoundSection() {
 
 function ThemeSection() {
   const { theme, setTheme } = useCarolineStore();
-  const options: { id: "default" | "dark"; label: string; desc: string; bg: string; fg: string }[] = [
-    { id: "default", label: "Default", desc: "Warm cream & ink — the original look.", bg: "var(--cream)", fg: "var(--ink)" },
-    { id: "dark", label: "Dark", desc: "Easy on the eyes for late-night rolls.", bg: "#1c1c22", fg: "#fff" },
+  type ThemeId = "default" | "minimal" | "dark" | "pastel" | "meme";
+  const options: {
+    id: ThemeId;
+    label: string;
+    desc: string;
+    bg: string;
+    fg: string;
+    accent: string;
+  }[] = [
+    {
+      id: "default",
+      label: "Caroline",
+      desc: "Warm cream & ink — the original look.",
+      bg: "linear-gradient(135deg, #fdf6e3 0%, #fce4ec 100%)",
+      fg: "#222",
+      accent: "#e85d75",
+    },
+    {
+      id: "minimal",
+      label: "Minimal Float",
+      desc: "Clean lavender mist, indigo accent.",
+      bg: "linear-gradient(160deg, #f8f9ff 0%, #eef0ff 100%)",
+      fg: "#333",
+      accent: "#6C63FF",
+    },
+    {
+      id: "dark",
+      label: "Dark Drama",
+      desc: "Deep navy with a red-pink glow.",
+      bg: "linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)",
+      fg: "#fff",
+      accent: "#e94560",
+    },
+    {
+      id: "pastel",
+      label: "Pastel Party",
+      desc: "Soft pink, lilac & mint candy.",
+      bg: "linear-gradient(135deg, #fce4ec 0%, #e8eaf6 50%, #e0f7fa 100%)",
+      fg: "#333",
+      accent: "#e91e8c",
+    },
+    {
+      id: "meme",
+      label: "Meme Stamp",
+      desc: "Cream yellow, red Impact stamps.",
+      bg: "#fffde7",
+      fg: "#555",
+      accent: "#f44336",
+    },
   ];
   return (
     <Section title="Theme">
@@ -218,11 +264,23 @@ function ThemeSection() {
               }`}
               style={{ background: o.bg, color: o.fg }}
             >
-              <span className="grid h-10 w-10 place-items-center rounded-xl" style={{ background: o.fg, color: o.bg }}>
+              <span
+                className="grid h-10 w-10 place-items-center rounded-xl"
+                style={{ background: o.accent, color: "#fff" }}
+              >
                 <Palette className="h-5 w-5" />
               </span>
               <span className="flex-1">
-                <span className="block font-display text-base font-black">{o.label}</span>
+                <span
+                  className="block font-display text-base font-black"
+                  style={
+                    o.id === "meme"
+                      ? { fontFamily: "Impact, 'Arial Black', sans-serif", letterSpacing: 0 }
+                      : undefined
+                  }
+                >
+                  {o.label}
+                </span>
                 <span className="block text-xs opacity-80">{o.desc}</span>
               </span>
               {active && <Check className="h-5 w-5" />}
