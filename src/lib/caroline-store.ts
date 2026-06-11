@@ -34,7 +34,7 @@ type State = {
   parties: PartyLink[];
   soundId: string;
   dieScale: number;
-  theme: "default" | "dark";
+  theme: "default" | "minimal" | "dark" | "pastel" | "meme";
   shakeEnabled: boolean;
 };
 
