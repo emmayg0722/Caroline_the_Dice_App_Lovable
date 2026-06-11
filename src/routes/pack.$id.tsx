@@ -139,11 +139,15 @@ function RollPack() {
 
         <div
           className="relative mt-4 grid min-h-[340px] place-content-center rounded-3xl border border-ink/15 p-4 shadow-pop"
-          style={{ background: pickCardSurface(pack.color) }}
+          style={{ background: pickCardSurface(dieColorMode === "white" ? "var(--snow)" : pack.color) }}
         >
           <div className="flex flex-wrap items-center justify-center gap-3">
             {rolled.map((idx, i) => {
               const s = pack.sides[idx];
+              const dieBg =
+                dieColorMode === "white"
+                  ? "#ffffff"
+                  : DIE_PALETTE[i % DIE_PALETTE.length];
               return (
                 <CustomDieFace
                   key={i}
@@ -153,7 +157,7 @@ function RollPack() {
                   mode={s.mode}
                   pipCount={s.mode === "pip" ? idx + 1 : undefined}
                   size={dieSize}
-                  bg={pack.color}
+                  bg={dieBg}
                   tumbling={tumbling}
                 />
               );
