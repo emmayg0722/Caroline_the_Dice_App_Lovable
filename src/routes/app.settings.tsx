@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import {
   ArrowLeft, ChevronRight, Play, Check, Sliders, Volume2, VolumeX,
-  Palette, Crown, Info, Gift, RefreshCw,
+  Palette, Crown, Info, Gift, RefreshCw, Smartphone,
 } from "lucide-react";
 import { useCarolineStore } from "@/lib/caroline-store";
 import { SOUND_OPTIONS, playSoundById } from "@/lib/dice-sound";
@@ -46,6 +46,7 @@ function SettingsPage() {
 }
 
 function Menu({ onOpen }: { onOpen: (s: Section) => void }) {
+  const { shakeEnabled, setShakeEnabled } = useCarolineStore();
   const items: { id: Section; label: string; desc: string; Icon: typeof Sliders }[] = [
     { id: "size", label: "Dice size", desc: "Make dice bigger or smaller", Icon: Sliders },
     { id: "sound", label: "Sound", desc: "Choose your dice clatter", Icon: Volume2 },
@@ -60,6 +61,31 @@ function Menu({ onOpen }: { onOpen: (s: Section) => void }) {
       </div>
       <h1 className="mt-1 font-display text-4xl font-black leading-[0.95]">Settings</h1>
       <div className="mt-6 space-y-2">
+        <div className="flex w-full items-center gap-3 rounded-2xl border border-ink/12 bg-card p-4 text-left shadow-pop">
+          <span className="grid h-10 w-10 place-items-center rounded-xl bg-cream text-ink">
+            <Smartphone className="h-5 w-5" />
+          </span>
+          <span className="flex-1">
+            <span className="block font-display text-base font-black">Shake to roll</span>
+            <span className="block text-xs text-ink/60">
+              Give your phone a shake to roll the dice.
+            </span>
+          </span>
+          <button
+            role="switch"
+            aria-checked={shakeEnabled}
+            onClick={() => setShakeEnabled(!shakeEnabled)}
+            className={`relative h-7 w-12 rounded-full transition ${
+              shakeEnabled ? "bg-coral" : "bg-ink/20"
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition ${
+                shakeEnabled ? "left-[22px]" : "left-0.5"
+              }`}
+            />
+          </button>
+        </div>
         {items.map(({ id, label, desc, Icon }) => (
           <button
             key={id}
