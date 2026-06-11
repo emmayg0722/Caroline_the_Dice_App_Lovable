@@ -35,6 +35,7 @@ type State = {
   soundId: string;
   dieScale: number;
   theme: "default" | "dark";
+  shakeEnabled: boolean;
 };
 
 const DEFAULT_STATE: State = {
@@ -46,6 +47,7 @@ const DEFAULT_STATE: State = {
   soundId: "b",
   dieScale: 1,
   theme: "default",
+  shakeEnabled: true,
 };
 
 function load(): State {
@@ -127,8 +129,9 @@ export function useCarolineStore() {
   const setSoundId = useCallback((soundId: string) => save({ ...ensure(), soundId }), []);
   const setDieScale = useCallback((dieScale: number) => save({ ...ensure(), dieScale }), []);
   const setTheme = useCallback((theme: "default" | "dark") => save({ ...ensure(), theme }), []);
+  const setShakeEnabled = useCallback((shakeEnabled: boolean) => save({ ...ensure(), shakeEnabled }), []);
 
-  return { ...s, setPro, recordRoll, savePack, deletePack, createParty, deleteParty, setSoundId, setDieScale, setTheme };
+  return { ...s, setPro, recordRoll, savePack, deletePack, createParty, deleteParty, setSoundId, setDieScale, setTheme, setShakeEnabled };
 }
 
 export function getStoredSoundId(): string {

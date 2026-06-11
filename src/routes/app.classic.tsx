@@ -4,6 +4,7 @@ import { DieFace, Confetti } from "@/components/caroline/Dice";
 import { useCarolineStore } from "@/lib/caroline-store";
 import { BeerPopup, useBeerTrigger } from "@/components/caroline/BeerPopup";
 import { playRollSound, getRollDurationMs } from "@/lib/dice-sound";
+import { useShakeToRoll } from "@/hooks/use-shake";
 
 export const Route = createFileRoute("/app/classic")({
   head: () => ({ meta: [{ title: "Classic Dice — Caroline" }] }),
@@ -13,7 +14,7 @@ export const Route = createFileRoute("/app/classic")({
 const DIE_BG = ["var(--butter)", "var(--pink)", "var(--powder)", "var(--sage)", "var(--lavender)", "var(--cream)"];
 
 function ClassicPage() {
-  const { recentScores, recordRoll, dieScale } = useCarolineStore();
+  const { recentScores, recordRoll, dieScale, shakeEnabled } = useCarolineStore();
   const [count, setCount] = useState(2);
   const [dice, setDice] = useState<number[]>([3, 5]);
   const [tumbling, setTumbling] = useState(false);
@@ -53,26 +54,9 @@ function ClassicPage() {
     }, ms);
   }
 
-  useEffect(() => {
-    let last = 0;
-    let lx = 0, ly = 0, lz = 0;
-    function onMotion(e: DeviceMotionEvent) {
-      const a = e.accelerationIncludingGravity;
-      if (!a || a.x == null || a.y == null || a.z == null) return;
-      const dx = Math.abs(a.x - lx);
-      const dy = Math.abs(a.y - ly);
-      const dz = Math.abs(a.z - lz);
-      lx = a.x; ly = a.y; lz = a.z;
-      const now = Date.now();
-      if (dx + dy + dz > 28 && now - last > 900) {
-        last = now;
-        roll();
-      }
-    }
-    window.addEventListener("devicemotion", onMotion);
-    return () => window.removeEventListener("devicemotion", onMotion);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [count, showBeer]);
+  useShakeToRoll(() => {
+    if (!tumbling) roll();
+  }, { enabled: shakeEnabled });
 
   const baseSize = count <= 2 ? 120 : count <= 4 ? 92 : 72;
   const dieSize = Math.round(baseSize * (dieScale || 1));
