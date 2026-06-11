@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate, useParams, useRouter } from "@tanst
 import { useRef, useState } from "react";
 import { ArrowLeft, Share2 } from "lucide-react";
 import { CustomDieFace, Confetti, PhoneShell, AllSidesButton } from "@/components/caroline/Dice";
-import { useCarolineStore, pickCardSurface } from "@/lib/caroline-store";
+import { useCarolineStore, pickCardSurface, DIE_PALETTE } from "@/lib/caroline-store";
 import { findPack, PRESET_PACKS } from "@/lib/preset-packs";
 import { playRollSound, getRollDurationMs } from "@/lib/dice-sound";
 import { useShakeToRoll } from "@/hooks/use-shake";
