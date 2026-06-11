@@ -107,7 +107,7 @@ function ClassicPage() {
                 key={i}
                 value={v}
                 size={dieSize}
-                bg={DIE_BG[i % DIE_BG.length]}
+                bg={dieColorMode === "white" ? "#ffffff" : DIE_PALETTE[i % DIE_PALETTE.length]}
                 tumbling={tumbling}
               />
             ))}
