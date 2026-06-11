@@ -19,6 +19,15 @@ function ClassicPage() {
   const [confetti, setConfetti] = useState(false);
   const [beer, setBeer] = useState(false);
   const showBeer = useBeerTrigger();
+  const rollBtnRef = useRef<HTMLButtonElement>(null);
+  const [hintRoll, setHintRoll] = useState(true);
+
+  useEffect(() => {
+    // Focus the Roll button on mount so a user can just press Enter / tap.
+    rollBtnRef.current?.focus({ preventScroll: true });
+    const t = setTimeout(() => setHintRoll(false), 3200);
+    return () => clearTimeout(t);
+  }, []);
 
   useEffect(() => {
     setDice((d) => {
