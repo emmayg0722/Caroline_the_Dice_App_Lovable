@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import {
   ArrowLeft, ChevronRight, Play, Check, Sliders, Volume2, VolumeX,
-  Palette, Crown, Info, Gift, RefreshCw, Smartphone,
+  Palette, Crown, Info, Gift, RefreshCw, Smartphone, Dices,
 } from "lucide-react";
 import { useCarolineStore } from "@/lib/caroline-store";
 import { SOUND_OPTIONS, playSoundById } from "@/lib/dice-sound";
