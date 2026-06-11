@@ -155,8 +155,11 @@ function ClassicPage() {
       </section>
 
       <button
-        onClick={roll}
-        className="mt-3 w-full rounded-full bg-coral py-3.5 font-display text-xl font-black text-white shadow-pop active:scale-[0.99]"
+        ref={rollBtnRef}
+        onClick={() => { setHintRoll(false); roll(); }}
+        className={`mt-3 w-full rounded-full bg-coral py-3.5 font-display text-xl font-black text-white shadow-pop outline-none transition focus-visible:ring-4 focus-visible:ring-coral/40 active:scale-[0.99] ${
+          hintRoll ? "animate-pulse ring-4 ring-coral/40" : ""
+        }`}
       >
         Roll
       </button>
