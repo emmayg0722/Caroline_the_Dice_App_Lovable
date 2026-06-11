@@ -50,7 +50,7 @@ function Menu({ onOpen }: { onOpen: (s: Section) => void }) {
   const items: { id: Section; label: string; desc: string; Icon: typeof Sliders }[] = [
     { id: "size", label: "Dice size", desc: "Make dice bigger or smaller", Icon: Sliders },
     { id: "sound", label: "Sound", desc: "Choose your dice clatter", Icon: Volume2 },
-    { id: "theme", label: "Theme", desc: "Default or Dark", Icon: Palette },
+    { id: "theme", label: "Theme", desc: "Minimal, Dark, Pastel, Meme & more", Icon: Palette },
     { id: "premium", label: "Premium", desc: "Unlock Caroline Pro", Icon: Crown },
     { id: "about", label: "About", desc: "Terms, Privacy, Support", Icon: Info },
   ];
