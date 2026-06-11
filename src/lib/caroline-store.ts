@@ -128,7 +128,7 @@ export function useCarolineStore() {
 
   const setSoundId = useCallback((soundId: string) => save({ ...ensure(), soundId }), []);
   const setDieScale = useCallback((dieScale: number) => save({ ...ensure(), dieScale }), []);
-  const setTheme = useCallback((theme: "default" | "dark") => save({ ...ensure(), theme }), []);
+  const setTheme = useCallback((theme: State["theme"]) => save({ ...ensure(), theme }), []);
   const setShakeEnabled = useCallback((shakeEnabled: boolean) => save({ ...ensure(), shakeEnabled }), []);
 
   return { ...s, setPro, recordRoll, savePack, deletePack, createParty, deleteParty, setSoundId, setDieScale, setTheme, setShakeEnabled };
