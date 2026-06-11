@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DieFace, Confetti } from "@/components/caroline/Dice";
-import { useCarolineStore } from "@/lib/caroline-store";
+import { useCarolineStore, DIE_PALETTE } from "@/lib/caroline-store";
 import { BeerPopup, useBeerTrigger } from "@/components/caroline/BeerPopup";
 import { playRollSound, getRollDurationMs } from "@/lib/dice-sound";
 import { useShakeToRoll } from "@/hooks/use-shake";
@@ -11,10 +11,8 @@ export const Route = createFileRoute("/app/classic")({
   component: ClassicPage,
 });
 
-const DIE_BG = ["var(--butter)", "var(--pink)", "var(--powder)", "var(--sage)", "var(--lavender)", "var(--cream)"];
-
 function ClassicPage() {
-  const { recentScores, recordRoll, dieScale, shakeEnabled } = useCarolineStore();
+  const { recentScores, recordRoll, dieScale, shakeEnabled, dieColorMode } = useCarolineStore();
   const [count, setCount] = useState(2);
   const [dice, setDice] = useState<number[]>([3, 5]);
   const [tumbling, setTumbling] = useState(false);
