@@ -16,7 +16,7 @@ function RollPack() {
   const { id } = useParams({ from: "/pack/$id" });
   const navigate = useNavigate();
   const router = useRouter();
-  const { packs, pro, createParty, dieScale, shakeEnabled } = useCarolineStore();
+  const { packs, pro, createParty, dieScale, shakeEnabled, dieColorMode } = useCarolineStore();
   const pack = findPack(id, packs);
   const isPreset = PRESET_PACKS.some((p) => p.id === id);
 
