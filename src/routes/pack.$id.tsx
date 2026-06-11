@@ -5,6 +5,7 @@ import { CustomDieFace, Confetti, PhoneShell, AllSidesButton } from "@/component
 import { useCarolineStore, pickCardSurface } from "@/lib/caroline-store";
 import { findPack, PRESET_PACKS } from "@/lib/preset-packs";
 import { playRollSound, getRollDurationMs } from "@/lib/dice-sound";
+import { useShakeToRoll } from "@/hooks/use-shake";
 
 export const Route = createFileRoute("/pack/$id")({
   head: () => ({ meta: [{ title: "Roll — Caroline" }] }),
@@ -15,7 +16,7 @@ function RollPack() {
   const { id } = useParams({ from: "/pack/$id" });
   const navigate = useNavigate();
   const router = useRouter();
-  const { packs, pro, createParty, dieScale } = useCarolineStore();
+  const { packs, pro, createParty, dieScale, shakeEnabled } = useCarolineStore();
   const pack = findPack(id, packs);
   const isPreset = PRESET_PACKS.some((p) => p.id === id);
 
