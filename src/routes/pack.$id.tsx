@@ -25,6 +25,11 @@ function RollPack() {
   const [tumbling, setTumbling] = useState(false);
   const [confetti, setConfetti] = useState(false);
 
+  useShakeToRoll(() => {
+    if (pack && !tumbling) rollRef.current?.();
+  }, { enabled: shakeEnabled });
+  const rollRef = useRef<() => void>(() => {});
+
   if (!pack) {
     return (
       <PhoneShell>
@@ -57,10 +62,9 @@ function RollPack() {
       }
     }, ms);
   }
+  rollRef.current = roll;
 
-  useShakeToRoll(() => {
-    if (pack && !tumbling) roll();
-  }, { enabled: shakeEnabled });
+
 
 
 
