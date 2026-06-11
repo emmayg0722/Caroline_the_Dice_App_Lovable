@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate, useParams, useRouter } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ArrowLeft, Share2 } from "lucide-react";
 import { CustomDieFace, Confetti, PhoneShell, AllSidesButton } from "@/components/caroline/Dice";
 import { useCarolineStore, pickCardSurface } from "@/lib/caroline-store";
