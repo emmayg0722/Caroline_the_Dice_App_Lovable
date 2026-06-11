@@ -58,6 +58,12 @@ function RollPack() {
     }, ms);
   }
 
+  useShakeToRoll(() => {
+    if (pack && !tumbling) roll();
+  }, { enabled: shakeEnabled });
+
+
+
   function shareParty() {
     if (!pro) {
       navigate({ to: "/app/settings", search: { section: "premium" } });
