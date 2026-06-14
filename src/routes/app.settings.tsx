@@ -327,6 +327,48 @@ const PRO_FEATURES = [
 
 function PremiumSection() {
   const { pro, setPro } = useCarolineStore();
+  const [busy, setBusy] = useState<"buy" | "restore" | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleBuy() {
+    setError(null);
+    const { isIapAvailable, purchasePro } = await import("@/lib/iap");
+    if (!isIapAvailable()) {
+      // Web/preview: mock the unlock so the rest of the app is testable.
+      setPro(!pro);
+      return;
+    }
+    try {
+      setBusy("buy");
+      const ok = await purchasePro();
+      if (ok) setPro(true);
+    } catch (e: any) {
+      if (e?.userCancelled) return;
+      setError(e?.message ?? "Purchase failed. Please try again.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function handleRestore() {
+    setError(null);
+    const { isIapAvailable, restorePurchases } = await import("@/lib/iap");
+    if (!isIapAvailable()) {
+      setError("Restore is only available in the iOS app.");
+      return;
+    }
+    try {
+      setBusy("restore");
+      const ok = await restorePurchases();
+      setPro(ok);
+      if (!ok) setError("No previous purchase found on this Apple ID.");
+    } catch (e: any) {
+      setError(e?.message ?? "Restore failed.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
   return (
     <Section title="Premium">
       <p className="text-sm text-ink/70">
@@ -356,19 +398,32 @@ function PremiumSection() {
         </div>
       </div>
       <button
-        onClick={() => setPro(!pro)}
-        className={`mt-4 w-full rounded-full py-4 font-display text-lg font-black shadow-pop transition ${
+        onClick={handleBuy}
+        disabled={busy !== null}
+        className={`mt-4 w-full rounded-full py-4 font-display text-lg font-black shadow-pop transition disabled:opacity-60 ${
           pro ? "bg-sage text-ink" : "bg-coral text-white"
         }`}
       >
-        {pro ? "Pro is active ✓" : "Unlock Pro · $4.99"}
+        {busy === "buy"
+          ? "Processing…"
+          : pro
+            ? "Pro is active ✓"
+            : "Unlock Pro · $4.99"}
       </button>
+      {error && (
+        <p className="mt-2 text-center text-xs text-coral">{error}</p>
+      )}
       <div className="mt-3 grid grid-cols-2 gap-2">
         <button className="flex items-center justify-center gap-1.5 rounded-full border border-ink/15 bg-card py-3 text-xs font-semibold text-ink/80">
           <Gift className="h-3.5 w-3.5" /> Redeem Pro Code
         </button>
-        <button className="flex items-center justify-center gap-1.5 rounded-full border border-ink/15 bg-card py-3 text-xs font-semibold text-ink/80">
-          <RefreshCw className="h-3.5 w-3.5" /> Restore Purchase
+        <button
+          onClick={handleRestore}
+          disabled={busy !== null}
+          className="flex items-center justify-center gap-1.5 rounded-full border border-ink/15 bg-card py-3 text-xs font-semibold text-ink/80 disabled:opacity-60"
+        >
+          <RefreshCw className="h-3.5 w-3.5" />
+          {busy === "restore" ? "Restoring…" : "Restore Purchase"}
         </button>
       </div>
     </Section>
