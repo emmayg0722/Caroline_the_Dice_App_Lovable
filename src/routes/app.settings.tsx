@@ -377,16 +377,31 @@ function PremiumSection() {
 
 function AboutSection() {
   const items = [
-    { label: "Terms of Use", desc: "Coming soon" },
-    { label: "Privacy Policy", desc: "Coming soon" },
-    { label: "Support", desc: "Contact us at hello@caroline.app" },
+    {
+      label: "Terms of Use",
+      desc: "Read our terms",
+      href: "https://emmayg.netlify.app/#caroline-terms",
+    },
+    {
+      label: "Privacy Policy",
+      desc: "How we handle your data",
+      href: "https://emmayg.netlify.app/#caroline-terms",
+    },
+    {
+      label: "Support",
+      desc: "Get help or send feedback",
+      href: "https://emmayg.netlify.app/#caroline-support",
+    },
   ];
   return (
     <Section title="About">
       <div className="space-y-2">
         {items.map((it) => (
-          <div
+          <a
             key={it.label}
+            href={it.href}
+            target="_blank"
+            rel="noopener noreferrer"
             className="flex items-center justify-between rounded-2xl border border-ink/12 bg-card p-4 shadow-pop"
           >
             <span>
@@ -394,7 +409,7 @@ function AboutSection() {
               <span className="block text-xs text-ink/60">{it.desc}</span>
             </span>
             <ChevronRight className="h-5 w-5 text-ink/40" />
-          </div>
+          </a>
         ))}
       </div>
       <p className="mt-8 text-center text-[10px] uppercase tracking-[0.25em] text-ink/45">
