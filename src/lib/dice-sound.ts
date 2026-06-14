@@ -11,12 +11,6 @@ export const SOUND_OPTIONS: SoundOption[] = [
     url: "/__l5e/assets-v1/24ce48c4-d21c-466f-b304-43cefe87246c/dice-b.mp3",
   },
   {
-    id: "clack",
-    label: "Click-clack",
-    description: "Sharp, snappy click-clack.",
-    url: "/__l5e/assets-v1/b7dd3375-80d5-4f97-bbfc-6572af065373/dice-d.mp3",
-  },
-  {
     id: "off",
     label: "Off",
     description: "Silent rolls — no sound effect.",
