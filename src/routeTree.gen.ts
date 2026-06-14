@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
@@ -23,6 +25,16 @@ import { Route as AppPartyRouteImport } from './routes/app.party'
 import { Route as AppCustomRouteImport } from './routes/app.custom'
 import { Route as AppClassicRouteImport } from './routes/app.classic'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppRoute = AppRouteImport.update({
   id: '/app',
   path: '/app',
@@ -92,6 +104,8 @@ const AppClassicRoute = AppClassicRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/app/classic': typeof AppClassicRoute
   '/app/custom': typeof AppCustomRoute
   '/app/party': typeof AppPartyRoute
@@ -106,6 +120,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/app/classic': typeof AppClassicRoute
   '/app/custom': typeof AppCustomRoute
   '/app/party': typeof AppPartyRoute
@@ -122,6 +138,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/app/classic': typeof AppClassicRoute
   '/app/custom': typeof AppCustomRoute
   '/app/party': typeof AppPartyRoute
@@ -139,6 +157,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
+    | '/privacy'
+    | '/terms'
     | '/app/classic'
     | '/app/custom'
     | '/app/party'
@@ -153,6 +173,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/privacy'
+    | '/terms'
     | '/app/classic'
     | '/app/custom'
     | '/app/party'
@@ -168,6 +190,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/app'
+    | '/privacy'
+    | '/terms'
     | '/app/classic'
     | '/app/custom'
     | '/app/party'
@@ -184,6 +208,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  PrivacyRoute: typeof PrivacyRoute
+  TermsRoute: typeof TermsRoute
   CustomIdRoute: typeof CustomIdRoute
   CustomNewRoute: typeof CustomNewRoute
   PackIdRoute: typeof PackIdRoute
@@ -193,6 +219,20 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app': {
       id: '/app'
       path: '/app'
@@ -310,6 +350,8 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  PrivacyRoute: PrivacyRoute,
+  TermsRoute: TermsRoute,
   CustomIdRoute: CustomIdRoute,
   CustomNewRoute: CustomNewRoute,
   PackIdRoute: PackIdRoute,

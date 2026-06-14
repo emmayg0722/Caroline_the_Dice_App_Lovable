@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import {
   ArrowLeft, ChevronRight, Play, Check, Sliders, Volume2, VolumeX,
@@ -431,41 +431,56 @@ function PremiumSection() {
 }
 
 function AboutSection() {
-  const items = [
-    {
-      label: "Terms of Use",
-      desc: "Read our terms",
-      href: "https://emmayg.netlify.app/#caroline-terms",
-    },
-    {
-      label: "Privacy Policy",
-      desc: "How we handle your data",
-      href: "https://emmayg.netlify.app/#caroline-terms",
-    },
+  type Item = {
+    label: string;
+    desc: string;
+    to?: "/terms" | "/privacy";
+    href?: string;
+    external?: boolean;
+  };
+  const items: Item[] = [
+    { label: "Terms of Use", desc: "Read our terms", to: "/terms" },
+    { label: "Privacy Policy", desc: "How we handle your data", to: "/privacy" },
     {
       label: "Support",
       desc: "Get help or send feedback",
       href: "https://emmayg.netlify.app/#caroline-support",
+      external: true,
     },
   ];
   return (
     <Section title="About">
       <div className="space-y-2">
-        {items.map((it) => (
-          <a
-            key={it.label}
-            href={it.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-between rounded-2xl border border-ink/12 bg-card p-4 shadow-pop"
-          >
-            <span>
-              <span className="block font-display text-base font-black">{it.label}</span>
-              <span className="block text-xs text-ink/60">{it.desc}</span>
-            </span>
-            <ChevronRight className="h-5 w-5 text-ink/40" />
-          </a>
-        ))}
+        {items.map((it) => {
+          const className =
+            "flex items-center justify-between rounded-2xl border border-ink/12 bg-card p-4 shadow-pop";
+          const inner = (
+            <>
+              <span>
+                <span className="block font-display text-base font-black">
+                  {it.label}
+                </span>
+                <span className="block text-xs text-ink/60">{it.desc}</span>
+              </span>
+              <ChevronRight className="h-5 w-5 text-ink/40" />
+            </>
+          );
+          return it.to ? (
+            <Link key={it.label} to={it.to} className={className}>
+              {inner}
+            </Link>
+          ) : (
+            <a
+              key={it.label}
+              href={it.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={className}
+            >
+              {inner}
+            </a>
+          );
+        })}
       </div>
       <p className="mt-8 text-center text-[10px] uppercase tracking-[0.25em] text-ink/45">
         Caroline · The Dice · v1.0
