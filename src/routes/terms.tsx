@@ -89,8 +89,8 @@ function TermsPage() {
         <h2 className="font-display text-xl font-black">Contact</h2>
         <p>
           Questions? Email{" "}
-          <a className="underline" href="mailto:hello@emmayg.com">
-            hello@emmayg.com
+          <a className="underline" href="mailto:emmagao0722@gmail.com">
+            emmagao0722@gmail.com
           </a>
           .
         </p>

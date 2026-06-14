@@ -87,9 +87,9 @@ function PrivacyPage() {
           Questions, requests, or feedback? Email{" "}
           <a
             className="underline"
-            href="mailto:hello@emmayg.com"
+            href="mailto:emmagao0722@gmail.com"
           >
-            hello@emmayg.com
+            emmagao0722@gmail.com
           </a>
           .
         </p>
