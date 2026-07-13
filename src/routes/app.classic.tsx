@@ -69,7 +69,7 @@ function ClassicPage() {
   const dieSize = Math.round(baseSize * (dieScale || 1));
 
   return (
-    <div className="px-5 pt-5">
+    <div className="px-5 pt-12">
       <Confetti show={confetti} />
       <BeerPopup open={beer} onClose={() => setBeer(false)} />
 
