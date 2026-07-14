@@ -139,7 +139,10 @@ export function Editor({ id }: { id: string }) {
 
   return (
     <div className="mx-auto min-h-screen max-w-[440px] bg-cream pb-24">
-      <div className="sticky top-0 z-10 flex items-center justify-between bg-cream/90 px-5 pb-3 pt-5 backdrop-blur">
+      <div
+        className="sticky top-0 z-10 flex items-center justify-between bg-cream/90 px-5 pb-3 backdrop-blur"
+        style={{ paddingTop: "calc(env(safe-area-inset-top) + 1.25rem)" }}
+      >
         <button
           onClick={() => navigate({ to: "/app/custom" })}
           className="grid h-10 w-10 place-items-center rounded-full border border-ink/15 bg-card"

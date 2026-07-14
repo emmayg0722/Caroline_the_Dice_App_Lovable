@@ -66,6 +66,11 @@ export async function purchasePro(): Promise<boolean> {
   if (!isNative()) {
     throw new Error("In-app purchases are only available in the iOS app.");
   }
+  if (!RC_IOS_KEY) {
+    throw new Error(
+      "Purchases aren't configured yet — set VITE_REVENUECAT_IOS_KEY and rebuild.",
+    );
+  }
   await ensureInit();
   const { Purchases } = await import("@revenuecat/purchases-capacitor");
   const offerings = await Purchases.getOfferings();
@@ -90,6 +95,40 @@ export async function restorePurchases(): Promise<boolean> {
   const { Purchases } = await import("@revenuecat/purchases-capacitor");
   const info = await Purchases.restorePurchases();
   return Boolean(info.customerInfo.entitlements.active[PRO_ENTITLEMENT_ID]);
+}
+
+/**
+ * Opens Apple's offer-code redemption sheet (iOS only). The result arrives
+ * asynchronously through watchProEntitlement, not as a return value.
+ */
+export async function redeemProCode(): Promise<void> {
+  if (!isNative()) {
+    throw new Error("Redeeming codes is only available in the iOS app.");
+  }
+  await ensureInit();
+  const { Purchases } = await import("@revenuecat/purchases-capacitor");
+  await Purchases.presentCodeRedemptionSheet();
+}
+
+/**
+ * Reports whether Pro is active now, and again whenever RevenueCat pushes an
+ * update (purchase on another device, redeemed code, refund).
+ */
+export async function watchProEntitlement(
+  onChange: (active: boolean) => void,
+): Promise<void> {
+  if (!isNative()) return;
+  await ensureInit();
+  try {
+    const { Purchases } = await import("@revenuecat/purchases-capacitor");
+    await Purchases.addCustomerInfoUpdateListener((customerInfo) => {
+      onChange(Boolean(customerInfo.entitlements.active[PRO_ENTITLEMENT_ID]));
+    });
+    const info = await Purchases.getCustomerInfo();
+    onChange(Boolean(info.customerInfo.entitlements.active[PRO_ENTITLEMENT_ID]));
+  } catch (err) {
+    console.warn("[iap] watchProEntitlement failed", err);
+  }
 }
 
 export function isIapAvailable() {

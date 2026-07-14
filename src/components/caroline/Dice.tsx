@@ -2,6 +2,15 @@ import { useState, type ReactNode } from "react";
 import { X } from "lucide-react";
 import { type DiceSide, pickCardSurface as surfaceFor } from "@/lib/caroline-store";
 
+/** Soften a die fill so the pastels read gently, not fully saturated. Applied
+ *  only to the die surface — the palette vars stay vivid for buttons/accents.
+ *  Raise DIE_SOFTEN for more washout, lower it for more color. */
+const DIE_SOFTEN = 0.26;
+function softDieBg(bg: string): string {
+  const w = `rgba(255, 255, 255, ${DIE_SOFTEN})`;
+  return `linear-gradient(0deg, ${w}, ${w}), ${bg}`;
+}
+
 /** Unified rim + highlight + drop shadow, scaled to the die size so small dice
  *  keep a crisp edge on any surface (light or dark) and large dice still feel soft. */
 function dieShadow(size: number): string {
@@ -20,7 +29,13 @@ function dieShadow(size: number): string {
 export function PhoneShell({ children }: { children: ReactNode }) {
   return (
     <div className="phone-shell min-h-screen">
-      <div className="relative mx-auto min-h-screen w-full max-w-[440px] overflow-hidden">
+      {/* Pad for the status-bar / notch safe area. The native web view runs
+          edge-to-edge (contentInset "never"), so every screen needs this to
+          keep its header clear of the status bar. */}
+      <div
+        className="relative mx-auto min-h-screen w-full max-w-[440px] overflow-hidden"
+        style={{ paddingTop: "env(safe-area-inset-top)" }}
+      >
         {children}
       </div>
     </div>
@@ -89,7 +104,7 @@ export function DieFace({
       style={{
         width: size,
         height: size,
-        background: bg,
+        background: softDieBg(bg),
         borderRadius: Math.round(size * 0.18),
         boxShadow: dieShadow(size),
       }}
@@ -134,7 +149,7 @@ export function CustomDieFace({
         style={{
           width: size,
           height: size,
-          background: bg,
+          background: softDieBg(bg),
           borderRadius: Math.round(size * 0.18),
           boxShadow: dieShadow(size),
         }}
@@ -182,7 +197,7 @@ export function CustomDieFace({
       style={{
         width: size,
         height: size,
-        background: bg,
+        background: softDieBg(bg),
         borderRadius: Math.round(size * 0.18),
         boxShadow: dieShadow(size),
       }}

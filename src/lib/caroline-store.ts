@@ -28,7 +28,6 @@ const KEY = "caroline.state.v1";
 
 type State = {
   pro: boolean;
-  rolls: number;
   recentScores: number[];
   packs: DicePack[];
   parties: PartyLink[];
@@ -41,7 +40,6 @@ type State = {
 
 const DEFAULT_STATE: State = {
   pro: false,
-  rolls: 0,
   recentScores: [],
   packs: [],
   parties: [],
@@ -110,7 +108,6 @@ export function useCarolineStore() {
     const cur = ensure();
     save({
       ...cur,
-      rolls: cur.rolls + 1,
       recentScores: [total, ...cur.recentScores].slice(0, 6),
     });
   }, []);
@@ -149,13 +146,6 @@ export function useCarolineStore() {
 
 export function getStoredSoundId(): string {
   return ensure().soundId;
-}
-
-export function shouldShowBeer(rolls: number): boolean {
-  if (rolls === 20) return true;
-  if (rolls === 60) return true;
-  if (rolls > 60 && (rolls - 60) % 100 === 0) return true;
-  return false;
 }
 
 export const PACK_COLORS = [

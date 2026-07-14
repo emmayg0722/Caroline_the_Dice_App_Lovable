@@ -5,6 +5,7 @@ import {
   Palette, Crown, Info, Gift, RefreshCw, Smartphone, Dices,
 } from "lucide-react";
 import { useCarolineStore } from "@/lib/caroline-store";
+import { useProPurchase } from "@/hooks/use-pro-purchase";
 import { SOUND_OPTIONS, playSoundById } from "@/lib/dice-sound";
 import { DieFace } from "@/components/caroline/Dice";
 
@@ -29,7 +30,7 @@ function SettingsPage() {
   if (section === "menu") return <Menu onOpen={setSection} />;
 
   return (
-    <div className="px-5 pt-5">
+    <div className="px-5 pt-20">
       <button
         onClick={() => setSection("menu")}
         className="mb-3 flex items-center gap-2 text-sm font-semibold text-ink/70"
@@ -55,7 +56,7 @@ function Menu({ onOpen }: { onOpen: (s: Section) => void }) {
     { id: "about", label: "About", desc: "Terms, Privacy, Support", Icon: Info },
   ];
   return (
-    <div className="px-5 pt-5">
+    <div className="px-5 pt-20">
       <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">
         Settings
       </div>
@@ -322,52 +323,10 @@ const PRO_FEATURES = [
   "Customize all six sides",
   "Names, emojis, foods, animals, dares, friends",
   "Share Party Links valid for 10 hours",
-  "No 'Buy us a beer' popups",
 ];
 
 function PremiumSection() {
-  const { pro, setPro } = useCarolineStore();
-  const [busy, setBusy] = useState<"buy" | "restore" | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  async function handleBuy() {
-    setError(null);
-    const { isIapAvailable, purchasePro } = await import("@/lib/iap");
-    if (!isIapAvailable()) {
-      // Web/preview: mock the unlock so the rest of the app is testable.
-      setPro(!pro);
-      return;
-    }
-    try {
-      setBusy("buy");
-      const ok = await purchasePro();
-      if (ok) setPro(true);
-    } catch (e: any) {
-      if (e?.userCancelled) return;
-      setError(e?.message ?? "Purchase failed. Please try again.");
-    } finally {
-      setBusy(null);
-    }
-  }
-
-  async function handleRestore() {
-    setError(null);
-    const { isIapAvailable, restorePurchases } = await import("@/lib/iap");
-    if (!isIapAvailable()) {
-      setError("Restore is only available in the iOS app.");
-      return;
-    }
-    try {
-      setBusy("restore");
-      const ok = await restorePurchases();
-      setPro(ok);
-      if (!ok) setError("No previous purchase found on this Apple ID.");
-    } catch (e: any) {
-      setError(e?.message ?? "Restore failed.");
-    } finally {
-      setBusy(null);
-    }
-  }
+  const { pro, busy, error, buy, restore, redeem } = useProPurchase();
 
   return (
     <Section title="Premium">
@@ -398,7 +357,7 @@ function PremiumSection() {
         </div>
       </div>
       <button
-        onClick={handleBuy}
+        onClick={buy}
         disabled={busy !== null}
         className={`mt-4 w-full rounded-full py-4 font-display text-lg font-black shadow-pop transition disabled:opacity-60 ${
           pro ? "bg-sage text-ink" : "bg-coral text-white"
@@ -414,11 +373,16 @@ function PremiumSection() {
         <p className="mt-2 text-center text-xs text-coral">{error}</p>
       )}
       <div className="mt-3 grid grid-cols-2 gap-2">
-        <button className="flex items-center justify-center gap-1.5 rounded-full border border-ink/15 bg-card py-3 text-xs font-semibold text-ink/80">
-          <Gift className="h-3.5 w-3.5" /> Redeem Pro Code
+        <button
+          onClick={redeem}
+          disabled={busy !== null}
+          className="flex items-center justify-center gap-1.5 rounded-full border border-ink/15 bg-card py-3 text-xs font-semibold text-ink/80 disabled:opacity-60"
+        >
+          <Gift className="h-3.5 w-3.5" />
+          {busy === "redeem" ? "Opening…" : "Redeem Pro Code"}
         </button>
         <button
-          onClick={handleRestore}
+          onClick={restore}
           disabled={busy !== null}
           className="flex items-center justify-center gap-1.5 rounded-full border border-ink/15 bg-card py-3 text-xs font-semibold text-ink/80 disabled:opacity-60"
         >
