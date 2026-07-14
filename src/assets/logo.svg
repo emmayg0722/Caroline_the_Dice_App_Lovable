@@ -1,0 +1,18 @@
+<svg width="680" height="240" viewBox="0 0 680 240" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title>Caroline dice app logo</title>
+  <desc>A rounded pastel die showing five pips beside the wordmark Caroline in a soft serif.</desc>
+  <g transform="rotate(-8 130 120)">
+    <rect x="52" y="42" width="156" height="156" rx="40" fill="#F6C84A"/>
+    <rect x="52" y="42" width="156" height="156" rx="40" fill="none" stroke="#E8654A" stroke-width="6"/>
+    <rect x="66" y="56" width="128" height="60" rx="30" fill="#FFFFFF" opacity="0.28"/>
+    <g fill="#2E2C33">
+      <circle cx="96" cy="86" r="13"/>
+      <circle cx="164" cy="86" r="13"/>
+      <circle cx="130" cy="120" r="13"/>
+      <circle cx="96" cy="154" r="13"/>
+      <circle cx="164" cy="154" r="13"/>
+    </g>
+  </g>
+  <text x="250" y="140" font-family="Fraunces, ui-serif, Georgia, serif" font-size="72" font-weight="600" fill="#2E2C33">Caroline</text>
+  <text x="253" y="176" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="20" letter-spacing="6" fill="#E8654A">ROLL SOMETHING GOOD</text>
+</svg>

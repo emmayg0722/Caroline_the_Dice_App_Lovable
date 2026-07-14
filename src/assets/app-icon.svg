@@ -1,0 +1,12 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title>Caroline app icon</title>
+  <desc>Five dots in a dice-five layout on a white background: four black corners and a yellow center.</desc>
+  <rect width="1024" height="1024" fill="#FFFFFF"/>
+  <g>
+    <circle cx="302" cy="302" r="100" fill="#2E2C33"/>
+    <circle cx="722" cy="302" r="100" fill="#2E2C33"/>
+    <circle cx="512" cy="512" r="100" fill="#F6C84A"/>
+    <circle cx="302" cy="722" r="100" fill="#2E2C33"/>
+    <circle cx="722" cy="722" r="100" fill="#2E2C33"/>
+  </g>
+</svg>
