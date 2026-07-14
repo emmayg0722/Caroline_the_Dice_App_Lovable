@@ -1,0 +1,17 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title>Caroline app icon</title>
+  <desc>Rounded pastel die showing five pips on a warm cream background, full bleed.</desc>
+  <rect width="1024" height="1024" fill="#FBF6EC"/>
+  <g transform="rotate(-8 512 512)">
+    <rect x="212" y="212" width="600" height="600" rx="150" fill="#F6C84A"/>
+    <rect x="212" y="212" width="600" height="600" rx="150" fill="none" stroke="#E8654A" stroke-width="24"/>
+    <rect x="267" y="267" width="490" height="230" rx="115" fill="#FFFFFF" opacity="0.28"/>
+    <g fill="#2E2C33">
+      <circle cx="382" cy="382" r="50"/>
+      <circle cx="642" cy="382" r="50"/>
+      <circle cx="512" cy="512" r="50"/>
+      <circle cx="382" cy="642" r="50"/>
+      <circle cx="642" cy="642" r="50"/>
+    </g>
+  </g>
+</svg>
