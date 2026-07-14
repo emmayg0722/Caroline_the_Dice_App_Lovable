@@ -125,6 +125,23 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  useEffect(() => {
+    // The splash is held (launchAutoHide: false) until the web app has
+    // rendered, so there's no blank/white flash on launch. Hide it now, with a
+    // safety timeout so it can never get stuck if the import fails.
+    let hidden = false;
+    const hide = () => {
+      if (hidden) return;
+      hidden = true;
+      import("@capacitor/splash-screen")
+        .then(({ SplashScreen }) => SplashScreen.hide())
+        .catch(() => {});
+    };
+    hide();
+    const t = setTimeout(hide, 3000);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}

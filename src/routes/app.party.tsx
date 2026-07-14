@@ -102,7 +102,7 @@ function PartyTab() {
     .filter((x) => x.pack && x.remaining > 0);
 
   return (
-    <div className="px-5 pt-5">
+    <div className="px-5 pt-20">
       <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">
         Party
       </div>

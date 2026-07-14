@@ -9,7 +9,17 @@ export const Route = createFileRoute("/app")({
 });
 
 function AppLayout() {
-  const { theme } = useCarolineStore();
+  const { theme, setPro } = useCarolineStore();
+
+  useEffect(() => {
+    // On device, RevenueCat is the source of truth for Pro: sync on launch
+    // and whenever it pushes an update (redeemed code, refund, other device).
+    import("@/lib/iap").then(({ isIapAvailable, watchProEntitlement }) => {
+      if (!isIapAvailable()) return;
+      watchProEntitlement((active) => setPro(active));
+    });
+  }, []);
+
   useEffect(() => {
     if (typeof document === "undefined") return;
     const root = document.documentElement;
@@ -20,6 +30,7 @@ function AppLayout() {
   }, [theme]);
   return (
     <PhoneShell>
+      {/* Safe-area top padding lives in PhoneShell so every screen gets it. */}
       <div className="min-h-screen pb-24">
         <Outlet />
       </div>

@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { DieFace, Confetti } from "@/components/caroline/Dice";
 import { useCarolineStore, DIE_PALETTE } from "@/lib/caroline-store";
-import { BeerPopup, useBeerTrigger } from "@/components/caroline/BeerPopup";
 import { playRollSound, getRollDurationMs } from "@/lib/dice-sound";
 import { useShakeToRoll } from "@/hooks/use-shake";
 
@@ -17,8 +16,6 @@ function ClassicPage() {
   const [dice, setDice] = useState<number[]>([3, 5]);
   const [tumbling, setTumbling] = useState(false);
   const [confetti, setConfetti] = useState(false);
-  const [beer, setBeer] = useState(false);
-  const showBeer = useBeerTrigger();
   const rollBtnRef = useRef<HTMLButtonElement>(null);
   const [hintRoll, setHintRoll] = useState(true);
 
@@ -55,9 +52,6 @@ function ClassicPage() {
         setConfetti(true);
         setTimeout(() => setConfetti(false), 2400);
       }
-      setTimeout(() => {
-        if (showBeer) setBeer(true);
-      }, 600);
     }, ms);
   }
 
@@ -69,9 +63,8 @@ function ClassicPage() {
   const dieSize = Math.round(baseSize * (dieScale || 1));
 
   return (
-    <div className="px-5 pt-12">
+    <div className="px-5 pt-20">
       <Confetti show={confetti} />
-      <BeerPopup open={beer} onClose={() => setBeer(false)} />
 
       <div>
         <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">

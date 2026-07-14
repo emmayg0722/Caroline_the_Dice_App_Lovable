@@ -8,7 +8,16 @@ export const SOUND_OPTIONS: SoundOption[] = [
     id: "b",
     label: "Wooden table tumble",
     description: "Full, heavy clatter on wood.",
-    url: "/__l5e/assets-v1/24ce48c4-d21c-466f-b304-43cefe87246c/dice-b.mp3",
+    // Bundled locally (public/) so it resolves inside the native (Capacitor)
+    // build, which serves from capacitor://localhost — the old /__l5e CDN
+    // path only worked on the hosted web app.
+    url: "/dice-b.mp3",
+  },
+  {
+    id: "c",
+    label: "Quick shake",
+    description: "Short, sharp rattle.",
+    url: "/dice-c.mp3",
   },
   {
     id: "off",
@@ -33,17 +42,102 @@ function getAudio(id: string): HTMLAudioElement | null {
   return a;
 }
 
+// The raw samples are long (10–20s+). We only want a short roll, so we cap
+// every playback to this length with a brief fade-out at the end. Change this
+// one value to make rolls longer or shorter.
+const MAX_PLAY_MS = 3500;
+const FADE_MS = 400;
+const BASE_VOLUME = 0.9;
+
+// Per-element timers so re-triggering a roll cancels the previous cap.
+const stopTimers = new WeakMap<HTMLAudioElement, ReturnType<typeof setTimeout>[]>();
+function clearStopTimers(a: HTMLAudioElement) {
+  const t = stopTimers.get(a);
+  if (t) t.forEach(clearTimeout);
+  stopTimers.delete(a);
+}
+function capPlayback(a: HTMLAudioElement) {
+  clearStopTimers(a);
+  const fade = setTimeout(() => {
+    const steps = 8;
+    const step = FADE_MS / steps;
+    let i = 0;
+    const iv = setInterval(() => {
+      i++;
+      a.volume = Math.max(0, BASE_VOLUME * (1 - i / steps));
+      if (i >= steps) clearInterval(iv);
+    }, step);
+  }, Math.max(0, MAX_PLAY_MS - FADE_MS));
+  const stop = setTimeout(() => {
+    a.pause();
+    a.currentTime = 0;
+    a.volume = BASE_VOLUME;
+  }, MAX_PLAY_MS);
+  stopTimers.set(a, [fade, stop]);
+}
+
 export function playSoundById(id: string) {
   const a = getAudio(id);
   if (!a) return;
   try {
-    const node = a.cloneNode(true) as HTMLAudioElement;
-    node.volume = 0.9;
-    const p = node.play();
+    // Rewind and replay the cached (already-unlocked) element rather than
+    // cloning. A cloned <audio> is a brand-new element that iOS treats as
+    // un-blessed, so it stays silent when play() is called outside a user
+    // gesture — which is exactly the shake-to-roll case.
+    a.muted = false;
+    a.volume = BASE_VOLUME;
+    a.currentTime = 0;
+    const p = a.play();
     if (p && typeof p.catch === "function") p.catch(() => {});
+    capPlayback(a);
   } catch {
     // ignore
   }
+}
+
+// iOS/Safari (and mobile Chrome) block audio playback that isn't initiated
+// from a user gesture. Shake-to-roll fires from a devicemotion event, which
+// does NOT count as a gesture, so the roll would be silent. To work around
+// this we "unlock" every cached audio element on the first real interaction:
+// play it muted, then immediately pause and rewind. Once an element has been
+// played inside a gesture it can be replayed programmatically forever after.
+let audioUnlocked = false;
+function unlockAudio() {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+  for (const opt of SOUND_OPTIONS) {
+    if (!opt.url) continue;
+    const a = getAudio(opt.id);
+    if (!a) continue;
+    // If this element is already playing (the gesture that triggered unlock
+    // also started a real roll), it's already user-activated — leave it alone
+    // instead of pausing/rewinding the sound that just began.
+    if (!a.paused) continue;
+    try {
+      // Bless the element within the gesture: a muted play() then an
+      // immediate synchronous pause is enough for the browser to mark it
+      // user-activated, so later gesture-free play() calls (shake) work.
+      // Do NOT pause on the play() promise — that would resolve later and
+      // cut off a real roll sound sharing this same element.
+      a.muted = true;
+      const p = a.play();
+      if (p && typeof p.catch === "function") p.catch(() => {});
+      a.pause();
+      a.currentTime = 0;
+      a.muted = false;
+    } catch {
+      a.muted = false;
+    }
+  }
+  window.removeEventListener("touchend", unlockAudio);
+  window.removeEventListener("pointerdown", unlockAudio);
+  window.removeEventListener("click", unlockAudio);
+}
+
+if (typeof window !== "undefined") {
+  window.addEventListener("touchend", unlockAudio, { passive: true });
+  window.addEventListener("pointerdown", unlockAudio, { passive: true });
+  window.addEventListener("click", unlockAudio);
 }
 
 export function playRollSound() {
@@ -53,6 +147,10 @@ export function playRollSound() {
 }
 
 const DEFAULT_ROLL_MS = 825;
+
+// How much faster the dice tumble than the sound. 2 = animation plays twice
+// as fast. Controls both the tumble animation and when the result settles.
+const ROLL_SPEED = 2;
 
 function audioDurationMs(id: string): number {
   const a = getAudio(id);
@@ -68,7 +166,9 @@ export function getRollDurationMs(): number {
   let id = "b";
   try { id = getStoredSoundId(); } catch { /* SSR */ }
   const effective = id === "off" ? "b" : id;
-  return audioDurationMs(effective) || DEFAULT_ROLL_MS;
+  const dur = audioDurationMs(effective) || DEFAULT_ROLL_MS;
+  // Never tumble longer than we actually play the sound, then speed it up.
+  return Math.round(Math.min(dur, MAX_PLAY_MS) / ROLL_SPEED);
 }
 
 /** Warm audio metadata so durations are available before first roll. */

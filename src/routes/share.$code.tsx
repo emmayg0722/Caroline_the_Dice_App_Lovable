@@ -51,7 +51,10 @@ function SharePage() {
   }
 
   return (
-    <div className="mx-auto min-h-screen max-w-[440px] bg-cream px-5 pb-16 pt-5">
+    <div
+      className="mx-auto min-h-screen max-w-[440px] bg-cream px-5 pb-16"
+      style={{ paddingTop: "calc(env(safe-area-inset-top) + 1.25rem)" }}
+    >
       <button
         onClick={back}
         className="grid h-10 w-10 place-items-center rounded-full border border-ink/15 bg-card"

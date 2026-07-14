@@ -243,23 +243,37 @@
   --die-pip-highlight: rgba(255, 255, 255, 0.4);
 }
 
-.phone-shell {
+/* The gradient lives on the html canvas (not just .phone-shell) so the iOS
+ * rubber-band overscroll region — which paints the canvas background — matches
+ * the page instead of flashing the flat cream "white bar" at the top.
+ * background-attachment: fixed pins it to the viewport so it looks identical
+ * whether you're scrolled to the top or pulling past it. */
+html, .phone-shell {
   background:
     radial-gradient(circle at 20% -10%, var(--butter) 0%, transparent 45%),
     radial-gradient(circle at 120% 10%, var(--pink) 0%, transparent 40%),
     var(--cream);
+  background-size: cover;
 }
-.theme-dark .phone-shell {
+html.theme-dark, .theme-dark .phone-shell {
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
 }
-.theme-minimal .phone-shell {
+html.theme-minimal, .theme-minimal .phone-shell {
   background: linear-gradient(160deg, #f8f9ff 0%, #eef0ff 100%);
 }
-.theme-pastel .phone-shell {
+html.theme-pastel, .theme-pastel .phone-shell {
   background: linear-gradient(135deg, #fce4ec 0%, #e8eaf6 50%, #e0f7fa 100%);
 }
-.theme-meme .phone-shell {
+html.theme-meme, .theme-meme .phone-shell {
   background: #fffde7;
+}
+
+/* Pin only the html canvas gradient to the viewport so the iOS rubber-band
+ * overscroll area shows the same gradient top-and-bottom rather than a flat
+ * "white bar". Kept off .phone-shell to avoid fixed-attachment scroll jank on
+ * a non-root element in iOS WKWebView. */
+html {
+  background-attachment: fixed;
 }
 
 @layer base {

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Plus, Pencil, Share2, Trash2, Lock, Dices } from "lucide-react";
-import { useCarolineStore, pickCardSurface, CARD_SURFACES } from "@/lib/caroline-store";
+import { useCarolineStore, pickCardSurface, CARD_SURFACES, DIE_PALETTE } from "@/lib/caroline-store";
 import { PRESET_PACKS } from "@/lib/preset-packs";
 import { CustomDieFace } from "@/components/caroline/Dice";
 
@@ -16,7 +16,7 @@ function CustomTab() {
   const pendingPack = packs.find((p) => p.id === confirmDelete);
 
   return (
-    <div className="px-5 pt-12">
+    <div className="px-5 pt-20">
       <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">
         Custom
       </div>
@@ -196,7 +196,9 @@ function CustomTab() {
                     mode={s.mode}
                     pipCount={s.mode === "pip" ? j + 1 : undefined}
                     size={64}
-                    bg={p.color}
+                    // Multi-colored per die (offset per pack for variety), matching
+                    // how the pack actually rolls — not one flat pack color.
+                    bg={DIE_PALETTE[(i + j) % DIE_PALETTE.length]}
                   />
                 ))}
               </div>

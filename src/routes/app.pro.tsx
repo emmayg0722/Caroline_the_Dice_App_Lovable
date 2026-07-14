@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Check, Gift, RefreshCw } from "lucide-react";
-import { useCarolineStore } from "@/lib/caroline-store";
+import { useProPurchase } from "@/hooks/use-pro-purchase";
 
 export const Route = createFileRoute("/app/pro")({
   head: () => ({ meta: [{ title: "Caroline Pro" }] }),
@@ -12,14 +12,13 @@ const FEATURES = [
   "Customize all six sides",
   "Names, emojis, foods, animals, dares, friends",
   "Share Party Links valid for 10 hours",
-  "No 'Buy us a beer' popups",
 ];
 
 function ProTab() {
-  const { pro, setPro } = useCarolineStore();
+  const { pro, busy, error, buy, restore, redeem } = useProPurchase();
 
   return (
-    <div className="px-5 pt-12">
+    <div className="px-5 pt-20">
       <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">
         Membership
       </div>
@@ -57,20 +56,36 @@ function ProTab() {
       </div>
 
       <button
-        onClick={() => setPro(!pro)}
-        className={`mt-5 w-full rounded-full py-4 font-display text-lg font-black shadow-pop transition ${
+        onClick={buy}
+        disabled={busy !== null}
+        className={`mt-5 w-full rounded-full py-4 font-display text-lg font-black shadow-pop transition disabled:opacity-60 ${
           pro ? "bg-sage text-ink" : "bg-coral text-white"
         }`}
       >
-        {pro ? "Pro is active ✓" : "Unlock Pro · $4.99"}
+        {busy === "buy"
+          ? "Processing…"
+          : pro
+            ? "Pro is active ✓"
+            : "Unlock Pro · $4.99"}
       </button>
+      {error && <p className="mt-2 text-center text-xs text-coral">{error}</p>}
 
       <div className="mt-3 grid grid-cols-2 gap-2">
-        <button className="flex items-center justify-center gap-1.5 rounded-full border border-ink/15 bg-card py-3 text-xs font-semibold text-ink/80">
-          <Gift className="h-3.5 w-3.5" /> Redeem Pro Code
+        <button
+          onClick={redeem}
+          disabled={busy !== null}
+          className="flex items-center justify-center gap-1.5 rounded-full border border-ink/15 bg-card py-3 text-xs font-semibold text-ink/80 disabled:opacity-60"
+        >
+          <Gift className="h-3.5 w-3.5" />
+          {busy === "redeem" ? "Opening…" : "Redeem Pro Code"}
         </button>
-        <button className="flex items-center justify-center gap-1.5 rounded-full border border-ink/15 bg-card py-3 text-xs font-semibold text-ink/80">
-          <RefreshCw className="h-3.5 w-3.5" /> Restore Purchase
+        <button
+          onClick={restore}
+          disabled={busy !== null}
+          className="flex items-center justify-center gap-1.5 rounded-full border border-ink/15 bg-card py-3 text-xs font-semibold text-ink/80 disabled:opacity-60"
+        >
+          <RefreshCw className="h-3.5 w-3.5" />
+          {busy === "restore" ? "Restoring…" : "Restore Purchase"}
         </button>
       </div>
 
