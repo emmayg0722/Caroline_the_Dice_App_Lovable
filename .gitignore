@@ -35,3 +35,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# App Store screenshots are regenerable (scratchpad/shots.mjs); keep the
+# listing doc tracked but not the large PNGs.
+appstore-screenshots/*.png
