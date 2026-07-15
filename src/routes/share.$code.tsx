@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate, useParams, useRouter } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ArrowLeft, Copy, Share2, Check, Clock } from "lucide-react";
 import { useCarolineStore } from "@/lib/caroline-store";
 import { AllSidesButton } from "@/components/caroline/Dice";
@@ -23,28 +23,18 @@ function SharePage() {
     else navigate({ to: "/app/custom" });
   }
 
-  const [url, setUrl] = useState(`/party/${code}`);
-  useEffect(() => {
-    if (typeof window !== "undefined") setUrl(`${window.location.origin}/party/${code}`);
-  }, [code]);
-
   async function copy() {
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(code);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch {}
   }
 
   async function share() {
+    const text = `Join my Caroline party — open the app, Party tab, code ${code}`;
     if (navigator.share) {
-      try {
-        await navigator.share({
-          title: "Caroline — Party Pack",
-          text: `Roll my pack "${pack?.name ?? "Party"}" with me — valid 10 hours.`,
-          url,
-        });
-      } catch {}
+      try { await navigator.share({ title: "Caroline — Party", text }); } catch {}
     } else {
       copy();
     }
@@ -72,7 +62,7 @@ function SharePage() {
         <span className="italic text-coral">is ready</span>
       </h1>
       <p className="mt-2 text-sm text-ink/70">
-        Share this link with friends. They can use this dice pack for 10 hours.
+        Share this code. A friend opens Caroline → Party → types the code (valid 10 hours).
       </p>
 
       {pack && (
@@ -95,9 +85,6 @@ function SharePage() {
           Code
         </div>
         <div className="mt-1 font-display text-4xl font-black tracking-[0.25em]">{code}</div>
-        <div className="mt-2 truncate rounded-xl bg-cream px-3 py-2 text-xs text-ink/70">
-          {url}
-        </div>
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-2">
