@@ -16,9 +16,22 @@ function PartyActive() {
   const { code } = useParams({ from: "/party/$code" });
   const navigate = useNavigate();
   const router = useRouter();
-  const { parties } = useCarolineStore();
+  const { parties, saveParty } = useCarolineStore();
   const party = useMemo(() => parties.find((p) => p.code === code), [parties, code]);
   const pack = party?.pack;
+
+  const [hydrating, setHydrating] = useState(false);
+  useEffect(() => {
+    if (party || hydrating) return;
+    setHydrating(true);
+    import("@/lib/party-api").then(async ({ fetchParty }) => {
+      try {
+        const res = await fetchParty(code.toUpperCase());
+        if (res) saveParty({ code: code.toUpperCase(), pack: res.pack, createdAt: res.createdAt });
+      } catch { /* fall through to the expired screen */ }
+      finally { setHydrating(false); }
+    });
+  }, [party, code, hydrating, saveParty]);
 
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
@@ -53,6 +66,7 @@ function PartyActive() {
   }
 
   if (!party || !pack) {
+    if (hydrating) return null; // waiting on fetch
     return (
       <PhoneShell>
         <div className="px-5 pt-5">
