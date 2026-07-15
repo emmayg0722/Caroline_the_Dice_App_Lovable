@@ -82,7 +82,7 @@ function PartyTab() {
   const [code, setCode] = useState("");
   const [joining, setJoining] = useState(false);
   const [joinError, setJoinError] = useState<string | null>(null);
-  const [now, setNow] = useState(0);
+  const [now, setNow] = useState(Date.now());
 
   useEffect(() => {
     setNow(Date.now());
@@ -132,7 +132,7 @@ function PartyTab() {
       <div className="mt-4 rounded-3xl border border-ink/15 bg-lavender p-5 shadow-pop">
         <div className="flex items-center justify-between">
           <span className="font-display text-xl font-black leading-tight">
-            Got a Party Link?
+            Got a Party Code?
           </span>
           <span className="flex items-center gap-1 rounded-full bg-ink px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-cream">
             <Clock className="h-3 w-3" /> 10 hrs
@@ -169,7 +169,7 @@ function PartyTab() {
         </div>
         {active.length === 0 ? (
           <div className="mt-3 rounded-3xl border border-dashed border-ink/20 bg-card p-5 text-center text-sm text-ink/65">
-            No active party packs yet. Open a Party Link above to add one.
+            No active party packs yet. Enter a party code above to join one.
           </div>
         ) : (
           <div className="mt-3 space-y-2">

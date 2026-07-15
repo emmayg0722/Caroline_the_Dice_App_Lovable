@@ -5,7 +5,7 @@ import { useCarolineStore } from "@/lib/caroline-store";
 import { AllSidesButton } from "@/components/caroline/Dice";
 
 export const Route = createFileRoute("/share/$code")({
-  head: () => ({ meta: [{ title: "Party Link Ready — Caroline" }] }),
+  head: () => ({ meta: [{ title: "Party Code Ready — Caroline" }] }),
   component: SharePage,
 });
 
@@ -54,10 +54,10 @@ function SharePage() {
       </button>
 
       <div className="mt-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">
-        Party Link
+        Party Code
       </div>
       <h1 className="mt-1 font-display text-[44px] font-black leading-[0.95]">
-        Your Party Link
+        Your Party Code
         <br />
         <span className="italic text-coral">is ready</span>
       </h1>
@@ -93,7 +93,7 @@ function SharePage() {
           className="flex items-center justify-center gap-2 rounded-full bg-ink py-3 text-sm font-semibold text-cream"
         >
           {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-          {copied ? "Copied" : "Copy Link"}
+          {copied ? "Copied" : "Copy Code"}
         </button>
         <button
           onClick={share}
