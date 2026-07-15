@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate, useParams, useRouter } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Clock } from "lucide-react";
 import { useCarolineStore } from "@/lib/caroline-store";
 import { CustomDieFace, PhoneShell, AllSidesButton } from "@/components/caroline/Dice";
@@ -21,17 +21,23 @@ function PartyActive() {
   const pack = party?.pack;
 
   const [hydrating, setHydrating] = useState(false);
+  const attemptedRef = useRef<string | null>(null);
   useEffect(() => {
-    if (party || hydrating) return;
+    const c = code.toUpperCase();
+    if (party || attemptedRef.current === c) return;
+    attemptedRef.current = c;
     setHydrating(true);
     import("@/lib/party-api").then(async ({ fetchParty }) => {
       try {
-        const res = await fetchParty(code.toUpperCase());
-        if (res) saveParty({ code: code.toUpperCase(), pack: res.pack, createdAt: res.createdAt });
-      } catch { /* fall through to the expired screen */ }
-      finally { setHydrating(false); }
+        const res = await fetchParty(c);
+        if (res) saveParty({ code: c, pack: res.pack, createdAt: res.createdAt });
+      } catch {
+        /* fall through to the expired screen */
+      } finally {
+        setHydrating(false);
+      }
     });
-  }, [party, code, hydrating, saveParty]);
+  }, [party, code, saveParty]);
 
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
