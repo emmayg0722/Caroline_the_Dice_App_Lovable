@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Link2, Hash, Clock, ChevronRight, Trash2 } from "lucide-react";
+import { Hash, Clock, ChevronRight, Trash2 } from "lucide-react";
 import { useCarolineStore, type PartyLink } from "@/lib/caroline-store";
 import type { SharedPack } from "@/lib/party-api";
 
@@ -78,9 +78,10 @@ function SwipeRow({
 
 function PartyTab() {
   const navigate = useNavigate();
-  const { parties, deleteParty } = useCarolineStore();
+  const { parties, deleteParty, saveParty } = useCarolineStore();
   const [code, setCode] = useState("");
-  const [link, setLink] = useState("");
+  const [joining, setJoining] = useState(false);
+  const [joinError, setJoinError] = useState<string | null>(null);
   const [now, setNow] = useState(0);
 
   useEffect(() => {
@@ -89,9 +90,23 @@ function PartyTab() {
     return () => clearInterval(t);
   }, []);
 
-  function join(c: string) {
-    if (!c) return;
-    navigate({ to: "/party/$code", params: { code: c.toUpperCase() } });
+  async function join(c: string) {
+    const clean = c.trim().toUpperCase();
+    if (!clean) return;
+    try {
+      setJoining(true);
+      setJoinError(null);
+      const { fetchParty, isExpired } = await import("@/lib/party-api");
+      const res = await fetchParty(clean);
+      if (!res) { setJoinError("No party found for that code."); return; }
+      if (isExpired(res.createdAt)) { setJoinError("This party has expired."); return; }
+      saveParty({ code: clean, pack: res.pack, createdAt: res.createdAt });
+      navigate({ to: "/party/$code", params: { code: clean } });
+    } catch (e) {
+      setJoinError((e as Error).message);
+    } finally {
+      setJoining(false);
+    }
   }
 
   const active = parties
@@ -126,32 +141,6 @@ function PartyTab() {
 
         <div className="mt-4 space-y-2">
           <div className="flex items-center gap-2 rounded-2xl border border-ink/15 bg-cream px-3">
-            <Link2 className="h-4 w-4 text-ink/50" />
-            <input
-              value={link}
-              onChange={(e) => setLink(e.target.value)}
-              placeholder="Paste Party Link"
-              className="w-full bg-transparent py-3 text-sm outline-none placeholder:text-ink/40"
-            />
-          </div>
-          <button
-            onClick={() => {
-              const m = link.match(/party\/([A-Z0-9]+)/i);
-              if (m) join(m[1]);
-              else if (link.trim()) join(link.trim());
-            }}
-            className="w-full rounded-full bg-ink py-3 text-sm font-semibold text-cream"
-          >
-            Open Party Link
-          </button>
-
-          <div className="flex items-center gap-2 pt-2">
-            <div className="h-px flex-1 bg-ink/15" />
-            <span className="text-[10px] uppercase tracking-widest text-ink/50">or</span>
-            <div className="h-px flex-1 bg-ink/15" />
-          </div>
-
-          <div className="flex items-center gap-2 rounded-2xl border border-ink/15 bg-cream px-3">
             <Hash className="h-4 w-4 text-ink/50" />
             <input
               value={code}
@@ -161,11 +150,13 @@ function PartyTab() {
             />
             <button
               onClick={() => join(code)}
-              className="rounded-full bg-coral px-3 py-1.5 text-xs font-semibold text-white"
+              disabled={joining}
+              className="rounded-full bg-coral px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-60"
             >
-              Join
+              {joining ? "Joining…" : "Join"}
             </button>
           </div>
+          {joinError && <p className="text-xs text-coral">{joinError}</p>}
         </div>
       </div>
 
