@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import type { SharedPack } from "./party-api";
 
 export type DiceSide = {
   text: string;
@@ -20,7 +21,7 @@ export type DicePack = {
 
 export type PartyLink = {
   code: string;
-  packId: string;
+  pack: SharedPack;
   createdAt: number;
 };
 
@@ -123,12 +124,10 @@ export function useCarolineStore() {
     const cur = ensure();
     save({ ...cur, packs: cur.packs.filter((p) => p.id !== id) });
   }, []);
-  const createParty = useCallback((packId: string): PartyLink => {
+  const saveParty = useCallback((party: PartyLink) => {
     const cur = ensure();
-    const code = Math.random().toString(36).slice(2, 8).toUpperCase();
-    const party = { code, packId, createdAt: Date.now() };
-    save({ ...cur, parties: [party, ...cur.parties].slice(0, 20) });
-    return party;
+    const parties = [party, ...cur.parties.filter((p) => p.code !== party.code)].slice(0, 20);
+    save({ ...cur, parties });
   }, []);
   const deleteParty = useCallback((code: string) => {
     const cur = ensure();
@@ -141,7 +140,7 @@ export function useCarolineStore() {
   const setShakeEnabled = useCallback((shakeEnabled: boolean) => save({ ...ensure(), shakeEnabled }), []);
   const setDieColorMode = useCallback((dieColorMode: State["dieColorMode"]) => save({ ...ensure(), dieColorMode }), []);
 
-  return { ...s, setPro, recordRoll, savePack, deletePack, createParty, deleteParty, setSoundId, setDieScale, setTheme, setShakeEnabled, setDieColorMode };
+  return { ...s, setPro, recordRoll, savePack, deletePack, saveParty, deleteParty, setSoundId, setDieScale, setTheme, setShakeEnabled, setDieColorMode };
 }
 
 export function getStoredSoundId(): string {

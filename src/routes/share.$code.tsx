@@ -13,9 +13,9 @@ function SharePage() {
   const { code } = useParams({ from: "/share/$code" });
   const navigate = useNavigate();
   const router = useRouter();
-  const { parties, packs } = useCarolineStore();
+  const { parties } = useCarolineStore();
   const party = useMemo(() => parties.find((p) => p.code === code), [parties, code]);
-  const pack = useMemo(() => packs.find((p) => p.id === party?.packId), [packs, party]);
+  const pack = party?.pack;
   const [copied, setCopied] = useState(false);
 
   function back() {

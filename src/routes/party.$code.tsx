@@ -16,9 +16,9 @@ function PartyActive() {
   const { code } = useParams({ from: "/party/$code" });
   const navigate = useNavigate();
   const router = useRouter();
-  const { parties, packs } = useCarolineStore();
+  const { parties } = useCarolineStore();
   const party = useMemo(() => parties.find((p) => p.code === code), [parties, code]);
-  const pack = useMemo(() => packs.find((p) => p.id === party?.packId), [packs, party]);
+  const pack = party?.pack;
 
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
@@ -164,7 +164,6 @@ function PartyActive() {
                   key={i}
                   text={s.text}
                   emoji={s.emoji}
-                  photo={s.photo}
                   mode={s.mode}
                   size={count <= 2 ? 144 : count <= 4 ? 112 : 88}
                   bg="var(--cream)"

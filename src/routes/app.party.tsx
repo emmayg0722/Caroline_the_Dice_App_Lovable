@@ -1,7 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Link2, Hash, Clock, ChevronRight, Trash2 } from "lucide-react";
-import { useCarolineStore, type PartyLink, type DicePack } from "@/lib/caroline-store";
+import { useCarolineStore, type PartyLink } from "@/lib/caroline-store";
+import type { SharedPack } from "@/lib/party-api";
 
 export const Route = createFileRoute("/app/party")({
   head: () => ({ meta: [{ title: "Party Pack — Caroline" }] }),
@@ -17,7 +18,7 @@ function SwipeRow({
   onDelete,
 }: {
   party: PartyLink;
-  pack: DicePack;
+  pack: SharedPack;
   remaining: number;
   onDelete: () => void;
 }) {
@@ -77,7 +78,7 @@ function SwipeRow({
 
 function PartyTab() {
   const navigate = useNavigate();
-  const { parties, packs, deleteParty } = useCarolineStore();
+  const { parties, deleteParty } = useCarolineStore();
   const [code, setCode] = useState("");
   const [link, setLink] = useState("");
   const [now, setNow] = useState(0);
@@ -95,7 +96,7 @@ function PartyTab() {
 
   const active = parties
     .map((p) => {
-      const pack = packs.find((pk) => pk.id === p.packId);
+      const pack = p.pack;
       const remaining = TEN_HOURS - (now - p.createdAt);
       return { party: p, pack, remaining };
     })

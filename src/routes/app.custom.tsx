@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Plus, Pencil, Share2, Trash2, Lock, Dices } from "lucide-react";
 import { useCarolineStore, pickCardSurface, CARD_SURFACES, DIE_PALETTE } from "@/lib/caroline-store";
@@ -11,9 +11,11 @@ export const Route = createFileRoute("/app/custom")({
 });
 
 function CustomTab() {
-  const { pro, packs, deletePack, createParty } = useCarolineStore();
+  const { pro, packs, deletePack, saveParty } = useCarolineStore();
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const pendingPack = packs.find((p) => p.id === confirmDelete);
+  const navigate = useNavigate();
+  const [sharing, setSharing] = useState<string | null>(null);
 
   return (
     <div className="px-5 pt-20">
@@ -139,13 +141,23 @@ function CustomTab() {
                     <Pencil className="h-3.5 w-3.5" /> Edit
                   </Link>
                   <button
-                    onClick={() => {
-                      const party = createParty(p.id);
-                      window.location.href = `/share/${party.code}`;
+                    onClick={async () => {
+                      try {
+                        setSharing(p.id);
+                        const { createParty, stripPack } = await import("@/lib/party-api");
+                        const { code, createdAt } = await createParty(p);
+                        saveParty({ code, pack: stripPack(p), createdAt });
+                        navigate({ to: "/share/$code", params: { code } });
+                      } catch (e) {
+                        alert((e as Error).message);
+                      } finally {
+                        setSharing(null);
+                      }
                     }}
+                    disabled={sharing === p.id}
                     className="flex items-center justify-center gap-1 rounded-full border border-ink/20 bg-card py-2 text-xs font-semibold"
                   >
-                    <Share2 className="h-3.5 w-3.5" /> Share
+                    <Share2 className="h-3.5 w-3.5" /> {sharing === p.id ? "Sharing…" : "Share"}
                   </button>
                 </div>
               </div>

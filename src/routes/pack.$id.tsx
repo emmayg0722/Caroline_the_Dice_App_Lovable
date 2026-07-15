@@ -16,7 +16,7 @@ function RollPack() {
   const { id } = useParams({ from: "/pack/$id" });
   const navigate = useNavigate();
   const router = useRouter();
-  const { packs, pro, createParty, dieScale, shakeEnabled, dieColorMode } = useCarolineStore();
+  const { packs, pro, saveParty, dieScale, shakeEnabled, dieColorMode } = useCarolineStore();
   const pack = findPack(id, packs);
   const isPreset = PRESET_PACKS.some((p) => p.id === id);
 
@@ -24,6 +24,7 @@ function RollPack() {
   const [rolled, setRolled] = useState<number[]>([0]);
   const [tumbling, setTumbling] = useState(false);
   const [confetti, setConfetti] = useState(false);
+  const [sharing, setSharing] = useState(false);
 
   useShakeToRoll(() => {
     if (pack && !tumbling) rollRef.current?.();
@@ -68,13 +69,22 @@ function RollPack() {
 
 
 
-  function shareParty() {
+  async function shareParty() {
     if (!pro) {
       navigate({ to: "/app/settings", search: { section: "premium" } });
       return;
     }
-    const party = createParty(pack!.id);
-    navigate({ to: "/share/$code", params: { code: party.code } });
+    try {
+      setSharing(true);
+      const { createParty, stripPack } = await import("@/lib/party-api");
+      const { code, createdAt } = await createParty(pack!);
+      saveParty({ code, pack: stripPack(pack!), createdAt });
+      navigate({ to: "/share/$code", params: { code } });
+    } catch (e) {
+      alert((e as Error).message);
+    } finally {
+      setSharing(false);
+    }
   }
 
   function back() {
@@ -103,6 +113,7 @@ function RollPack() {
           {!isPreset ? (
             <button
               onClick={shareParty}
+              disabled={sharing}
               className="grid h-10 w-10 place-items-center rounded-full bg-ink text-cream"
               aria-label="Share"
             >
