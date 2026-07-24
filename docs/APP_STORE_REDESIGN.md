@@ -31,14 +31,22 @@ wrapped for iOS via Capacitor.
 
 ## Remove
 
-- The "Friends Drinking 🍻" preset pack (`src/lib/preset-packs.ts`)
-- "Take a shot" 🥃 as default custom-pack side content (`src/routes/custom.$id.tsx`)
-- Drinking/alcohol language in `src/routes/terms.tsx` ("dares, drinking prompts," "drink responsibly")
-- Any other alcohol terminology or imagery found in the restricted-content audit
-- Alcohol references in store-facing content (App Store description/keywords, if present outside this repo)
+- ~~The "Friends Drinking 🍻" preset pack (`src/lib/preset-packs.ts`)~~ — **Removed in Phase 1**
+- ~~"Cheers All" 🍾 champagne content in the "Party Madness" preset~~ — **Replaced with "Round of Applause" 👏 in Phase 1**
+- ~~"Take a shot" 🥃 as default custom-pack side content (`src/routes/custom.$id.tsx`)~~ — **Replaced with "Tell a Joke" 😂 in Phase 1**
+- ~~Drinking/alcohol language in `src/routes/terms.tsx`~~ — **Rewritten in Phase 1**
+- Alcohol references in store-facing content (App Store description/keywords) — **cannot be verified or changed from this repo**; see `docs/PHASE_1_RESULT.md`
 
 There is currently no "Buy us a beer" sponsor wording in this repo — no
-action needed there unless found during implementation.
+action was needed there.
+
+**Important:** removing these four locations was necessary but is not, by
+itself, sufficient. Apple reviews the complete submitted experience
+(screenshots, subtitle, description, keywords, and the app as installed) —
+one prominent drinking preset can define the product in a reviewer's eyes
+even after the string-level content is gone. See
+`docs/PRODUCT_POSITIONING_AUDIT.md` for the full positioning review and
+`docs/PHASE_1_RESULT.md` for what remains outside this repo's control.
 
 ## Target modes (aspirational — current app does not yet implement these)
 
@@ -83,7 +91,7 @@ modes; do not build them speculatively.
 ## Progress
 
 - Phase 0 — Repository audit: **Done** — see `docs/CURRENT_APP_AUDIT.md`
-- Phase 1 — Alcohol-content removal: Not started
+- Phase 1 — Alcohol-content removal + product-positioning audit: **Done** — see `docs/PRODUCT_POSITIONING_AUDIT.md` and `docs/PHASE_1_RESULT.md`
 - Phase 2 — Shared game architecture (if/when Quick Play/Icebreaker/Team Battle are scoped): Not started
 - Phase 3 — Quick Play and Icebreaker: Not started
 - Phase 4 — Team Battle: Not started

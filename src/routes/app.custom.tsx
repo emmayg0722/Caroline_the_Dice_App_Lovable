@@ -1,7 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Plus, Pencil, Share2, Trash2, Lock, Dices } from "lucide-react";
-import { useCarolineStore, pickCardSurface, CARD_SURFACES, DIE_PALETTE } from "@/lib/caroline-store";
+import {
+  useCarolineStore,
+  pickCardSurface,
+  CARD_SURFACES,
+  DIE_PALETTE,
+} from "@/lib/caroline-store";
 import { PRESET_PACKS } from "@/lib/preset-packs";
 import { CustomDieFace } from "@/components/caroline/Dice";
 
@@ -24,6 +29,10 @@ function CustomTab() {
         <h1 className="mt-1 font-display text-5xl font-black leading-[0.95]">
           Dice <span className="italic text-coral">Packs</span>
         </h1>
+        <p className="mt-2 max-w-[20rem] text-sm text-ink/70">
+          Build your own party game — questions, dares, challenges, in-jokes, anything you want on
+          six sides.
+        </p>
         {pro && (
           <Link
             to="/custom/new"
@@ -47,12 +56,10 @@ function CustomTab() {
 
         {!pro && (
           <div className="mt-3 rounded-3xl border border-ink/15 bg-ink p-5 text-cream shadow-pop">
-            <h3 className="font-display text-2xl font-black leading-tight">
-              Build your party
-            </h3>
+            <h3 className="font-display text-2xl font-black leading-tight">Build your party</h3>
             <p className="mt-1 text-sm opacity-80">
-              Unlock Pro to create unlimited custom packs, add photos of friends,
-              and share Party Links.
+              Unlock Pro to create unlimited custom packs, add photos of friends, and share Party
+              Links.
             </p>
             <Link
               to="/app/settings"

@@ -133,20 +133,26 @@ Case-insensitive search across `src/`, `ios/`, `public/`, and repo-root docs
 for drink/drinking/drunk/sip/shot/beer/wine/alcohol/cocktail/bottoms
 up/waterfall and CJK/Swedish equivalents. Hits:
 
-| File | Line | Content |
-| --- | --- | --- |
-| `src/lib/preset-packs.ts` | 5–16 | Entire `preset_drinking` pack: "Friends Drinking 🍻", "Shot!" 🍺, "Swap Drinks" 🍹, "Punishment Round" 🍻 |
-| `src/lib/preset-packs.ts` | 71 | "Cheers All" 🍾 in the unrelated "Party Madness" preset pack |
-| `src/routes/custom.$id.tsx` | 26 | `defaultPack()` seeds every new custom pack with a "Take a shot" 🥃 side |
-| `src/routes/terms.tsx` | 50–52 | Terms of Use text: "...including any dares, drinking prompts, or party games you choose to play. Please be safe, drink responsibly..." |
+| File | Line | Content | Status |
+| --- | --- | --- | --- |
+| `src/lib/preset-packs.ts` | 5–16 | Entire `preset_drinking` pack: "Friends Drinking 🍻", "Shot!" 🍺, "Swap Drinks" 🍹, "Punishment Round" 🍻 | **Removed in Phase 1** |
+| `src/lib/preset-packs.ts` | 71 | "Cheers All" 🍾 in the unrelated "Party Madness" preset pack | **Replaced in Phase 1** |
+| `src/routes/custom.$id.tsx` | 26 | `defaultPack()` seeds every new custom pack with a "Take a shot" 🥃 side | **Replaced in Phase 1** |
+| `src/routes/terms.tsx` | 50–52 | Terms of Use text: "...including any dares, drinking prompts, or party games you choose to play. Please be safe, drink responsibly..." | **Rewritten in Phase 1** |
 
 No hits in `ios/` (native shell has no user-facing strings of its own
 beyond `Info.plist`, which is clean), `public/` (only two `.mp3` dice-sound
 files, no alcohol-themed assets), or asset filenames (`src/assets/` is
 logos + dice sounds only, no beer/wine/cocktail imagery).
 
-All four hits are real and require removal in Phase 1 — none are false
-positives like "screenshot" containing "shot."
+All four hits were real and have been removed/replaced — none were false
+positives like "screenshot" containing "shot." `scripts/audit-restricted-content.sh`
+(added in Phase 1) confirms zero remaining matches in shipped source as of
+this writing. Removing these four locations does not, by itself, guarantee
+the product reads as non-alcoholic — see the full positioning review in
+`docs/PRODUCT_POSITIONING_AUDIT.md`, which found two additional ambiguous
+(not confirmed-alcohol) entries worth watching in Phase 2: "Penalty Chain"
+and "King's Order" in the `preset_party` pack.
 
 ## Recommended incremental migration plan
 
