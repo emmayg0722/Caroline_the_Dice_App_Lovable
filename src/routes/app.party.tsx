@@ -2,13 +2,14 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Link2, Hash, Clock, ChevronRight, Trash2 } from "lucide-react";
 import { useCarolineStore, type PartyLink, type DicePack } from "@/lib/caroline-store";
+import { PARTY_LINK_TTL_MS } from "@/lib/party-link";
 
 export const Route = createFileRoute("/app/party")({
   head: () => ({ meta: [{ title: "Party Pack — Caroline" }] }),
   component: PartyTab,
 });
 
-const TEN_HOURS = 10 * 60 * 60 * 1000;
+const TEN_HOURS = PARTY_LINK_TTL_MS;
 
 function SwipeRow({
   party,
@@ -26,7 +27,9 @@ function SwipeRow({
   const h = Math.floor(remaining / 3_600_000);
   const m = Math.floor((remaining % 3_600_000) / 60_000);
 
-  function start(x: number) { startX.current = x; }
+  function start(x: number) {
+    startX.current = x;
+  }
   function move(x: number) {
     if (startX.current == null) return;
     const d = Math.min(0, x - startX.current);
@@ -66,7 +69,7 @@ function SwipeRow({
         <div className="min-w-0">
           <div className="font-display text-base font-black leading-tight">{pack.name}</div>
           <div className="mt-0.5 text-[11px] uppercase tracking-wider text-ink/60">
-            {party.code} · {h}h {m}m left
+            {h}h {m}m left
           </div>
         </div>
         <ChevronRight className="h-5 w-5 text-ink/55" />
@@ -89,8 +92,11 @@ function PartyTab() {
   }, []);
 
   function join(c: string) {
-    if (!c) return;
-    navigate({ to: "/party/$code", params: { code: c.toUpperCase() } });
+    const trimmed = c.trim();
+    if (!trimmed) return;
+    // Party codes encode the pack itself and are case-sensitive — do not
+    // normalize casing here (see src/lib/party-link.ts).
+    navigate({ to: "/party/$code", params: { code: trimmed } });
   }
 
   const active = parties
@@ -103,21 +109,15 @@ function PartyTab() {
 
   return (
     <div className="px-5 pt-20">
-      <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">
-        Party
-      </div>
-      <h1 className="mt-1 font-display text-4xl font-black leading-[0.95]">
-        Party Pack
-      </h1>
+      <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">Party</div>
+      <h1 className="mt-1 font-display text-4xl font-black leading-[0.95]">Party Pack</h1>
       <p className="mt-2 max-w-[20rem] text-sm text-ink/70">
         Join a shared dice pack and play for 10 hours.
       </p>
 
       <div className="mt-4 rounded-3xl border border-ink/15 bg-lavender p-5 shadow-pop">
         <div className="flex items-center justify-between">
-          <span className="font-display text-xl font-black leading-tight">
-            Got a Party Link?
-          </span>
+          <span className="font-display text-xl font-black leading-tight">Got a Party Link?</span>
           <span className="flex items-center gap-1 rounded-full bg-ink px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-cream">
             <Clock className="h-3 w-3" /> 10 hrs
           </span>
@@ -135,7 +135,7 @@ function PartyTab() {
           </div>
           <button
             onClick={() => {
-              const m = link.match(/party\/([A-Z0-9]+)/i);
+              const m = link.match(/party\/([\w-]+)/i);
               if (m) join(m[1]);
               else if (link.trim()) join(link.trim());
             }}
@@ -154,9 +154,12 @@ function PartyTab() {
             <Hash className="h-4 w-4 text-ink/50" />
             <input
               value={code}
-              onChange={(e) => setCode(e.target.value.toUpperCase())}
-              placeholder="Enter Party Code"
-              className="w-full bg-transparent py-3 font-display text-base font-bold tracking-[0.2em] outline-none placeholder:text-ink/40 placeholder:font-sans placeholder:tracking-normal placeholder:text-sm"
+              onChange={(e) => setCode(e.target.value)}
+              placeholder="Paste Party Code"
+              // Party codes are long and case-sensitive now (they encode the
+              // pack itself) — no letter-spacing/uppercase styling, this is
+              // meant to be pasted, not typed or admired.
+              className="w-full bg-transparent py-3 text-sm outline-none placeholder:text-ink/40"
             />
             <button
               onClick={() => join(code)}

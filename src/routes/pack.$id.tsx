@@ -25,9 +25,12 @@ function RollPack() {
   const [tumbling, setTumbling] = useState(false);
   const [confetti, setConfetti] = useState(false);
 
-  useShakeToRoll(() => {
-    if (pack && !tumbling) rollRef.current?.();
-  }, { enabled: shakeEnabled });
+  useShakeToRoll(
+    () => {
+      if (pack && !tumbling) rollRef.current?.();
+    },
+    { enabled: shakeEnabled },
+  );
   const rollRef = useRef<() => void>(() => {});
 
   if (!pack) {
@@ -53,7 +56,9 @@ function RollPack() {
     const ms = getRollDurationMs();
     document.documentElement.style.setProperty("--tumble-ms", `${ms}ms`);
     setTimeout(() => {
-      const next = Array.from({ length: count }, () => Math.floor(Math.random() * pack!.sides.length));
+      const next = Array.from({ length: count }, () =>
+        Math.floor(Math.random() * pack!.sides.length),
+      );
       setRolled(next);
       setTumbling(false);
       if (count >= 2 && next.every((v) => v === next[0])) {
@@ -64,16 +69,12 @@ function RollPack() {
   }
   rollRef.current = roll;
 
-
-
-
-
   function shareParty() {
     if (!pro) {
       navigate({ to: "/app/settings", search: { section: "premium" } });
       return;
     }
-    const party = createParty(pack!.id);
+    const party = createParty(pack!);
     navigate({ to: "/share/$code", params: { code: party.code } });
   }
 
@@ -139,15 +140,15 @@ function RollPack() {
 
         <div
           className="relative mt-4 grid min-h-[340px] place-content-center rounded-3xl border border-ink/15 p-4 shadow-pop"
-          style={{ background: pickCardSurface(dieColorMode === "white" ? "var(--snow)" : pack.color) }}
+          style={{
+            background: pickCardSurface(dieColorMode === "white" ? "var(--snow)" : pack.color),
+          }}
         >
           <div className="flex flex-wrap items-center justify-center gap-3">
             {rolled.map((idx, i) => {
               const s = pack.sides[idx];
               const dieBg =
-                dieColorMode === "white"
-                  ? "#ffffff"
-                  : DIE_PALETTE[i % DIE_PALETTE.length];
+                dieColorMode === "white" ? "#ffffff" : DIE_PALETTE[i % DIE_PALETTE.length];
               return (
                 <CustomDieFace
                   key={i}

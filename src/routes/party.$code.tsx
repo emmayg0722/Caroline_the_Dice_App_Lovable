@@ -4,21 +4,33 @@ import { ArrowLeft, Clock } from "lucide-react";
 import { useCarolineStore } from "@/lib/caroline-store";
 import { CustomDieFace, PhoneShell, AllSidesButton } from "@/components/caroline/Dice";
 import { playRollSound, getRollDurationMs } from "@/lib/dice-sound";
+import { decodeSharedPack, PARTY_LINK_TTL_MS } from "@/lib/party-link";
 
 export const Route = createFileRoute("/party/$code")({
   head: () => ({ meta: [{ title: "Party Pack — Caroline" }] }),
   component: PartyActive,
 });
 
-const TEN_HOURS = 10 * 60 * 60 * 1000;
-
 function PartyActive() {
   const { code } = useParams({ from: "/party/$code" });
   const navigate = useNavigate();
   const router = useRouter();
   const { parties, packs } = useCarolineStore();
-  const party = useMemo(() => parties.find((p) => p.code === code), [parties, code]);
-  const pack = useMemo(() => packs.find((p) => p.id === party?.packId), [packs, party]);
+
+  // Party Links carry the pack inside the link itself (no backend to look
+  // codes up against — see src/lib/party-link.ts), so decoding the URL is
+  // the primary path and works on any device, including one that never
+  // created this party locally. The local-store lookup below only helps a
+  // pre-Phase-2 link opened on the same device that made it.
+  const decoded = useMemo(() => decodeSharedPack(code), [code]);
+  const localParty = useMemo(() => parties.find((p) => p.code === code), [parties, code]);
+  const localPack = useMemo(
+    () => packs.find((p) => p.id === localParty?.packId),
+    [packs, localParty],
+  );
+
+  const pack = decoded?.pack ?? localPack;
+  const createdAt = decoded?.createdAt ?? localParty?.createdAt;
 
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
@@ -30,8 +42,9 @@ function PartyActive() {
   const [rolled, setRolled] = useState<number[]>([0, 0]);
   const [tumbling, setTumbling] = useState(false);
 
-  const expired = !party || now - party.createdAt > TEN_HOURS;
-  const remaining = party ? Math.max(0, TEN_HOURS - (now - party.createdAt)) : 0;
+  const expired = !pack || createdAt === undefined || now - createdAt > PARTY_LINK_TTL_MS;
+  const remaining =
+    createdAt !== undefined ? Math.max(0, PARTY_LINK_TTL_MS - (now - createdAt)) : 0;
   const hoursLeft = Math.floor(remaining / 3_600_000);
   const minsLeft = Math.floor((remaining % 3_600_000) / 60_000);
 
@@ -52,7 +65,7 @@ function PartyActive() {
     }, ms);
   }
 
-  if (!party || !pack) {
+  if (!pack) {
     return (
       <PhoneShell>
         <div className="px-5 pt-5">
@@ -65,10 +78,10 @@ function PartyActive() {
           </button>
         </div>
         <div className="flex min-h-[70vh] flex-col items-center justify-center px-6 text-center">
-          <div className="text-5xl">⌛</div>
-          <h1 className="mt-3 font-display text-3xl font-black">This Party Link expired.</h1>
+          <div className="text-5xl">🔗</div>
+          <h1 className="mt-3 font-display text-3xl font-black">This Party Link isn't valid.</h1>
           <p className="mt-2 text-sm text-ink/65">
-            Party packs are valid for 10 hours. Ask your friend for a fresh link.
+            Double-check the link your friend sent, or ask them for a fresh one.
           </p>
           <Link
             to="/app/pro"
@@ -123,7 +136,7 @@ function PartyActive() {
         </div>
 
         <div className="mt-5 text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">
-          Party Pack · {code}
+          Party Pack
         </div>
         <h1 className="mt-1 font-display text-4xl font-black leading-[0.95]">{pack.name}</h1>
 
@@ -184,10 +197,7 @@ function PartyActive() {
 
         <AllSidesButton sides={pack.sides} packName={pack.name} packColor={pack.color} />
 
-        <Link
-          to="/app/pro"
-          className="mt-6 block rounded-2xl bg-ink p-4 text-cream"
-        >
+        <Link to="/app/pro" className="mt-6 block rounded-2xl bg-ink p-4 text-cream">
           <div className="font-display text-base font-bold">Love this pack?</div>
           <div className="text-xs opacity-75">
             Unlock Pro to save, edit, and host your own Party Links.

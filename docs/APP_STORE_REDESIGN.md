@@ -27,7 +27,7 @@ wrapped for iOS via Capacitor.
 - Local persistence infrastructure (`src/lib/caroline-store.ts`, `localStorage`)
 - Existing reusable UI components (`src/components/ui/*`)
 - Settings screen and its sections (size, sound, theme, premium, about)
-- Party Link sharing (time-boxed pack sharing) — not a social account system, keep as-is unless it conflicts with review notes
+- Party Link sharing (time-boxed pack sharing) — not a social account system. **Note:** this was found to be non-functional across devices (see `docs/PARTY_LINK_AND_PRIVACY_FIX.md`) and has been fixed by encoding the pack into the link itself, since no backend exists to fix it the other way
 
 ## Remove
 
@@ -92,6 +92,7 @@ modes; do not build them speculatively.
 
 - Phase 0 — Repository audit: **Done** — see `docs/CURRENT_APP_AUDIT.md`
 - Phase 1 — Alcohol-content removal + product-positioning audit: **Done** — see `docs/PRODUCT_POSITIONING_AUDIT.md` and `docs/PHASE_1_RESULT.md`
+- Phase 1b — Review-readiness fixes (Privacy Manifest, Party Link actually works cross-device): **Done** — see `docs/PARTY_LINK_AND_PRIVACY_FIX.md`
 - Phase 2 — Shared game architecture (if/when Quick Play/Icebreaker/Team Battle are scoped): Not started
 - Phase 3 — Quick Play and Icebreaker: Not started
 - Phase 4 — Team Battle: Not started

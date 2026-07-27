@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useNavigate, useParams, useRouter } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Copy, Share2, Check, Clock } from "lucide-react";
+import { ArrowLeft, Copy, Share2, Check, Clock, ImageOff } from "lucide-react";
 import { useCarolineStore } from "@/lib/caroline-store";
 import { AllSidesButton } from "@/components/caroline/Dice";
+import { decodeSharedPack, hasPhotoSide } from "@/lib/party-link";
 
 export const Route = createFileRoute("/share/$code")({
   head: () => ({ meta: [{ title: "Party Link Ready — Caroline" }] }),
@@ -14,8 +15,19 @@ function SharePage() {
   const navigate = useNavigate();
   const router = useRouter();
   const { parties, packs } = useCarolineStore();
-  const party = useMemo(() => parties.find((p) => p.code === code), [parties, code]);
-  const pack = useMemo(() => packs.find((p) => p.id === party?.packId), [packs, party]);
+  // The code is the encoded pack (see src/lib/party-link.ts) — decode it
+  // directly so this screen shows exactly what a friend opening the link
+  // will see, rather than trusting local storage.
+  const decoded = useMemo(() => decodeSharedPack(code), [code]);
+  const localParty = useMemo(() => parties.find((p) => p.code === code), [parties, code]);
+  const localPack = useMemo(
+    () => packs.find((p) => p.id === localParty?.packId),
+    [packs, localParty],
+  );
+  const pack = decoded?.pack ?? localPack;
+  // The original pack (still in local storage, with photos intact) — used
+  // only to detect whether the link is dropping any photo sides.
+  const sourcePack = localPack;
   const [copied, setCopied] = useState(false);
 
   function back() {
@@ -90,12 +102,21 @@ function SharePage() {
         </div>
       )}
 
+      {sourcePack && hasPhotoSide(sourcePack) && (
+        <div className="mt-4 flex items-start gap-2 rounded-2xl border border-ink/12 bg-card p-3 text-xs text-ink/70">
+          <ImageOff className="mt-0.5 h-4 w-4 shrink-0 text-ink/50" />
+          <span>
+            This pack has photos on some sides. Party Links don't include photos yet — your friends
+            will see the emoji or text for those sides instead.
+          </span>
+        </div>
+      )}
+
       <div className="mt-5 rounded-3xl border border-ink/12 bg-card p-4">
         <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/55">
-          Code
+          Party Link
         </div>
-        <div className="mt-1 font-display text-4xl font-black tracking-[0.25em]">{code}</div>
-        <div className="mt-2 truncate rounded-xl bg-cream px-3 py-2 text-xs text-ink/70">
+        <div className="mt-2 break-all rounded-xl bg-cream px-3 py-2 text-xs text-ink/70">
           {url}
         </div>
       </div>

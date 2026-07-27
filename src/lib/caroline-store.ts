@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { encodeSharedPack } from "./party-link";
 
 export type DiceSide = {
   text: string;
@@ -16,7 +17,6 @@ export type DicePack = {
   color: string;
   createdAt: number;
 };
-
 
 export type PartyLink = {
   code: string;
@@ -123,10 +123,14 @@ export function useCarolineStore() {
     const cur = ensure();
     save({ ...cur, packs: cur.packs.filter((p) => p.id !== id) });
   }, []);
-  const createParty = useCallback((packId: string): PartyLink => {
+  const createParty = useCallback((pack: DicePack): PartyLink => {
     const cur = ensure();
-    const code = Math.random().toString(36).slice(2, 8).toUpperCase();
-    const party = { code, packId, createdAt: Date.now() };
+    const createdAt = Date.now();
+    // The code IS the pack, encoded — there's no backend to look it up
+    // against, so the link has to carry everything a friend's device needs.
+    // See src/lib/party-link.ts for why.
+    const code = encodeSharedPack(pack, createdAt);
+    const party = { code, packId: pack.id, createdAt };
     save({ ...cur, parties: [party, ...cur.parties].slice(0, 20) });
     return party;
   }, []);
@@ -138,10 +142,29 @@ export function useCarolineStore() {
   const setSoundId = useCallback((soundId: string) => save({ ...ensure(), soundId }), []);
   const setDieScale = useCallback((dieScale: number) => save({ ...ensure(), dieScale }), []);
   const setTheme = useCallback((theme: State["theme"]) => save({ ...ensure(), theme }), []);
-  const setShakeEnabled = useCallback((shakeEnabled: boolean) => save({ ...ensure(), shakeEnabled }), []);
-  const setDieColorMode = useCallback((dieColorMode: State["dieColorMode"]) => save({ ...ensure(), dieColorMode }), []);
+  const setShakeEnabled = useCallback(
+    (shakeEnabled: boolean) => save({ ...ensure(), shakeEnabled }),
+    [],
+  );
+  const setDieColorMode = useCallback(
+    (dieColorMode: State["dieColorMode"]) => save({ ...ensure(), dieColorMode }),
+    [],
+  );
 
-  return { ...s, setPro, recordRoll, savePack, deletePack, createParty, deleteParty, setSoundId, setDieScale, setTheme, setShakeEnabled, setDieColorMode };
+  return {
+    ...s,
+    setPro,
+    recordRoll,
+    savePack,
+    deletePack,
+    createParty,
+    deleteParty,
+    setSoundId,
+    setDieScale,
+    setTheme,
+    setShakeEnabled,
+    setDieColorMode,
+  };
 }
 
 export function getStoredSoundId(): string {
@@ -179,11 +202,21 @@ export function pickCardSurface(packColor: string): string {
   // White / very light dice need a tinted surface to keep an edge.
   if (c.includes("--snow") || c.includes("--cream")) return "var(--mist)";
   // Warm yellows/peaches → cool surface
-  if (c.includes("--butter") || c.includes("--lemon") || c.includes("--peach") || c.includes("--clay")) {
+  if (
+    c.includes("--butter") ||
+    c.includes("--lemon") ||
+    c.includes("--peach") ||
+    c.includes("--clay")
+  ) {
     return "var(--mist)";
   }
   // Cool blues/greens → warm surface
-  if (c.includes("--powder") || c.includes("--sky") || c.includes("--sage") || c.includes("--mint")) {
+  if (
+    c.includes("--powder") ||
+    c.includes("--sky") ||
+    c.includes("--sage") ||
+    c.includes("--mint")
+  ) {
     return "var(--sand)";
   }
   // Pinks / purples → neutral paper with a hint of warmth

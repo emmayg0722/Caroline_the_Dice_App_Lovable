@@ -147,7 +147,7 @@ function CustomTab() {
                   </Link>
                   <button
                     onClick={() => {
-                      const party = createParty(p.id);
+                      const party = createParty(p);
                       window.location.href = `/share/${party.code}`;
                     }}
                     className="flex items-center justify-center gap-1 rounded-full border border-ink/20 bg-card py-2 text-xs font-semibold"
