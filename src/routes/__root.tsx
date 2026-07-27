@@ -78,11 +78,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#FFF8E8" },
-      { title: "Caroline — The Dice" },
-      { name: "description", content: "Create custom dice packs. Share them with friends. Let the party roll." },
+      { title: "Caroline — Party Dice" },
+      {
+        name: "description",
+        content:
+          "Caroline is a customizable party dice game — build your own prompt packs for questions, challenges, and group games, then share and roll with friends.",
+      },
       { name: "author", content: "emmayg" },
-      { property: "og:title", content: "Caroline — The Dice" },
-      { property: "og:description", content: "Create custom dice packs. Share them with friends. Let the party roll." },
+      { property: "og:title", content: "Caroline — Party Dice" },
+      {
+        property: "og:description",
+        content:
+          "Caroline is a customizable party dice game — build your own prompt packs for questions, challenges, and group games, then share and roll with friends.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

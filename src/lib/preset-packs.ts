@@ -2,20 +2,6 @@ import type { DicePack } from "./caroline-store";
 
 export const PRESET_PACKS: DicePack[] = [
   {
-    id: "preset_drinking",
-    name: "Friends Drinking 🍻",
-    color: "var(--coral)",
-    createdAt: 0,
-    sides: [
-      { text: "Shot!", emoji: "🍺" },
-      { text: "Toast King", emoji: "👑" },
-      { text: "Swap Drinks", emoji: "🍹" },
-      { text: "Truth", emoji: "❓" },
-      { text: "Dare", emoji: "🔥" },
-      { text: "Punishment Round", emoji: "🍻" },
-    ],
-  },
-  {
     id: "preset_family",
     name: "Family Gathering 👨‍👩‍👧‍👦",
     color: "var(--butter)",
@@ -68,7 +54,7 @@ export const PRESET_PACKS: DicePack[] = [
       { text: "Talent Bomb", emoji: "🎤" },
       { text: "King's Order", emoji: "👑" },
       { text: "Selfie Quest", emoji: "📸" },
-      { text: "Cheers All", emoji: "🍾" },
+      { text: "Round of Applause", emoji: "👏" },
     ],
   },
   {

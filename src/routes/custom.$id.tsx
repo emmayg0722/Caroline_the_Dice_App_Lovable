@@ -2,7 +2,13 @@ import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router"
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Camera, Save, X, Loader2 } from "lucide-react";
 import { CustomDieFace } from "@/components/caroline/Dice";
-import { useCarolineStore, newPackId, PACK_COLORS, type DicePack, type DiceSide } from "@/lib/caroline-store";
+import {
+  useCarolineStore,
+  newPackId,
+  PACK_COLORS,
+  type DicePack,
+  type DiceSide,
+} from "@/lib/caroline-store";
 import { compressPhoto, cutoutWhiteBackground } from "@/lib/dice-sound";
 
 export const Route = createFileRoute("/custom/$id")({
@@ -23,7 +29,7 @@ function defaultPack(id: string): DicePack {
       { text: "Lukas", emoji: "🧑", mode: "side" },
       { text: "Emma", emoji: "👩", mode: "side" },
       { text: "Pizza", emoji: "🍕", mode: "side" },
-      { text: "Take a shot", emoji: "🥃", mode: "side" },
+      { text: "Tell a Joke", emoji: "😂", mode: "side" },
       { text: "Truth", emoji: "💭", mode: "side" },
       { text: "Dare", emoji: "🔥", mode: "side" },
     ],
@@ -51,10 +57,13 @@ export function Editor({ id }: { id: string }) {
   const fileInputs = useRef<(HTMLInputElement | null)[]>([]);
   // Staged cutout shown in a preview modal so the user can confirm before it
   // commits to the side.
-  const [preview, setPreview] = useState<
-    | { idx: number; mode: "side" | "pip"; data: string; originalUrl: string; originalFile: File }
-    | null
-  >(null);
+  const [preview, setPreview] = useState<{
+    idx: number;
+    mode: "side" | "pip";
+    data: string;
+    originalUrl: string;
+    originalFile: File;
+  } | null>(null);
 
   function update(i: number, patch: Partial<Omit<DiceSide, "photo">> & { photo?: string | null }) {
     setPack((p) => {
@@ -72,7 +81,12 @@ export function Editor({ id }: { id: string }) {
     });
   }
 
-  async function onPickPhoto(i: number, file: File, mode: "side" | "pip", opts?: { force?: boolean }) {
+  async function onPickPhoto(
+    i: number,
+    file: File,
+    mode: "side" | "pip",
+    opts?: { force?: boolean },
+  ) {
     setBusyIdx(i);
     try {
       const data =
@@ -225,7 +239,9 @@ export function Editor({ id }: { id: string }) {
                     <div className="grid h-8 w-8 place-items-center rounded-xl bg-cream font-display text-sm font-bold text-ink/70">
                       {i + 1}
                     </div>
-                    <span className="text-[11px] uppercase tracking-wider text-ink/55">Side {i + 1}</span>
+                    <span className="text-[11px] uppercase tracking-wider text-ink/55">
+                      Side {i + 1}
+                    </span>
                   </div>
                   <div className="flex rounded-full bg-cream p-0.5 text-[11px] font-semibold">
                     <button
@@ -263,7 +279,11 @@ export function Editor({ id }: { id: string }) {
                         className="relative h-9 w-9 overflow-hidden rounded-xl border border-ink/15"
                         aria-label="Remove photo"
                       >
-                        <img src={s.photo} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                        <img
+                          src={s.photo}
+                          alt=""
+                          className="absolute inset-0 h-full w-full object-cover"
+                        />
                         <span className="absolute inset-0 grid place-items-center bg-ink/40 text-white">
                           <X className="h-4 w-4" />
                         </span>
@@ -275,7 +295,11 @@ export function Editor({ id }: { id: string }) {
                         aria-label="Add photo"
                         disabled={busy}
                       >
-                        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
+                        {busy ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Camera className="h-4 w-4" />
+                        )}
                       </button>
                     )}
                   </div>
@@ -296,7 +320,11 @@ export function Editor({ id }: { id: string }) {
                         className="relative h-12 w-12 overflow-hidden rounded-xl border border-ink/15 bg-[conic-gradient(at_50%_50%,#eee_25%,#fff_0_50%,#eee_0_75%,#fff_0)]"
                         aria-label="Remove image"
                       >
-                        <img src={s.photo} alt="" className="absolute inset-0 h-full w-full object-contain" />
+                        <img
+                          src={s.photo}
+                          alt=""
+                          className="absolute inset-0 h-full w-full object-contain"
+                        />
                         <span className="absolute inset-0 grid place-items-center bg-ink/40 text-white">
                           <X className="h-4 w-4" />
                         </span>
@@ -308,7 +336,11 @@ export function Editor({ id }: { id: string }) {
                         aria-label="Add image"
                         disabled={busy}
                       >
-                        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
+                        {busy ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Camera className="h-4 w-4" />
+                        )}
                       </button>
                     )}
                   </div>
@@ -375,11 +407,7 @@ export function Editor({ id }: { id: string }) {
                   Original
                 </div>
                 <div className="grid aspect-square place-items-center overflow-hidden rounded-xl bg-cream">
-                  <img
-                    src={preview.originalUrl}
-                    alt=""
-                    className="h-full w-full object-contain"
-                  />
+                  <img src={preview.originalUrl} alt="" className="h-full w-full object-contain" />
                 </div>
               </div>
               <div className="rounded-2xl border border-ink/12 bg-card p-3">
