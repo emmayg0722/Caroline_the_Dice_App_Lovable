@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Link2, Hash, Clock, ChevronRight, Trash2 } from "lucide-react";
+import { Link2, Clock, ChevronRight, Trash2 } from "lucide-react";
 import { useCarolineStore, type PartyLink, type DicePack } from "@/lib/caroline-store";
 import { PARTY_LINK_TTL_MS } from "@/lib/party-link";
 
@@ -81,7 +81,9 @@ function SwipeRow({
 function PartyTab() {
   const navigate = useNavigate();
   const { parties, packs, deleteParty } = useCarolineStore();
-  const [code, setCode] = useState("");
+  // A Party Link's code and its "code" typed on their own are the same
+  // opaque token now (see src/lib/party-link.ts) — one input handles both,
+  // rather than presenting them as two different things to paste.
   const [link, setLink] = useState("");
   const [now, setNow] = useState(0);
 
@@ -129,7 +131,7 @@ function PartyTab() {
             <input
               value={link}
               onChange={(e) => setLink(e.target.value)}
-              placeholder="Paste Party Link"
+              placeholder="Paste Party Link or code"
               className="w-full bg-transparent py-3 text-sm outline-none placeholder:text-ink/40"
             />
           </div>
@@ -141,33 +143,8 @@ function PartyTab() {
             }}
             className="w-full rounded-full bg-ink py-3 text-sm font-semibold text-cream"
           >
-            Open Party Link
+            Join
           </button>
-
-          <div className="flex items-center gap-2 pt-2">
-            <div className="h-px flex-1 bg-ink/15" />
-            <span className="text-[10px] uppercase tracking-widest text-ink/50">or</span>
-            <div className="h-px flex-1 bg-ink/15" />
-          </div>
-
-          <div className="flex items-center gap-2 rounded-2xl border border-ink/15 bg-cream px-3">
-            <Hash className="h-4 w-4 text-ink/50" />
-            <input
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              placeholder="Paste Party Code"
-              // Party codes are long and case-sensitive now (they encode the
-              // pack itself) — no letter-spacing/uppercase styling, this is
-              // meant to be pasted, not typed or admired.
-              className="w-full bg-transparent py-3 text-sm outline-none placeholder:text-ink/40"
-            />
-            <button
-              onClick={() => join(code)}
-              className="rounded-full bg-coral px-3 py-1.5 text-xs font-semibold text-white"
-            >
-              Join
-            </button>
-          </div>
         </div>
       </div>
 
@@ -180,7 +157,7 @@ function PartyTab() {
         </div>
         {active.length === 0 ? (
           <div className="mt-3 rounded-3xl border border-dashed border-ink/20 bg-card p-5 text-center text-sm text-ink/65">
-            No active party packs yet. Open a Party Link above to add one.
+            No active party packs yet. Join a Party Link above to add one.
           </div>
         ) : (
           <div className="mt-3 space-y-2">
